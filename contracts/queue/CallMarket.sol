@@ -1,4 +1,3 @@
-
 //pragma solidity 0.5.12;
 
 pragma solidity >=0.5.7 <0.6.0;
@@ -10,8 +9,7 @@ import "./HeapMapping.sol";
 import "./LinkedList.sol";
 import "./LinkedListMapping.sol";
 
-contract CallMarket{
-
+contract CallMarket {
     //HeapDynamicArray public priorityQueue = new HeapDynamicArray();
     //HeapStaticArray public priorityQueue = new HeapStaticArray(84);
     //HeapMapping public priorityQueue = new HeapMapping();
@@ -20,20 +18,20 @@ contract CallMarket{
     LinkedListMapping public priorityQueue = new LinkedListMapping();
     //Mapping public MP = new Mapping(address(this));
     address payable public callmarket = address(uint160(address(this)));
-    
-//***********************************************************************//
+
+    //***********************************************************************//
 
     /**
-    *   @dev Converts string to uint and returns the uint
-    */
+     *   @dev Converts string to uint and returns the uint
+     */
 
-    function strTouint (string memory s) internal pure returns (uint) {
+    function strTouint(string memory s) internal pure returns (uint256) {
         bytes memory b = bytes(s);
-        uint i;
-        uint result = 0;
-        uint j = b.length;
+        uint256 i;
+        uint256 result = 0;
+        uint256 j = b.length;
         for (i = 0; i < j; i++) {
-            uint c = uint(uint8(b[i]));
+            uint256 c = uint256(uint8(b[i]));
             if (c >= 48 && c <= 57) {
                 result = result * 10 + (c - 48);
             }
@@ -41,44 +39,45 @@ contract CallMarket{
 
         return result;
     }
-//***********************************************************************//
+
+    //***********************************************************************//
 
     /**
-    *   @dev Converts uint to string and returns the string
-    */
+     *   @dev Converts uint to string and returns the string
+     */
 
-    function uintTostr (uint intVar) internal pure returns (string memory _uintAsString) {
+    function uintTostr(uint256 intVar) internal pure returns (string memory _uintAsString) {
         if (intVar == 0) {
             return "0";
         }
-        uint j = intVar;
-        uint len;
+        uint256 j = intVar;
+        uint256 len;
         while (j != 0) {
             len++;
             j /= 10;
         }
         bytes memory bstr = new bytes(len);
-        uint k = len - 1;
+        uint256 k = len - 1;
         while (intVar != 0) {
-            bstr[k--] = byte(uint8(48 + intVar % 10));
+            bstr[k--] = bytes1(uint8(48 + (intVar % 10)));
             intVar /= 10;
         }
         return string(bstr);
     }
-//***********************************************************************//
-    
+
+    //***********************************************************************//
+
     /**
-    *   @dev Contcatenates two string and returns the result
-    */
+     *   @dev Contcatenates two string and returns the result
+     */
 
     function contcat(string memory a, string memory b) internal pure returns (string memory) {
-
-        return string (abi.encodePacked( a , b));
+        return string(abi.encodePacked(a, b));
     }
 
-//****************************************************//
-//****************************************************//
-//****************************************************//
+    //****************************************************//
+    //****************************************************//
+    //****************************************************//
 
     /**
     *   @dev
@@ -102,13 +101,13 @@ contract CallMarket{
     */
 
     //uint256 public countervariable;
-    enum States {Open, Closed, Settled} 
+    enum States { Open, Closed, Settled }
     States internal state;
     uint256 public creationTime;
     uint256 public biddingPeriod;
-    uint256 public numOrders;        
-    uint256 public buylistCounter;   
-    uint256 public sellistCounter;  
+    uint256 public numOrders;
+    uint256 public buylistCounter;
+    uint256 public sellistCounter;
     mapping(address => uint256) internal refunds;
 
     mapping(address => uint256) public totalTokenBalance;
@@ -118,12 +117,10 @@ contract CallMarket{
     mapping(address => uint256) public totalEtherBalance;
     mapping(address => uint256) public unavailableEtherBalance;
     address[] public unavailableEtherArray;
-    
 
-
-//**********************************************//
-//***************Function Modifiers*************//
-//**********************************************//
+    //**********************************************//
+    //***************Function Modifiers*************//
+    //**********************************************//
 
     /* modifier CheckAuctionStage () {
         if (now >= creationTime + biddingPeriod || numOrders == 1000) 
@@ -133,59 +130,55 @@ contract CallMarket{
         _;
     } */
 
-    
-//**********************************************// 
+    //**********************************************//
     /**
-    *   @dev Checks whether the market is at state_1 or not 
-    */
+     *   @dev Checks whether the market is at state_1 or not
+     */
 
-    modifier auctionAtStage (States state_1 ) { 
-        require (state == state_1); 
+    modifier auctionAtStage(States state_1) {
+        require(state == state_1);
         _;
     }
-//***********************************************************************//
+
+    //***********************************************************************//
     /**
     *   @dev Allows the traders to deposit ERC20 tokens
         Traders must firs call the approve() from the ERC20 token contract to allow the call market contract to spend those tokens
     */
 
     function depositToken(address token, uint256 numofTokens) external returns (bool) {
-        
         totalTokenBalance[msg.sender] += numofTokens;
-        IERC20(token).transferFrom(msg.sender, address(this), numofTokens);        
+        IERC20(token).transferFrom(msg.sender, address(this), numofTokens);
         return true;
-    
     }
-//***********************************************************************//
+
+    //***********************************************************************//
     /**
-    *   @dev Allows the traders to deposit ETH
-    */ 
+     *   @dev Allows the traders to deposit ETH
+     */
 
     function depositEther() external payable returns (bool) {
         totalEtherBalance[msg.sender] += msg.value;
-        
+
         return true;
     }
 
-
-
-//***********************************************************************//
+    //***********************************************************************//
     /**
-    *   @dev Opens the market
-    */ 
+     *   @dev Opens the market
+     */
 
     function openMarket() external returns (bool) {
-
-        creationTime = block.timestamp; 
+        creationTime = block.timestamp;
         biddingPeriod = 10 minutes;
         state = States.Open;
         numOrders = 0;
         sellistCounter = 100;
         buylistCounter = 999;
         return true;
-
     }
-//***********************************************************************//
+
+    //***********************************************************************//
     /**
     *   @dev 
         Allows traders to submit bid orders if the market is at the open state
@@ -195,17 +188,19 @@ contract CallMarket{
         Increment the market's total number of orders 
         Decrements the buylistCounter
         Increase the unavailableEtherBalance of the trader by _volume * _price;
-    */ 
-  
-    function submitBid (uint256 price, uint256 volume) external auctionAtStage (States.Open) returns (bool)
-    {
-        require ((totalEtherBalance[msg.sender] - unavailableEtherBalance[msg.sender]) >= volume * price, 'Ether balance is not enough!' );
-        
+    */
+
+    function submitBid(uint256 price, uint256 volume) external auctionAtStage(States.Open) returns (bool) {
+        require(
+            (totalEtherBalance[msg.sender] - unavailableEtherBalance[msg.sender]) >= volume * price,
+            "Ether balance is not enough!"
+        );
+
         uint256 _finalpriceUint;
         string memory _finalpriceString;
-        _finalpriceString = contcat ( uintTostr(price), uintTostr (buylistCounter));
-        _finalpriceUint = strTouint (_finalpriceString);
-        
+        _finalpriceString = contcat(uintTostr(price), uintTostr(buylistCounter));
+        _finalpriceUint = strTouint(_finalpriceString);
+
         numOrders++;
         buylistCounter--;
         unavailableEtherBalance[msg.sender] += volume * price;
@@ -214,7 +209,7 @@ contract CallMarket{
         return true;
     }
 
-//***********************************************************************//
+    //***********************************************************************//
     /**
     *   @dev 
         Allows traders to submit ask orders if the market is at the open state
@@ -224,43 +219,42 @@ contract CallMarket{
         Increments the market's total number of orders 
         Increments the sellistCounter
         Increase the unavailableTokenBalance of the trader by _volume
-    */ 
+    */
 
-    function submitAsk (uint256 price, uint256 volume) external auctionAtStage (States.Open) returns (bool)
-    {
-        require((totalTokenBalance[msg.sender] - unavailableTokenBalance[msg.sender]) >= volume, 'Token balance is not enough!');
+    function submitAsk(uint256 price, uint256 volume) external auctionAtStage(States.Open) returns (bool) {
+        require(
+            (totalTokenBalance[msg.sender] - unavailableTokenBalance[msg.sender]) >= volume,
+            "Token balance is not enough!"
+        );
         uint256 _finalpriceUint;
         string memory _finalpriceString;
-        _finalpriceString = contcat ( uintTostr(price), uintTostr (sellistCounter));
-        _finalpriceUint = strTouint (_finalpriceString);
-        
+        _finalpriceString = contcat(uintTostr(price), uintTostr(sellistCounter));
+        _finalpriceUint = strTouint(_finalpriceString);
+
         numOrders++;
         sellistCounter++;
         unavailableTokenBalance[msg.sender] += volume;
         unavailableTokenArray.push(msg.sender);
         priorityQueue.insertAsk(msg.sender, price, volume, _finalpriceUint);
         return true;
-
     }
-//***********************************************************************//
-    /**
-    *   @dev Closes the market
-    */ 
 
-    function closeMarket() external returns (bool)
-    {
+    //***********************************************************************//
+    /**
+     *   @dev Closes the market
+     */
+
+    function closeMarket() external returns (bool) {
         state = States.Closed;
         return true;
     }
 
-//***********************************************************************//
+    //***********************************************************************//
     /**
     *   @dev 
         Processes the orders only if the market is at the closed state
 
     */
-
-
 
     //*********************************************************//
     /**
@@ -323,44 +317,32 @@ contract CallMarket{
         matchorders() version 2: Partial fillings
 
     */
- 
 
-    function matchOrders() external auctionAtStage(States.Closed) returns (bool){
-
+    function matchOrders() external auctionAtStage(States.Closed) returns (bool) {
         state = States.Settled;
-        
+
         (uint256 BBPrice, address BBSender, uint256 BBVolume) = priorityQueue.buyListMax();
         (uint256 BAPrice, address BASender, uint256 BAVolume) = priorityQueue.sellListMax();
-    
-        
-        
-        
-         while (BBPrice >= BAPrice)
-        {  
-            
-            if (BBVolume > BAVolume ) 
-            {
-                totalTokenBalance[BBSender] += BAVolume ;
+
+        while (BBPrice >= BAPrice) {
+            if (BBVolume > BAVolume) {
+                totalTokenBalance[BBSender] += BAVolume;
                 totalEtherBalance[BBSender] -= BBPrice;
 
                 totalEtherBalance[BASender] += BAPrice;
                 totalTokenBalance[BASender] -= BAVolume;
-                
+
                 BBVolume = BBVolume - BAVolume;
                 priorityQueue.sellListMaxDelete();
-                
 
-                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) 
-                {
+                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) {
                     break;
                 }
                 (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();
             }
-            
-            if (BBVolume < BAVolume) 
-            {   
-                
-                totalTokenBalance[BBSender] += BBVolume ;
+
+            if (BBVolume < BAVolume) {
+                totalTokenBalance[BBSender] += BBVolume;
                 totalEtherBalance[BBSender] -= BBPrice;
 
                 totalEtherBalance[BASender] += BAPrice;
@@ -368,22 +350,15 @@ contract CallMarket{
 
                 BAVolume = BAVolume - BBVolume;
                 priorityQueue.buyListMaxDelete();
-                
 
-                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) 
-                {
+                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) {
                     break;
                 }
-                (BBPrice,BBSender,BBVolume) = priorityQueue.buyListMax();
-                
-
-
+                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();
             }
 
-            if (BBVolume == BAVolume) 
-            {
-                
-                totalTokenBalance[BBSender] += BBVolume ;
+            if (BBVolume == BAVolume) {
+                totalTokenBalance[BBSender] += BBVolume;
                 totalEtherBalance[BBSender] -= BBPrice;
 
                 totalEtherBalance[BASender] += BAPrice;
@@ -391,73 +366,65 @@ contract CallMarket{
 
                 priorityQueue.buyListMaxDelete();
                 priorityQueue.sellListMaxDelete();
-                
 
-                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) 
-                {
+                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) {
                     break;
                 }
-                (BBPrice,BBSender,BBVolume) = priorityQueue.buyListMax();
-                (BAPrice,BASender,BAVolume) = priorityQueue.sellListMax();
-
+                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();
+                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();
             }
-    
-            
 
-          
-        
-        
-        ////uint refund = refunds[block.coinbase]; 
-        ////refunds[block.coinbase] = 0; 
-        ////block.coinbase.transfer(refund);
-        
-        //for (uint i = 0 ; i< unavailableTokenArray.length; i++) 
-        //{   
-           // delete unavailableTokenBalance[unavailableTokenArray[i]];
-        //}
-        
-        //for (uint j= 0 ; j< unavailableEtherArray.length; j++) 
-        //{   
-           // delete unavailableEtherBalance[unavailableEtherArray[j]];
-        //}
-             
-        
-        
-        
-        } 
+            ////uint refund = refunds[block.coinbase];
+            ////refunds[block.coinbase] = 0;
+            ////block.coinbase.transfer(refund);
+
+            //for (uint i = 0 ; i< unavailableTokenArray.length; i++)
+            //{
+            // delete unavailableTokenBalance[unavailableTokenArray[i]];
+            //}
+
+            //for (uint j= 0 ; j< unavailableEtherArray.length; j++)
+            //{
+            // delete unavailableEtherBalance[unavailableEtherArray[j]];
+            //}
+        }
         return true;
-        
     }
-//***********************************************************************//
+
+    //***********************************************************************//
     /**
-    *   @dev Allows the tarders to claim their available tokens back
-    */    
-    function claimTokens (address token, uint256 numofTokens ) external returns (bool)
-    {
-        require ((totalTokenBalance[msg.sender] - unavailableTokenBalance[msg.sender]) >= numofTokens, 'Not enough Tokens');
-        uint256 tokensToBeClaimed = numofTokens ;
+     *   @dev Allows the tarders to claim their available tokens back
+     */
+    function claimTokens(address token, uint256 numofTokens) external returns (bool) {
+        require(
+            (totalTokenBalance[msg.sender] - unavailableTokenBalance[msg.sender]) >= numofTokens,
+            "Not enough Tokens"
+        );
+        uint256 tokensToBeClaimed = numofTokens;
         totalTokenBalance[msg.sender] -= tokensToBeClaimed;
         IERC20(token).transfer(msg.sender, tokensToBeClaimed);
         return true;
     }
-//***********************************************************************//
+
+    //***********************************************************************//
     /**
-    *   @dev Allows the tarders to claim their available ETH back
-    */     
-    function claimEther (uint256 numofEthers) external returns (bool)
-    {
-        require ((totalEtherBalance[msg.sender] - unavailableEtherBalance[msg.sender]) >= numofEthers, 'Not enough Ethers');
-        uint256 EthersToBeClaimed = numofEthers ;
+     *   @dev Allows the tarders to claim their available ETH back
+     */
+    function claimEther(uint256 numofEthers) external returns (bool) {
+        require(
+            (totalEtherBalance[msg.sender] - unavailableEtherBalance[msg.sender]) >= numofEthers,
+            "Not enough Ethers"
+        );
+        uint256 EthersToBeClaimed = numofEthers;
         totalEtherBalance[msg.sender] -= EthersToBeClaimed;
         msg.sender.transfer(EthersToBeClaimed);
         return true;
-    }    
-//***********************************************************************//
+    }
+    //***********************************************************************//
     /**
-    *   @dev Getter function to get the Ether balanace of the contract 
-    */     
+     *   @dev Getter function to get the Ether balanace of the contract
+     */
     /* function getBalance() public view returns (uint256) {
         return address(this).balance;
     } */
-                                                                                                                                                                                   
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+}
