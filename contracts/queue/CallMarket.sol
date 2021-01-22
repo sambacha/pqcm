@@ -1,6 +1,32 @@
-//pragma solidity 0.5.12;
+// SPDX-License-Identifier: SSPL-1.0 
+// @title Call Market 
+// @version 0.3.0
 
 pragma solidity >=0.5.7 <0.6.0;
+
+/**
+States.Open: The market is open
+States.Closed: The market is closed but the orders have not yet been processed
+States.Settled: The market is closed and settled (orders have been processed)
+creationTime: The openning time of the market
+biddingPeriod: The window of time during which the market is open
+numOrders: Total orders in the market (both bids and asks)
+buylistCounter: A bid orders counter that is decremented every time a bid is submitted (used for handling ties)
+sellistCounter: An ask orders counter that is incremented every time an ask is submitted (used for handling ties)
+refunds: Maintains the refund counters to be transferred to the block.coinbase (current block miner)
+
+totalTokenBalance: Maintains the total token balance of each trader 
+unavailableTokenBalance: Maintains the number of tokens a trader has depositted
+unavailableTokenArray: Maintains a list of unavailableTokenBalance addresses, this list will be used to delete the unavailableTokenBalance mapping
+
+totalEtherBalance: Maintains the total ETH balance of each trader 
+unavailableEtherBalance: Maintains the number of ETH a trader has depositted
+unavailableEtherArray: Maintains a list of unavailableEtherBalance addresses, this list will be used to delete the unavailableEtherBalance mapping
+*/
+
+
+
+
 //import "node_modules/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "./HeapDynamicArray.sol";
@@ -64,9 +90,6 @@ contract CallMarket {
         }
         return string(bstr);
     }
-
-    //***********************************************************************//
-
     /**
      *   @dev Contcatenates two string and returns the result
      */
@@ -74,10 +97,6 @@ contract CallMarket {
     function contcat(string memory a, string memory b) internal pure returns (string memory) {
         return string(abi.encodePacked(a, b));
     }
-
-    //****************************************************//
-    //****************************************************//
-    //****************************************************//
 
     /**
     *   @dev
@@ -118,9 +137,9 @@ contract CallMarket {
     mapping(address => uint256) public unavailableEtherBalance;
     address[] public unavailableEtherArray;
 
-    //**********************************************//
+
     //***************Function Modifiers*************//
-    //**********************************************//
+
 
     /* modifier CheckAuctionStage () {
         if (now >= creationTime + biddingPeriod || numOrders == 1000) 
@@ -130,7 +149,7 @@ contract CallMarket {
         _;
     } */
 
-    //**********************************************//
+
     /**
      *   @dev Checks whether the market is at state_1 or not
      */
@@ -304,12 +323,8 @@ contract CallMarket {
         // {   
         //     delete unavailableEtherBalance[unavailableEtherArray[j]];
         // }
-             
-        
-        
-        return true;
 
-        
+        return true;
     } */
     //*********************************************************//
     /**
