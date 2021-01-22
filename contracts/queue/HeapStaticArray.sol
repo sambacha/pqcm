@@ -47,11 +47,7 @@ contract HeapStaticArray {
     uint256 public sellIndex;
     uint256 public buyIndex;
 
-    //*****************************************************************//
     //**********************  buyList Functions  **********************//
-    //*****************************************************************//
-
-    //***********************************************************************//
 
     /**
      *   @dev Adds the incoming bid orders to the buyList array which will be then heapified
@@ -200,7 +196,6 @@ contract HeapStaticArray {
         return true;
     }
 
-    //***********************************************************************//
     /**
      *   @dev Checks if the buyList is empty or not
      */
@@ -212,11 +207,8 @@ contract HeapStaticArray {
         }
     }
 
-    //*****************************************************************//
-    //**********************  sellList Functions  *********************//
-    //*****************************************************************//
 
-    //***********************************************************************//
+    //**********************  sellList Functions  *********************//
 
     /**
      *   @dev Adds the incoming bid orders to the buyList array which will be then heapified
