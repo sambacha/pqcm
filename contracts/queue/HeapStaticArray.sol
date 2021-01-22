@@ -1,7 +1,10 @@
-//pragma solidity 0.5.12;
+/// SPDX-License-Identifier: SSPL-1.0
+/// @tittle HeapStaticArray
+/// @version 0.3.0
+
 pragma solidity >=0.5.7 <0.6.0;
 
-//Heap with static array wrapped in a priority queue
+// @note Heap with static array wrapped in a priority queue
 contract HeapStaticArray {
     constructor(uint256 _MAXORDERS) public {
         maxOrders = _MAXORDERS;
