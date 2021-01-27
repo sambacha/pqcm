@@ -1,8 +1,8 @@
 pragma solidity >=0.5.7 <0.6.0;
 
-//pragma solidity 0.5.12;
-
-//Linkedlist implemented with mapping wrapped in a priority queue
+/// @title Linked List Mapping
+/// @description Linkedlist implemented with mapping wrapped in a priority queue
+/// @version 0.3.0
 
 contract LinkedListMapping {
     constructor() public {
