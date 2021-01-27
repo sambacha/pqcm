@@ -1,7 +1,7 @@
-//pragma solidity 0.5.12;
+/// SPDX-Licesne-Identifier: GPL-3.0
 pragma solidity >=0.5.7 <0.6.0;
-
-//Heap with dynamic array wrapped in a priority queue
+/// @title Heap Dynamic Array
+/// @description Heap with dynamic array wrapped in a priority queue
 contract HeapDynamicArray {
     /**
 *   @dev 
@@ -24,11 +24,7 @@ contract HeapDynamicArray {
     OrderStruct[] internal buyList;
     OrderStruct[] internal sellList;
 
-    //*****************************************************************//
     //**********************  buyList Functions  **********************//
-    //*****************************************************************//
-
-    //***********************************************************************//
 
     /**
      *   @dev Adds the incoming bid orders to the end of the buyList array which will be then heapified
@@ -44,8 +40,6 @@ contract HeapDynamicArray {
         buyList.push(neworder);
         maxheapHeapifyUp();
     }
-
-    //***********************************************************************//
 
     /**
      *   @dev Sorts the heap
@@ -75,9 +69,6 @@ contract HeapDynamicArray {
         }
         return true;
     }
-
-    //***********************************************************************//
-
     /**
     *   @dev Removes and returns the highest priority element of the buyList
         Only if the buyList is not empty
@@ -113,7 +104,6 @@ contract HeapDynamicArray {
         return (_price, _sender, _volume);
     }
 
-    //***********************************************************************//
     /**
      *   @dev Returns the sender, price, and volume of the highest priority element (The highest bid)
      */
@@ -129,8 +119,6 @@ contract HeapDynamicArray {
         require(buyList.length != 0, "buyList is empty!"); //throws exception if the buylist is empty
         return (buyList[0].Price, buyList[0].Sender, buyList[0].Volume);
     }
-
-    //***********************************************************************//
 
     /**
      *   @dev Heapifydown the buyList when a bid order is removed
@@ -170,7 +158,6 @@ contract HeapDynamicArray {
         return true;
     }
 
-    //***********************************************************************//
     /**
      *   @dev Checks if the buyList is empty or not
      */
@@ -181,12 +168,7 @@ contract HeapDynamicArray {
             return false;
         }
     }
-
-    //*****************************************************************//
     //**********************  SellList Functions  *********************//
-    //*****************************************************************//
-
-    //***********************************************************************//
 
     /**
      *   @dev Adds the incoming ask orders to the end of the sellList array which will be then heapified
