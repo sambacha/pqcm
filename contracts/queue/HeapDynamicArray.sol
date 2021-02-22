@@ -1,5 +1,6 @@
 /// SPDX-Licesne-Identifier: GPL-3.0
 pragma solidity >=0.5.7 <0.6.0;
+
 /// @title Heap Dynamic Array
 /// @description Heap with dynamic array wrapped in a priority queue
 contract HeapDynamicArray {
@@ -46,7 +47,7 @@ contract HeapDynamicArray {
      */
 
     function maxheapHeapifyUp() internal returns (bool) {
-        //k is set to be the index of the last entry of the buyList array which is the oredr that has been added and needs to be moved up
+        //k is set to be the index of the last entry of the buyList array which is the order that has been added and needs to be moved up
         uint256 k = buyList.length - 1;
 
         //while we havent reached to the top of the heap
@@ -116,7 +117,7 @@ contract HeapDynamicArray {
             uint256
         )
     {
-        require(buyList.length != 0, "buyList is empty!"); //throws exception if the buylist is empty
+        require(buyList.length != 0, "buyList is empty!"); // @dev throws exception if the buylist is empty
         return (buyList[0].Price, buyList[0].Sender, buyList[0].Volume);
     }
 
@@ -148,7 +149,7 @@ contract HeapDynamicArray {
                 buyList[max] = temp;
                 //k is set to max
                 k = max;
-                //leftchild is recompuetd in preparation for the next iteration
+                //leftchild is recomputed in preparation for the next iteration
                 leftchild = 2 * k + 1;
             } else {
                 //if the k item is not smaller than the max item, heapifyDown should stop
@@ -298,7 +299,7 @@ contract HeapDynamicArray {
 
                 //k is set to min
                 k = min;
-                //leftchild is recompuetd in preparation for the next iteration
+                //leftchild is recomputed in preparation for the next iteration
                 leftchild = 2 * k + 1;
             }
             //if k item's smaller childer is not smaller than k item itself, heapifyDown should stop
