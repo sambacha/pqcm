@@ -234,7 +234,6 @@ contract HeapStaticArray {
         }
     }
 
-    //***********************************************************************//
     /**
      *   @dev Sorts the heap
      */
@@ -364,7 +363,7 @@ contract HeapStaticArray {
         return true;
     }
 
-    //***********************************************************************//
+   
     /**
      *   @dev Checks if the sellList is empty or not
      */
