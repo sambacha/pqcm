@@ -2,7 +2,7 @@ pragma solidity >=0.5.7 <0.6.0;
 
 //pragma solidity 0.5.12;
 
-contract DappToken {
+contract TINCToken {
     string public name = "There is no Cabal"; //Token name
     string public symbol = "TINC"; //Toekn symbol
     string public standard = "Backbone Cabal";
@@ -20,7 +20,7 @@ contract DappToken {
         address indexed _owner,
         address indexed _spender,
         uint256 _value
-    ); //I (the owner) approved account spender to spend _value of my Dapp tokens o
+    ); //I (the owner) approved account spender to spend _value of TINCToken
 
     //constructor: Set the value and the number of the tokens that we have
     //everytime the smart contract is deployed
