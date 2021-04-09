@@ -37,14 +37,10 @@ contract HeapMapping {
     uint256[] internal buyListHeap;
     uint256[] internal sellListHeap;
 
-    //*****************************************************************//
     //**********************  buyList Functions  **********************//
-    //*****************************************************************//
-
-    //***********************************************************************//
 
     /**
-    *   @dev Adds the incoming bid order to the buyList mapping and inserts its key to the buyListHeap  
+        @dev Adds the incoming bid order to the buyList mapping and inserts its key to the buyListHeap  
         which will be then heapified 
     */
 
@@ -62,7 +58,6 @@ contract HeapMapping {
         maxheapHeapifyUp();
     }
 
-    //***********************************************************************//
 
     /**
      *   @dev Sorts the heap
@@ -87,8 +82,6 @@ contract HeapMapping {
         }
         return true;
     }
-
-    //***********************************************************************//
 
     /**
     *   @dev Removes and returns the highest priority element of the buyList
@@ -133,7 +126,6 @@ contract HeapMapping {
         return (_price, _sender, _volume);
     }
 
-    //***********************************************************************//
     /**
      *   @dev Returns the sender, price, and volume of the highest priority element (The highest bid)
      */
@@ -153,8 +145,6 @@ contract HeapMapping {
             buyList[buyListHeap[0]].Volume
         );
     }
-
-    //***********************************************************************//
 
     /**
     *   @dev Heapifydown the buyListHeap when a bid order is removed 
@@ -198,7 +188,6 @@ contract HeapMapping {
         return true;
     }
 
-    //***********************************************************************//
     /**
      *   @dev Checks if the buyList is empty or not
      */
@@ -211,12 +200,7 @@ contract HeapMapping {
         }
     }
 
-    //*****************************************************************//
     //**********************  SellList Functions  *********************//
-    //*****************************************************************//
-
-    //***********************************************************************//
-
     /**
     *   @dev Adds the incoming ask order to the sellList mapping and inserts its key to the sellListHeap  
         which will be then heapified 
@@ -237,7 +221,6 @@ contract HeapMapping {
     }
 
     //***********************************************************************//
-
     /**
      *   @dev Sorts the heap
      */
@@ -266,7 +249,6 @@ contract HeapMapping {
     }
 
     //***********************************************************************//
-
     /**
     *   @dev Removes and returns the highest priority element of the sellList
         Only if the buyList is not empty
@@ -332,7 +314,6 @@ contract HeapMapping {
     }
 
     //***********************************************************************//
-
     /**
     *   @dev Heapifydown the sellListHeap when an ask order is removed 
         (we remove the root of the heap and add the last item to the root and reorder the heap again)
