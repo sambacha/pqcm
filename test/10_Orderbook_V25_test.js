@@ -1,12 +1,12 @@
-const DappToken = artifacts.require("DappToken");
-const Orderbook = artifacts.require("Orderbook_V25");
+const DappToken = artifacts.require('DappToken');
+const Orderbook = artifacts.require('Orderbook_V25');
 var Orderbookaddress;
 var tokenaddress;
 var accounts;
 
-contract("Orderbook", function (accounts) {
+contract('Orderbook', function (accounts) {
   //*******************Test 1*************************
-  it("should submit 1 asks from accounst[0]", async () => {
+  it('should submit 1 asks from accounst[0]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     var receipt = null;
     var array = [];
@@ -25,14 +25,14 @@ contract("Orderbook", function (accounts) {
     //     return a + b;
     // }, 0);
 
-    console.log(array.length, "asks has been succsessfully submitted");
-    console.log("Gas used for submitting the", array.length, "th ask is:");
+    console.log(array.length, 'asks has been succsessfully submitted');
+    console.log('Gas used for submitting the', array.length, 'th ask is:');
     console.log(`${receipt.receipt.gasUsed}`);
-    console.log("********************************************");
+    console.log('********************************************');
   });
   //*******************Test 2*************************
 
-  it("should submit 1 Bids from accounst[1]", async () => {
+  it('should submit 1 Bids from accounst[1]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     var receipt = null;
     var array = [];
@@ -45,17 +45,17 @@ contract("Orderbook", function (accounts) {
       array.push(gasUsed);
       console.log(`GasUsed for a submibid tx is: ${receipt.receipt.gasUsed}`);
     }
-    console.log(array.length, "bids has been succsessfully submitted");
-    console.log("Gas used for submitting the", array.length, "th bid is:");
+    console.log(array.length, 'bids has been succsessfully submitted');
+    console.log('Gas used for submitting the', array.length, 'th bid is:');
     console.log(`${receipt.receipt.gasUsed}`);
   });
   //*******************Test 3*************************
-  it("should match the orders", async () => {
+  it('should match the orders', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const receipt = await OrderbookInstance.MatchOrders();
 
-    console.log("********************************************");
+    console.log('********************************************');
     const gasUsed = receipt.receipt.gasUsed;
     console.log(`GasUsed for Matching: ${receipt.receipt.gasUsed}`);
 

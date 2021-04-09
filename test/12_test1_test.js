@@ -1,6 +1,6 @@
-const test1 = artifacts.require("test1.sol");
+const test1 = artifacts.require('test1.sol');
 
-contract("test1", function (accounts) {
+contract('test1', function (accounts) {
   //******************* Test 1*************************
 
   // it('should add integers to the array', async() => {
@@ -39,18 +39,27 @@ contract("test1", function (accounts) {
   // });
 
   //******************* Test 4*************************
-  it("should give the gasUSed for the ChangeVariable function", async () => {
+  it('should give the gasUSed for the ChangeVariable function', async () => {
     const testInstance = await test1.deployed();
     const receipt = await testInstance.ChangeVariable();
-    console.log(`GasUsed for ChangeVariable function is : ${receipt.receipt.gasUsed}`);
-    console.log("***************************************************************");
-    console.log("The transaction receipt is:", receipt);
+    console.log(
+      `GasUsed for ChangeVariable function is : ${receipt.receipt.gasUsed}`,
+    );
+    console.log(
+      '***************************************************************',
+    );
+    console.log('The transaction receipt is:', receipt);
   });
   //******************* Test 5*************************
-  it("should give the estimateGas for the ChangeVariable function", async () => {
+  it('should give the estimateGas for the ChangeVariable function', async () => {
     const testInstance = await test1.deployed();
     const estimatedGas = await testInstance.ChangeVariable.estimateGas();
-    console.log("***************************************************************");
-    console.log("The estimated gas for the ChangeVariable function is:", estimatedGas);
+    console.log(
+      '***************************************************************',
+    );
+    console.log(
+      'The estimated gas for the ChangeVariable function is:',
+      estimatedGas,
+    );
   });
 });

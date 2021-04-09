@@ -54,7 +54,8 @@ contract HeapMapping {
         uint256 volume,
         uint256 auxprice
     ) external {
-        OrderStruct memory neworder = OrderStruct(sender, price, volume, auxprice);
+        OrderStruct memory neworder =
+            OrderStruct(sender, price, volume, auxprice);
         buyList[buyListKey] = neworder;
         buyListHeap.push(buyListKey);
         buyListKey++;
@@ -72,7 +73,10 @@ contract HeapMapping {
         while (k > 0) {
             //while we havent reached to the top of the heap
             uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2
-            if (buyList[buyListHeap[k]].AuxPrice > buyList[buyListHeap[p]].AuxPrice) {
+            if (
+                buyList[buyListHeap[k]].AuxPrice >
+                buyList[buyListHeap[p]].AuxPrice
+            ) {
                 uint256 temp = buyListHeap[k]; //swap the element at index k with its parent
                 buyListHeap[k] = buyListHeap[p];
                 buyListHeap[p] = temp;
@@ -143,7 +147,11 @@ contract HeapMapping {
         )
     {
         require(buyListHeap.length != 0, "buyList is empty!"); //throws exception if the buylist is empty
-        return (buyList[buyListHeap[0]].Price, buyList[buyListHeap[0]].Sender, buyList[buyListHeap[0]].Volume);
+        return (
+            buyList[buyListHeap[0]].Price,
+            buyList[buyListHeap[0]].Sender,
+            buyList[buyListHeap[0]].Volume
+        );
     }
 
     //***********************************************************************//
@@ -164,7 +172,8 @@ contract HeapMapping {
             if (rightchild < buyListHeap.length) //if there is a rightchild
             {
                 if (
-                    buyList[buyListHeap[rightchild]].AuxPrice > buyList[buyListHeap[leftchild]].AuxPrice
+                    buyList[buyListHeap[rightchild]].AuxPrice >
+                    buyList[buyListHeap[leftchild]].AuxPrice
                 ) //then the right child and left child are compared
                 {
                     max++; //now max is set to rightchild, otherwise max remains to be the leftchild
@@ -172,7 +181,8 @@ contract HeapMapping {
             }
 
             if (
-                buyList[buyListHeap[k]].AuxPrice < buyList[buyListHeap[max]].AuxPrice
+                buyList[buyListHeap[k]].AuxPrice <
+                buyList[buyListHeap[max]].AuxPrice
             ) //compares the k item with the max item and if k is smaller than its greatest children they are swapped
             {
                 uint256 temp = buyListHeap[k]; //swap the element at index k with its parent
@@ -218,7 +228,8 @@ contract HeapMapping {
         uint256 volume,
         uint256 auxprice
     ) external {
-        OrderStruct memory neworder = OrderStruct(sender, price, volume, auxprice);
+        OrderStruct memory neworder =
+            OrderStruct(sender, price, volume, auxprice);
         sellList[sellListKey] = neworder;
         sellListHeap.push(sellListKey);
         sellListKey++;
@@ -237,7 +248,8 @@ contract HeapMapping {
             //while we havent reached to the top of the heap
             uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2
             if (
-                sellList[sellListHeap[k]].AuxPrice < sellList[sellListHeap[p]].AuxPrice
+                sellList[sellListHeap[k]].AuxPrice <
+                sellList[sellListHeap[p]].AuxPrice
             ) //if the element is greater than its parent
             {
                 uint256 temp = sellListHeap[k]; //swap the element at index k with its parent
@@ -312,7 +324,11 @@ contract HeapMapping {
         )
     {
         require(sellListHeap.length != 0, "sellList is empty!"); //throws exception if the sellList is empty
-        return (sellList[sellListHeap[0]].Price, sellList[sellListHeap[0]].Sender, sellList[sellListHeap[0]].Volume);
+        return (
+            sellList[sellListHeap[0]].Price,
+            sellList[sellListHeap[0]].Sender,
+            sellList[sellListHeap[0]].Volume
+        );
     }
 
     //***********************************************************************//
@@ -334,13 +350,17 @@ contract HeapMapping {
                 rightchild < sellListHeap.length
             ) //if there is a rightchild, then the right child and left child are compared
             {
-                if (sellList[sellListHeap[rightchild]].AuxPrice < sellList[sellListHeap[leftchild]].AuxPrice) {
+                if (
+                    sellList[sellListHeap[rightchild]].AuxPrice <
+                    sellList[sellListHeap[leftchild]].AuxPrice
+                ) {
                     min++;
                 } //now min is set to rightchild, otherwise min remains to be the leftchild
             }
 
             if (
-                sellList[sellListHeap[min]].AuxPrice < sellList[sellListHeap[k]].AuxPrice
+                sellList[sellListHeap[min]].AuxPrice <
+                sellList[sellListHeap[k]].AuxPrice
             ) //compares the k item with the max item and if its less they are swapped
             {
                 uint256 temp = sellListHeap[k]; //swap the element at index k with its parent

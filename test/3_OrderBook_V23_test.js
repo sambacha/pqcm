@@ -1,5 +1,5 @@
-const DappToken = artifacts.require("DappToken");
-const Orderbook = artifacts.require("Orderbook_V23");
+const DappToken = artifacts.require('DappToken');
+const Orderbook = artifacts.require('Orderbook_V23');
 var Orderbookaddress;
 var tokenaddress;
 var accounts;
@@ -9,67 +9,95 @@ var accounts;
 //const gasUsed = receipt.receipt.gasUsed;
 //console.log(`GasUsed for transfering: ${receipt.receipt.gasUsed}`);
 
-contract("Orderbook", function (accounts) {
-  it("should store the address of the orderbook into the var orderbookaddress", async () => {
+contract('Orderbook', function (accounts) {
+  it('should store the address of the orderbook into the var orderbookaddress', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     Orderbookaddress = OrderbookInstance.address;
-    console.log("The address of the orderbook contract is:", OrderbookInstance.address);
+    console.log(
+      'The address of the orderbook contract is:',
+      OrderbookInstance.address,
+    );
   });
 });
 
-contract("DappToken", function (accounts) {
-  it("should approve transfer of 100 tokens from account[0] to the orderbook contract ", async () => {
+contract('DappToken', function (accounts) {
+  it('should approve transfer of 100 tokens from account[0] to the orderbook contract ', async () => {
     const DappTokenInstance = await DappToken.deployed();
     tokenaddress = DappTokenInstance.address;
-    const receipt = await DappTokenInstance.approve(Orderbookaddress, 100, { from: accounts[0] });
-    const result = await DappTokenInstance.allowance(accounts[0], Orderbookaddress);
-    console.log("Account[0] allowes the orderbook contract to spend:", result.toNumber());
+    const receipt = await DappTokenInstance.approve(Orderbookaddress, 100, {
+      from: accounts[0],
+    });
+    const result = await DappTokenInstance.allowance(
+      accounts[0],
+      Orderbookaddress,
+    );
+    console.log(
+      'Account[0] allowes the orderbook contract to spend:',
+      result.toNumber(),
+    );
 
-    console.log("********************************************");
+    console.log('********************************************');
     const gasUsed = receipt.receipt.gasUsed;
     console.log(`GasUsed for approving: ${receipt.receipt.gasUsed}`);
   });
 });
 
 //*******************New test Block for the already deployed orderbook contract *************************
-describe("Orderbook", function (accounts) {
+describe('Orderbook', function (accounts) {
   this.timeout(0);
 
   //*******************Test 1*************************
-  it("should deposit 100 tokens from accounst[0] to the orderbook contract", async () => {
+  it('should deposit 100 tokens from accounst[0] to the orderbook contract', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
 
-    const receipt = await OrderbookInstance.DepositToken(tokenaddress, 100, { from: accounts[0] });
+    const receipt = await OrderbookInstance.DepositToken(tokenaddress, 100, {
+      from: accounts[0],
+    });
 
-    const totalbalance = await OrderbookInstance.TokenBalance(accounts[0], tokenaddress);
+    const totalbalance = await OrderbookInstance.TokenBalance(
+      accounts[0],
+      tokenaddress,
+    );
 
-    console.log("The total token balance of account[0] is:", totalbalance.toNumber());
-    console.log("********************************************");
+    console.log(
+      'The total token balance of account[0] is:',
+      totalbalance.toNumber(),
+    );
+    console.log('********************************************');
 
     const gasUsed = receipt.receipt.gasUsed;
-    console.log(`GasUsed for depositting 100 tokens: ${receipt.receipt.gasUsed}`);
+    console.log(
+      `GasUsed for depositting 100 tokens: ${receipt.receipt.gasUsed}`,
+    );
   });
 
   //*******************Test 2*************************
-  it("should deposit 6000 Ether from accounts[1] to the orderbook contract", async () => {
+  it('should deposit 6000 Ether from accounts[1] to the orderbook contract', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
 
-    const receipt = await OrderbookInstance.DepositEther(6000, { from: accounts[1] });
+    const receipt = await OrderbookInstance.DepositEther(6000, {
+      from: accounts[1],
+    });
 
     const totalbalance = await OrderbookInstance.EtherBalance(accounts[1]);
 
-    console.log("The total Ether balance of accounts[1] is:", totalbalance.toNumber());
-    console.log("********************************************");
+    console.log(
+      'The total Ether balance of accounts[1] is:',
+      totalbalance.toNumber(),
+    );
+    console.log('********************************************');
     const gasUsed = receipt.receipt.gasUsed;
-    console.log(`GasUsed for depositting 6000 Ethers: ${receipt.receipt.gasUsed}`);
+    console.log(
+      `GasUsed for depositting 6000 Ethers: ${receipt.receipt.gasUsed}`,
+    );
   });
   //*******************Test 3*************************
 
-  it("should open the market on the Dapp Token", async () => {
+  it('should open the market on the Dapp Token', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const receipt = await OrderbookInstance.OpenMarket(tokenaddress);
@@ -78,7 +106,7 @@ describe("Orderbook", function (accounts) {
   });
   //*******************Test 4*************************
 
-  it("should submit 2 asks from accounst[0]", async () => {
+  it('should submit 2 asks from accounst[0]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     var receipt = null;
     var array = [];
@@ -97,17 +125,17 @@ describe("Orderbook", function (accounts) {
       return a + b;
     }, 0);
 
-    console.log("********************************************");
+    console.log('********************************************');
     //console.log('cost of submitting 100 submitAsk txs is:',sum);
-    console.log(array.length, "ask orders has been succsessfully submitted");
+    console.log(array.length, 'ask orders has been succsessfully submitted');
   });
   //*******************Test 5*************************
-  it("should return the Selllist peak", async () => {
+  it('should return the Selllist peak', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const result = await OrderbookInstance.SellListPeak.call();
     const { 0: addsender, 1: intprice, 2: auxprice, 2: intvolume } = result;
-    console.log("The SellList peak is:", intprice);
+    console.log('The SellList peak is:', intprice);
   });
 
   //*******************Test 6*************************
@@ -130,7 +158,7 @@ describe("Orderbook", function (accounts) {
 
   // });
   //*******************Test 8*************************
-  it("should submit 3 Bids from accounst[1]", async () => {
+  it('should submit 3 Bids from accounst[1]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
@@ -138,19 +166,19 @@ describe("Orderbook", function (accounts) {
       await OrderbookInstance.submitBid(j, 1, { from: accounts[1] });
     }
   });
-  it("should return the BuyIndex", async () => {
+  it('should return the BuyIndex', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     const buyindex = await OrderbookInstance.BuyIndex();
-    console.log("The BuyIndex before match is:", buyindex.toNumber());
-    console.log("********************************************");
+    console.log('The BuyIndex before match is:', buyindex.toNumber());
+    console.log('********************************************');
   });
   //*******************Test 9*************************
-  it("should return the BuyList peak", async () => {
+  it('should return the BuyList peak', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const result = await OrderbookInstance.BuyListPeak.call();
     const { 0: addsender, 1: intprice, 2: auxprice, 2: intvolume } = result;
-    console.log("The Buylist peak  is:", intprice);
+    console.log('The Buylist peak  is:', intprice);
   });
 
   //*******************Test 10*************************
@@ -211,11 +239,11 @@ describe("Orderbook", function (accounts) {
   //     const {0: addsender2, 1: intprice2, 2: auxprice2, 2: intvolume2} = result2;
   //     console.log('The Buylist peak  is:', intprice2);
   // // });
-  it("should return the BuyIndex", async () => {
+  it('should return the BuyIndex', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     const buyindex = await OrderbookInstance.BuyIndex();
-    console.log("The BuyIndex before match is:", buyindex.toNumber());
-    console.log("********************************************");
+    console.log('The BuyIndex before match is:', buyindex.toNumber());
+    console.log('********************************************');
 
     // await OrderbookInstance.BuyListDelete();
     // const buyindex1 =  await OrderbookInstance.BuyIndex();
@@ -268,12 +296,12 @@ describe("Orderbook", function (accounts) {
 
   // });
   // //*******************Test 14*************************
-  it("should match the orders", async () => {
+  it('should match the orders', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     await OrderbookInstance.CloseMarket();
     const state = await OrderbookInstance.getState();
-    console.log("Market is currently:", state.toString());
+    console.log('Market is currently:', state.toString());
 
     const receipt = await OrderbookInstance.MatchOrders(tokenaddress);
 
@@ -281,12 +309,12 @@ describe("Orderbook", function (accounts) {
     //const {0: addsender, 1: intprice, 2: auxprice, 2: intvolume} = result;
     //console.log('The Buylist peak after matching orders is:', intprice);
 
-    console.log("********************************************");
+    console.log('********************************************');
     const gasUsed = receipt.receipt.gasUsed;
     console.log(`GasUsed for Matching: ${receipt.receipt.gasUsed}`);
     const counter = await OrderbookInstance.countervariable();
-    console.log("********************************************");
-    console.log("the countervariable is", counter.toNumber());
+    console.log('********************************************');
+    console.log('the countervariable is', counter.toNumber());
   });
 
   //     const test  = await OrderbookInstance.test();

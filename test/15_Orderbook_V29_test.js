@@ -1,70 +1,91 @@
-const DappToken = artifacts.require("DappToken");
-const Orderbook = artifacts.require("Orderbook_V29");
+const DappToken = artifacts.require('DappToken');
+const Orderbook = artifacts.require('Orderbook_V29');
 var Orderbookaddress;
 var tokenaddress;
 var accounts;
 
-contract("Orderbook", function (accounts) {
-  it("should store the address of the orderbook into the var orderbookaddress", async () => {
+contract('Orderbook', function (accounts) {
+  it('should store the address of the orderbook into the var orderbookaddress', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     Orderbookaddress = OrderbookInstance.address;
-    console.log("The address of the orderbook contract is:", OrderbookInstance.address);
+    console.log(
+      'The address of the orderbook contract is:',
+      OrderbookInstance.address,
+    );
   });
 });
 
-contract("DappToken", function (accounts) {
-  it("should approve transfer of 100 tokens from account[0] to the orderbook contract ", async () => {
+contract('DappToken', function (accounts) {
+  it('should approve transfer of 100 tokens from account[0] to the orderbook contract ', async () => {
     const DappTokenInstance = await DappToken.deployed();
     tokenaddress = DappTokenInstance.address;
-    const receipt = await DappTokenInstance.approve(Orderbookaddress, 15000, { from: accounts[0] });
-    const result = await DappTokenInstance.allowance(accounts[0], Orderbookaddress);
-    console.log("Account[0] allowes the orderbook contract to spend:", result.toNumber());
+    const receipt = await DappTokenInstance.approve(Orderbookaddress, 15000, {
+      from: accounts[0],
+    });
+    const result = await DappTokenInstance.allowance(
+      accounts[0],
+      Orderbookaddress,
+    );
+    console.log(
+      'Account[0] allowes the orderbook contract to spend:',
+      result.toNumber(),
+    );
 
-    console.log("********************************************");
+    console.log('********************************************');
     const gasUsed = receipt.receipt.gasUsed;
     console.log(`GasUsed for approving: ${receipt.receipt.gasUsed}`);
   });
 });
 
 //*******************New test Block for the already deployed orderbook contract *************************
-describe("Orderbook", function (accounts) {
+describe('Orderbook', function (accounts) {
   this.timeout(0);
 
   //*******************Test 1*************************
-  it("should deposit 100 tokens from accounst[0] to the orderbook contract", async () => {
+  it('should deposit 100 tokens from accounst[0] to the orderbook contract', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
 
-    const receipt = await OrderbookInstance.DepositToken(tokenaddress, 15000, { from: accounts[0] });
+    const receipt = await OrderbookInstance.DepositToken(tokenaddress, 15000, {
+      from: accounts[0],
+    });
 
-    const totalbalance = await OrderbookInstance.TokenBalance(accounts[0], tokenaddress);
+    const totalbalance = await OrderbookInstance.TokenBalance(
+      accounts[0],
+      tokenaddress,
+    );
 
-    console.log("The token balance of account[0] is:", totalbalance.toNumber());
-    console.log("********************************************");
+    console.log('The token balance of account[0] is:', totalbalance.toNumber());
+    console.log('********************************************');
     //const gasUsed = receipt.receipt.gasUsed;
     //console.log(`GasUsed for depositting 100 tokens: ${receipt.receipt.gasUsed}`);
   });
 
   //*******************Test 2*************************
-  it("should deposit 6000 Ether from accounts[1] to the orderbook contract", async () => {
+  it('should deposit 6000 Ether from accounts[1] to the orderbook contract', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
 
-    const receipt = await OrderbookInstance.DepositEther(1000000, { from: accounts[1] });
+    const receipt = await OrderbookInstance.DepositEther(1000000, {
+      from: accounts[1],
+    });
 
     const totalbalance = await OrderbookInstance.EtherBalance(accounts[1]);
 
-    console.log("The Ether balance of accounts[1] is:", totalbalance.toNumber());
-    console.log("********************************************");
+    console.log(
+      'The Ether balance of accounts[1] is:',
+      totalbalance.toNumber(),
+    );
+    console.log('********************************************');
     //const gasUsed = receipt.receipt.gasUsed;
     //console.log(`GasUsed for depositting 6000 Ethers: ${receipt.receipt.gasUsed}`);
   });
 
   //*******************Test 3*************************
 
-  it("should open the market on the Dapp Token", async () => {
+  it('should open the market on the Dapp Token', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const receipt = await OrderbookInstance.OpenMarket(tokenaddress);
@@ -74,7 +95,7 @@ describe("Orderbook", function (accounts) {
 
   //*******************Test 4*************************
 
-  it("should submit 1 asks from accounst[0]", async () => {
+  it('should submit 1 asks from accounst[0]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     var receipt = null;
     var array = [];
@@ -93,7 +114,7 @@ describe("Orderbook", function (accounts) {
   });
 
   //*******************Test 6*************************
-  it("should submit 1 Bids from accounst[1]", async () => {
+  it('should submit 1 Bids from accounst[1]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     var receipt = null;
     var array = [];
@@ -122,22 +143,22 @@ describe("Orderbook", function (accounts) {
 
   // });
 
-  it("should show the countervariable", async () => {
+  it('should show the countervariable', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const counter = await OrderbookInstance.countervariable();
-    console.log("********************************************");
-    console.log("the countervariable is", counter.toNumber());
-    console.log("********************************************");
+    console.log('********************************************');
+    console.log('the countervariable is', counter.toNumber());
+    console.log('********************************************');
     await OrderbookInstance.changetest();
     const test1 = await OrderbookInstance.test1();
-    console.log("the test is", test1.toNumber());
+    console.log('the test is', test1.toNumber());
     //const test2 = await OrderbookInstance.test2();
     //console.log('the test is',test2.toNumber());
     const test3 = await OrderbookInstance.test3();
-    console.log("the test is", test3.toNumber());
+    console.log('the test is', test3.toNumber());
     const test4 = await OrderbookInstance.test4();
-    console.log("the test is", test4.toNumber());
+    console.log('the test is', test4.toNumber());
   });
   //*******************Test 9*************************
 

@@ -1,7 +1,7 @@
-const Orderbook = artifacts.require("Orderbook_V26");
+const Orderbook = artifacts.require('Orderbook_V26');
 //var assert = require('assert');
 
-contract("Orderbook", function (accounts) {
+contract('Orderbook', function (accounts) {
   // it('should find out the gas limit for the latest block', async ()  =>{
   //     const OrderbookInstance = await Orderbook.deployed();
 
@@ -11,7 +11,7 @@ contract("Orderbook", function (accounts) {
   // });
 
   //*******************Test 1*************************
-  it("should submit 1 Buys from accounst[1]", async () => {
+  it('should submit 1 Buys from accounst[1]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     var receipt = null;
     var array = [];
@@ -24,8 +24,8 @@ contract("Orderbook", function (accounts) {
       array.push(gasUsed);
       console.log(`GasUsed for a submibid tx is: ${receipt.receipt.gasUsed}`);
     }
-    console.log(array.length, "bids has been succsessfully submitted");
-    console.log("Gas used for submitting the", array.length, "th bid is:");
+    console.log(array.length, 'bids has been succsessfully submitted');
+    console.log('Gas used for submitting the', array.length, 'th bid is:');
     console.log(`${receipt.receipt.gasUsed}`);
   });
   //*******************Test temp*************************
@@ -49,7 +49,7 @@ contract("Orderbook", function (accounts) {
   // });
 
   //*******************Test 3*************************
-  it("should submit 1 asks from accounst[0]", async () => {
+  it('should submit 1 asks from accounst[0]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     var receipt = null;
     var array = [];
@@ -63,31 +63,31 @@ contract("Orderbook", function (accounts) {
       console.log(`GasUsed for a submitask tx is: ${receipt.receipt.gasUsed}`);
     }
 
-    console.log(array.length, "asks has been succsessfully submitted");
-    console.log("Gas used for submitting the", array.length, "th ask is:");
+    console.log(array.length, 'asks has been succsessfully submitted');
+    console.log('Gas used for submitting the', array.length, 'th ask is:');
     console.log(`${receipt.receipt.gasUsed}`);
-    console.log("********************************************");
+    console.log('********************************************');
   });
 
   //*******************Test 4*************************
-  it("should match the orders", async () => {
+  it('should match the orders', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const receipt = await OrderbookInstance.MatchOrders();
-    console.log("********************************************");
+    console.log('********************************************');
     const gasUsed = receipt.receipt.gasUsed;
     console.log(`GasUsed for Matching: ${receipt.receipt.gasUsed}`);
   });
   //*******************Test 4*************************
-  it("should show the countervariable", async () => {
+  it('should show the countervariable', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const counter = await OrderbookInstance.countervariable();
-    console.log("********************************************");
-    console.log("the countervariable is", counter.toNumber());
-    console.log("********************************************");
+    console.log('********************************************');
+    console.log('the countervariable is', counter.toNumber());
+    console.log('********************************************');
     const test = await OrderbookInstance.test();
-    console.log("the test is", test.toNumber());
+    console.log('the test is', test.toNumber());
   });
 
   // it ('is just a test to check the head of the buylist', async ()  =>{

@@ -1,4 +1,4 @@
-var CallMarket = artifacts.require("./CallMarket.sol");
+var CallMarket = artifacts.require('./CallMarket.sol');
 // var PQ1 = artifacts.require("./HeapDynamicArray.sol");
 // var PQ2 = artifacts.require("./HeapStaticArray.sol");
 // var PQ3 = artifacts.require("./HeapMapping.sol");
@@ -48,7 +48,7 @@ var CallMarket = artifacts.require("./CallMarket.sol");
 module.exports = function (deployer) {
   //deployer.deploy(CallMarket,{overwrite: false});
   deployer.deploy(CallMarket);
-  console.log("CallMarket was deployed!");
+  console.log('CallMarket was deployed!');
 };
 
 // module.exports = function (deployer) {

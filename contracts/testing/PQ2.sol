@@ -36,7 +36,9 @@ contract PQ2 {
         while (k > 0) {
             //while we havent reached to the top of the heap
             uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2
-            if (MaxHeap[k].Number > MaxHeap[p].Number) //if the element is greater than its parent
+            if (
+                MaxHeap[k].Number > MaxHeap[p].Number
+            ) //if the element is greater than its parent
             {
                 OrderStruct memory temp = MaxHeap[k]; //swap the element at index k with its parent
                 MaxHeap[k] = MaxHeap[p];

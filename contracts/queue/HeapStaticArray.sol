@@ -61,7 +61,8 @@ contract HeapStaticArray {
         uint256 volume,
         uint256 auxprice
     ) external {
-        OrderStruct memory neworder = OrderStruct(sender, price, volume, true, auxprice);
+        OrderStruct memory neworder =
+            OrderStruct(sender, price, volume, true, auxprice);
 
         if (!buyList[0].Exists) {
             buyList[0] = neworder;
@@ -81,7 +82,9 @@ contract HeapStaticArray {
         while (k > 0) {
             //while we havent reached to the top of the heap
             uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2
-            if (buyList[k].AuxPrice > buyList[p].AuxPrice) //if the element is greater than its parent
+            if (
+                buyList[k].AuxPrice > buyList[p].AuxPrice
+            ) //if the element is greater than its parent
             {
                 OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent
                 buyList[k] = buyList[p];
@@ -210,7 +213,6 @@ contract HeapStaticArray {
         }
     }
 
-
     //**********************  sellList Functions  *********************//
 
     /**
@@ -223,7 +225,8 @@ contract HeapStaticArray {
         uint256 volume,
         uint256 auxprice
     ) external {
-        OrderStruct memory neworder = OrderStruct(sender, price, volume, true, auxprice);
+        OrderStruct memory neworder =
+            OrderStruct(sender, price, volume, true, auxprice);
 
         if (!sellList[0].Exists) {
             sellList[0] = neworder;
@@ -242,7 +245,9 @@ contract HeapStaticArray {
         while (k > 0) {
             //while we havent reached to the top of the heap
             uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2
-            if (sellList[k].AuxPrice < sellList[p].AuxPrice) //if the element is greater than its parent
+            if (
+                sellList[k].AuxPrice < sellList[p].AuxPrice
+            ) //if the element is greater than its parent
             {
                 OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent
                 sellList[k] = sellList[p];
@@ -338,9 +343,13 @@ contract HeapStaticArray {
             uint256 min = leftchild;
             uint256 rightchild = leftchild + 1; //rightchild = 2k+2
 
-            if (rightchild < sellIndex) //if there is a rightchild, then the right child and left child are compared
+            if (
+                rightchild < sellIndex
+            ) //if there is a rightchild, then the right child and left child are compared
             {
-                if (sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice) {
+                if (
+                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice
+                ) {
                     min++;
                 } //now min is set to rightchild, otherwise min remains to be the leftchild
             }
@@ -363,7 +372,6 @@ contract HeapStaticArray {
         return true;
     }
 
-   
     /**
      *   @dev Checks if the sellList is empty or not
      */

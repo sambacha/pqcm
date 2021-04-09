@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: SSPL-1.0 
-// @title Call Market 
+// SPDX-License-Identifier: SSPL-1.0
+// @title Call Market
 // @version 0.3.0
 
 pragma solidity >=0.5.7 <0.6.0;
@@ -23,9 +23,6 @@ totalEtherBalance: Maintains the total ETH balance of each trader
 unavailableEtherBalance: Maintains the number of ETH a trader has depositted
 unavailableEtherArray: Maintains a list of unavailableEtherBalance addresses, this list will be used to delete the unavailableEtherBalance mapping
 */
-
-
-
 
 //import "node_modules/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
@@ -72,7 +69,11 @@ contract CallMarket {
      *   @dev Converts uint to string and returns the string
      */
 
-    function uintTostr(uint256 intVar) internal pure returns (string memory _uintAsString) {
+    function uintTostr(uint256 intVar)
+        internal
+        pure
+        returns (string memory _uintAsString)
+    {
         if (intVar == 0) {
             return "0";
         }
@@ -90,11 +91,16 @@ contract CallMarket {
         }
         return string(bstr);
     }
+
     /**
      *   @dev Contcatenates two string and returns the result
      */
 
-    function contcat(string memory a, string memory b) internal pure returns (string memory) {
+    function contcat(string memory a, string memory b)
+        internal
+        pure
+        returns (string memory)
+    {
         return string(abi.encodePacked(a, b));
     }
 
@@ -137,9 +143,7 @@ contract CallMarket {
     mapping(address => uint256) public unavailableEtherBalance;
     address[] public unavailableEtherArray;
 
-
     //***************Function Modifiers*************//
-
 
     /* modifier CheckAuctionStage () {
         if (now >= creationTime + biddingPeriod || numOrders == 1000) 
@@ -148,7 +152,6 @@ contract CallMarket {
         }
         _;
     } */
-
 
     /**
      *   @dev Checks whether the market is at state_1 or not
@@ -165,7 +168,10 @@ contract CallMarket {
         Traders must firs call the approve() from the ERC20 token contract to allow the call market contract to spend those tokens
     */
 
-    function depositToken(address token, uint256 numofTokens) external returns (bool) {
+    function depositToken(address token, uint256 numofTokens)
+        external
+        returns (bool)
+    {
         totalTokenBalance[msg.sender] += numofTokens;
         IERC20(token).transferFrom(msg.sender, address(this), numofTokens);
         return true;
@@ -209,15 +215,23 @@ contract CallMarket {
         Increase the unavailableEtherBalance of the trader by _volume * _price;
     */
 
-    function submitBid(uint256 price, uint256 volume) external auctionAtStage(States.Open) returns (bool) {
+    function submitBid(uint256 price, uint256 volume)
+        external
+        auctionAtStage(States.Open)
+        returns (bool)
+    {
         require(
-            (totalEtherBalance[msg.sender] - unavailableEtherBalance[msg.sender]) >= volume * price,
+            (totalEtherBalance[msg.sender] -
+                unavailableEtherBalance[msg.sender]) >= volume * price,
             "Ether balance is not enough!"
         );
 
         uint256 _finalpriceUint;
         string memory _finalpriceString;
-        _finalpriceString = contcat(uintTostr(price), uintTostr(buylistCounter));
+        _finalpriceString = contcat(
+            uintTostr(price),
+            uintTostr(buylistCounter)
+        );
         _finalpriceUint = strTouint(_finalpriceString);
 
         numOrders++;
@@ -240,14 +254,22 @@ contract CallMarket {
         Increase the unavailableTokenBalance of the trader by _volume
     */
 
-    function submitAsk(uint256 price, uint256 volume) external auctionAtStage(States.Open) returns (bool) {
+    function submitAsk(uint256 price, uint256 volume)
+        external
+        auctionAtStage(States.Open)
+        returns (bool)
+    {
         require(
-            (totalTokenBalance[msg.sender] - unavailableTokenBalance[msg.sender]) >= volume,
+            (totalTokenBalance[msg.sender] -
+                unavailableTokenBalance[msg.sender]) >= volume,
             "Token balance is not enough!"
         );
         uint256 _finalpriceUint;
         string memory _finalpriceString;
-        _finalpriceString = contcat(uintTostr(price), uintTostr(sellistCounter));
+        _finalpriceString = contcat(
+            uintTostr(price),
+            uintTostr(sellistCounter)
+        );
         _finalpriceUint = strTouint(_finalpriceString);
 
         numOrders++;
@@ -333,11 +355,17 @@ contract CallMarket {
 
     */
 
-    function matchOrders() external auctionAtStage(States.Closed) returns (bool) {
+    function matchOrders()
+        external
+        auctionAtStage(States.Closed)
+        returns (bool)
+    {
         state = States.Settled;
 
-        (uint256 BBPrice, address BBSender, uint256 BBVolume) = priorityQueue.buyListMax();
-        (uint256 BAPrice, address BASender, uint256 BAVolume) = priorityQueue.sellListMax();
+        (uint256 BBPrice, address BBSender, uint256 BBVolume) =
+            priorityQueue.buyListMax();
+        (uint256 BAPrice, address BASender, uint256 BAVolume) =
+            priorityQueue.sellListMax();
 
         while (BBPrice >= BAPrice) {
             if (BBVolume > BAVolume) {
@@ -350,7 +378,10 @@ contract CallMarket {
                 BBVolume = BBVolume - BAVolume;
                 priorityQueue.sellListMaxDelete();
 
-                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) {
+                if (
+                    priorityQueue.buyListisEmpty() ||
+                    priorityQueue.sellListisEmpty()
+                ) {
                     break;
                 }
                 (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();
@@ -366,7 +397,10 @@ contract CallMarket {
                 BAVolume = BAVolume - BBVolume;
                 priorityQueue.buyListMaxDelete();
 
-                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) {
+                if (
+                    priorityQueue.buyListisEmpty() ||
+                    priorityQueue.sellListisEmpty()
+                ) {
                     break;
                 }
                 (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();
@@ -382,7 +416,10 @@ contract CallMarket {
                 priorityQueue.buyListMaxDelete();
                 priorityQueue.sellListMaxDelete();
 
-                if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) {
+                if (
+                    priorityQueue.buyListisEmpty() ||
+                    priorityQueue.sellListisEmpty()
+                ) {
                     break;
                 }
                 (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();
@@ -410,9 +447,13 @@ contract CallMarket {
     /**
      *   @dev Allows the tarders to claim their available tokens back
      */
-    function claimTokens(address token, uint256 numofTokens) external returns (bool) {
+    function claimTokens(address token, uint256 numofTokens)
+        external
+        returns (bool)
+    {
         require(
-            (totalTokenBalance[msg.sender] - unavailableTokenBalance[msg.sender]) >= numofTokens,
+            (totalTokenBalance[msg.sender] -
+                unavailableTokenBalance[msg.sender]) >= numofTokens,
             "Not enough Tokens"
         );
         uint256 tokensToBeClaimed = numofTokens;
@@ -427,7 +468,8 @@ contract CallMarket {
      */
     function claimEther(uint256 numofEthers) external returns (bool) {
         require(
-            (totalEtherBalance[msg.sender] - unavailableEtherBalance[msg.sender]) >= numofEthers,
+            (totalEtherBalance[msg.sender] -
+                unavailableEtherBalance[msg.sender]) >= numofEthers,
             "Not enough Ethers"
         );
         uint256 EthersToBeClaimed = numofEthers;

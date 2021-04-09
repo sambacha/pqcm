@@ -16,7 +16,11 @@ contract DappToken {
     //            ...
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value); //I (the owner) approved account spender to spend _value of my Dapp tokens o
+    event Approval(
+        address indexed _owner,
+        address indexed _spender,
+        uint256 _value
+    ); //I (the owner) approved account spender to spend _value of my Dapp tokens o
 
     //constructor: Set the value and the number of the tokens that we have
     //everytime the smart contract is deployed
@@ -28,7 +32,10 @@ contract DappToken {
 
     //transfer function allows users to trasfer tokens and MUST fire the "transfer event"
     //The function SHOULD throw exception if the _from address does not have enough tokens to spend
-    function transfer(address _to, uint256 _value) public returns (bool success) {
+    function transfer(address _to, uint256 _value)
+        public
+        returns (bool success)
+    {
         require(balanceOf[msg.sender] >= _value);
         balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _value;
@@ -38,7 +45,10 @@ contract DappToken {
 
     //approve function: allows sb to approve another account to spend tokens on tehir behalf. You're basically approving the exchange to spend x tokens on your behalf
     //MUST trigger the approval event
-    function approve(address _spender, uint256 _value) public returns (bool success) {
+    function approve(address _spender, uint256 _value)
+        public
+        returns (bool success)
+    {
         //spender: the exchange
 
         allowance[msg.sender][_spender] = _value; //set the allowance: the amount which _spender is still allowed to withdraw from _owner

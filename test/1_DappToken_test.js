@@ -1,18 +1,18 @@
-const DappToken = artifacts.require("DappToken");
-const Orderbook = artifacts.require("Orderbook_V22");
+const DappToken = artifacts.require('DappToken');
+const Orderbook = artifacts.require('Orderbook_V22');
 var Orderbookaddress;
 var tokenaddress;
 var accounts;
 
-contract("Orderbook", function (accounts) {
-  it("should store the address of the orderbook into the var orderbookaddress", async () => {
+contract('Orderbook', function (accounts) {
+  it('should store the address of the orderbook into the var orderbookaddress', async () => {
     const OrderbookInstance = await Orderbook.deployed();
     Orderbookaddress = OrderbookInstance.address;
     console.log(OrderbookInstance.address);
   });
 });
 
-contract("DappToken", function (accounts) {
+contract('DappToken', function (accounts) {
   //*******************Test 1*************************
   //  it('should deploy the smart contract properly', async() => {
   //      const DappTokenInstance = await DappToken.deployed();
@@ -56,7 +56,7 @@ contract("DappToken", function (accounts) {
 
   // });
   //*******************Test 6*************************
-  it("accounts[1] should transfer 10 token to ", async () => {
+  it('accounts[1] should transfer 10 token to ', async () => {
     const tokenInsatnce = await DappToken.deployed();
     tokenaddress = tokenInsatnce.address;
     await tokenInsatnce.approve(Orderbookaddress, 100, { from: accounts[0] });
@@ -65,53 +65,74 @@ contract("DappToken", function (accounts) {
   });
 });
 //*******************New test Block for the already deployed orderbook*************************
-describe("Orderbook", function (accounts) {
+describe('Orderbook', function (accounts) {
   this.timeout(0);
-  it("should deposit 100 tokens from accounst[0]", async () => {
+  it('should deposit 100 tokens from accounst[0]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
 
-    await OrderbookInstance.DepositToken(tokenaddress, 100, { from: accounts[0] });
+    await OrderbookInstance.DepositToken(tokenaddress, 100, {
+      from: accounts[0],
+    });
 
-    const totalbalance = await OrderbookInstance.TotalTokenBalance(accounts[0], tokenaddress);
-    console.log("The number of tokens depositted by account[0] is:", totalbalance.toNumber());
+    const totalbalance = await OrderbookInstance.TotalTokenBalance(
+      accounts[0],
+      tokenaddress,
+    );
+    console.log(
+      'The number of tokens depositted by account[0] is:',
+      totalbalance.toNumber(),
+    );
   });
   //*******************Test 2*************************
-  it("should OpenMarket on Dapp Token", async () => {
+  it('should OpenMarket on Dapp Token', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     await OrderbookInstance.OpenMarket(tokenaddress);
   });
 
   //*******************Test 3*************************
-  it("should submit 100 asks from accounst[0]", async () => {
+  it('should submit 100 asks from accounst[0]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     //     //const state =  await OrderbookInstance.getState();
     //     //console.log(state.toString());
 
     accounts = await web3.eth.getAccounts();
-    for (let j = 1; j < 31; j++) await OrderbookInstance.submitAsk(j, 1, { from: accounts[0] });
+    for (let j = 1; j < 31; j++)
+      await OrderbookInstance.submitAsk(j, 1, { from: accounts[0] });
 
     //await OrderbookInstance.submitAsk (10, 1, {from: accounts[0]});
   });
   //*******************Test 4*************************
 
-  it("should return both the total and available token balance of accounts[0]", async () => {
+  it('should return both the total and available token balance of accounts[0]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
 
-    const totalbalance = await OrderbookInstance.TotalTokenBalance(accounts[0], tokenaddress);
-    const availablebalance = await OrderbookInstance.AvailableTokenBalance(accounts[0], tokenaddress);
+    const totalbalance = await OrderbookInstance.TotalTokenBalance(
+      accounts[0],
+      tokenaddress,
+    );
+    const availablebalance = await OrderbookInstance.AvailableTokenBalance(
+      accounts[0],
+      tokenaddress,
+    );
 
-    console.log("The total token balance of accounts[0] is:", totalbalance.toNumber());
-    console.log("The available token balance of accounts[0] is:", availablebalance.toNumber());
+    console.log(
+      'The total token balance of accounts[0] is:',
+      totalbalance.toNumber(),
+    );
+    console.log(
+      'The available token balance of accounts[0] is:',
+      availablebalance.toNumber(),
+    );
   });
   //*******************Test 5*************************
 
-  it("should deposit 6000 Ether from accounts[1]", async () => {
+  it('should deposit 6000 Ether from accounts[1]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
@@ -119,20 +140,29 @@ describe("Orderbook", function (accounts) {
     await OrderbookInstance.DepositEther(6000, { from: accounts[1] });
 
     const totalbalance = await OrderbookInstance.TotalEtherBalance(accounts[1]);
-    const availablebalance = await OrderbookInstance.AvailableEtherBalance(accounts[1]);
+    const availablebalance = await OrderbookInstance.AvailableEtherBalance(
+      accounts[1],
+    );
 
-    console.log("The total Ether balance of accounts[1] is:", totalbalance.toNumber());
-    console.log("The available Ether balance of accounts[1] is:", availablebalance.toNumber());
+    console.log(
+      'The total Ether balance of accounts[1] is:',
+      totalbalance.toNumber(),
+    );
+    console.log(
+      'The available Ether balance of accounts[1] is:',
+      availablebalance.toNumber(),
+    );
   });
   //*******************Test 6*************************
-  it("should submit 100 Bids from accounst[1]", async () => {
+  it('should submit 100 Bids from accounst[1]', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     accounts = await web3.eth.getAccounts();
-    for (let j = 1; j < 31; j++) await OrderbookInstance.submitBid(j, 1, { from: accounts[1] });
+    for (let j = 1; j < 31; j++)
+      await OrderbookInstance.submitBid(j, 1, { from: accounts[1] });
   });
   //*******************Test 7*************************
-  it("should return the Selllist peak", async () => {
+  it('should return the Selllist peak', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     //const SellListCounter = await OrderbookInstance.SellListCounter();
@@ -140,29 +170,29 @@ describe("Orderbook", function (accounts) {
 
     const result = await OrderbookInstance.SellListPeak.call();
     const { 0: addsender, 1: intprice, 2: auxprice, 2: intvolume } = result;
-    console.log("The SellList peak is:", intprice);
+    console.log('The SellList peak is:', intprice);
   });
   //*******************Test 8*************************
-  it("should return the BuyList peak", async () => {
+  it('should return the BuyList peak', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     const result = await OrderbookInstance.BuyListPeak.call();
     const { 0: addsender, 1: intprice, 2: auxprice, 2: intvolume } = result;
-    console.log("The Buylist peak is:", intprice);
+    console.log('The Buylist peak is:', intprice);
   });
   //*******************Test 9*************************
-  it("should match the orders", async () => {
+  it('should match the orders', async () => {
     const OrderbookInstance = await Orderbook.deployed();
 
     await OrderbookInstance.CloseMarket();
     const state = await OrderbookInstance.getState();
-    console.log("Market is currently:", state.toString());
+    console.log('Market is currently:', state.toString());
 
     //await OrderbookInstance.MatchOrders();
 
     const result = await OrderbookInstance.BuyListPeak.call();
     const { 0: addsender, 1: intprice, 2: auxprice, 2: intvolume } = result;
-    console.log("The Buylist peak after matching orders is:", intprice);
+    console.log('The Buylist peak after matching orders is:', intprice);
   });
 });
 

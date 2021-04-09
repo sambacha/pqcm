@@ -115,7 +115,7 @@ contract LinkedList {
             return false;
         }
     }
-    
+
     //**********************  SellList Functions  *********************//
 
     /**
@@ -244,7 +244,9 @@ contract SellList {
         next = askorder;
     }
 
-    function deletenode(address payable callmarket, address ownerContract) external {
+    function deletenode(address payable callmarket, address ownerContract)
+        external
+    {
         require(msg.sender == ownerContract, "Should be the Owner");
         selfdestruct(callmarket);
     }
@@ -286,7 +288,9 @@ contract BuyList {
         next = bidorder;
     }
 
-    function deletenode(address payable callmarket, address ownerContract) external {
+    function deletenode(address payable callmarket, address ownerContract)
+        external
+    {
         require(msg.sender == ownerContract, "Should be the Owner");
         selfdestruct(callmarket);
     }

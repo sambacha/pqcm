@@ -1,9 +1,9 @@
-const Heap_Dynamic_Array = artifacts.require("Heap_Dynamic_Array");
+const Heap_Dynamic_Array = artifacts.require('Heap_Dynamic_Array');
 
-contract("Heap_Dynamic_Array", function (accounts) {
+contract('Heap_Dynamic_Array', function (accounts) {
   //*******************Test 1 (adding n elements to the Heap)*************************
 
-  it("should store n orders to the Heap", async () => {
+  it('should store n orders to the Heap', async () => {
     const HeapInstance = await Heap_Dynamic_Array.deployed();
 
     var receipt = null;
@@ -14,7 +14,9 @@ contract("Heap_Dynamic_Array", function (accounts) {
       receipt = await HeapInstance.submitorder(j, 1, { from: accounts[0] });
       const gasUsed = receipt.receipt.gasUsed;
       array.push(gasUsed);
-      console.log(`GasUsed for 1 submitorder tx is: ${receipt.receipt.gasUsed}`);
+      console.log(
+        `GasUsed for 1 submitorder tx is: ${receipt.receipt.gasUsed}`,
+      );
     }
     // Getting sum of numbers
     //var sum = array.reduce(function(a, b){
@@ -22,11 +24,11 @@ contract("Heap_Dynamic_Array", function (accounts) {
     //}, 0);
 
     //console.log('cost of n submitorder txs is:',sum);
-    console.log(array.length, "orders has been succsessfully submitted");
-    console.log("Gas used for submitting the", array.length, "th order is:");
+    console.log(array.length, 'orders has been succsessfully submitted');
+    console.log('Gas used for submitting the', array.length, 'th order is:');
     console.log(`${receipt.receipt.gasUsed}`);
 
-    console.log("*******************************************************");
+    console.log('*******************************************************');
     //const result1 = HeapInstance.MaxHeapPeak();
     //console.log(result1.toNumber());
     //const result = await HeapInstance.MaxHeapPeak.call();

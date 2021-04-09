@@ -37,7 +37,8 @@ contract HeapDynamicArray {
         uint256 volume,
         uint256 auxprice
     ) external {
-        OrderStruct memory neworder = OrderStruct(sender, price, volume, auxprice);
+        OrderStruct memory neworder =
+            OrderStruct(sender, price, volume, auxprice);
         buyList.push(neworder);
         maxheapHeapifyUp();
     }
@@ -70,6 +71,7 @@ contract HeapDynamicArray {
         }
         return true;
     }
+
     /**
     *   @dev Removes and returns the highest priority element of the buyList
         Only if the buyList is not empty
@@ -137,7 +139,9 @@ contract HeapDynamicArray {
             //if there is a rightchild
             if (rightchild < buyList.length) {
                 //then the right child and left child are compared
-                if (buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice) {
+                if (
+                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice
+                ) {
                     //now max is set to rightchild, otherwise max remains to be the leftchild
                     max++;
                 }
@@ -169,6 +173,7 @@ contract HeapDynamicArray {
             return false;
         }
     }
+
     //**********************  SellList Functions  *********************//
 
     /**
@@ -181,7 +186,8 @@ contract HeapDynamicArray {
         uint256 volume,
         uint256 auxprice
     ) external {
-        OrderStruct memory neworder = OrderStruct(sender, price, volume, auxprice);
+        OrderStruct memory neworder =
+            OrderStruct(sender, price, volume, auxprice);
         sellList.push(neworder);
         minheapHeapifyUp();
     }
@@ -285,7 +291,9 @@ contract HeapDynamicArray {
 
             //if there is a rightchild, then the right child and left child are compared
             if (rightchild < sellList.length) {
-                if (sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice) {
+                if (
+                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice
+                ) {
                     //now min is set to rightchild, otherwise min remains to be the leftchild
                     min++;
                 }

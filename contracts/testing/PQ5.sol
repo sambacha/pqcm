@@ -46,7 +46,10 @@ contract PQ5 {
     }
 
     //******************** List_InsertAfter() function ********************//
-    function List_InsertAfter(uint256 _prevId, uint256 _number) internal returns (bool) {
+    function List_InsertAfter(uint256 _prevId, uint256 _number)
+        internal
+        returns (bool)
+    {
         if (_prevId == Tail) {
             List_AddTail(_number);
         } else {
