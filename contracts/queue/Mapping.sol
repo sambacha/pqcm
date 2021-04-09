@@ -1,6 +1,9 @@
+/// SPDX-License-Identifier: SSPL-1.0
 pragma solidity >=0.5.7 <0.6.0;
 
-//import "./Call_Market.sol";
+/// @title Mapping
+import "./Call_Market.sol";
+
 contract Mapping {
     address payable addr;
 
