@@ -1,6 +1,6 @@
 {
-  "name": "OrderBookQueue",
-  "version": "0.3.0",
+  "name": "evoqueue",
+  "version": "0.4.0",
   "description": "Experimental Orderbook Designs in Solidity",
   "main": "index.ts",
   "directories": {
@@ -10,7 +10,9 @@
     "contracts": "contracts"
   },
   "scripts": {
-    "build": "truffle compile",
+    "build": "npx hardhat compile",
+    "compile": "npx truffle compile",
+    "hh": "npx hardhat clean && npx hardhat compile",
     "testnet": "./scripts/devnet.sh",
     "lint:sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
