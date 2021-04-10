@@ -58,7 +58,6 @@ contract HeapMapping {
         maxheapHeapifyUp();
     }
 
-
     /**
      *   @dev Sorts the heap
      */
