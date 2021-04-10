@@ -1,0 +1,4338 @@
+    /* "contracts/queue/HeapMapping.sol":272:13553  contract HeapMapping {... */
+  mstore(0x40, 0x80)
+  callvalue
+    /* "--CODEGEN--":8:17   */
+  dup1
+    /* "--CODEGEN--":5:7   */
+  iszero
+  tag_1
+  jumpi
+    /* "--CODEGEN--":30:31   */
+  0x00
+    /* "--CODEGEN--":27:28   */
+  dup1
+    /* "--CODEGEN--":20:32   */
+  revert
+    /* "--CODEGEN--":5:7   */
+tag_1:
+    /* "contracts/queue/HeapMapping.sol":272:13553  contract HeapMapping {... */
+  pop
+  dataSize(sub_0)
+  dup1
+  dataOffset(sub_0)
+  0x00
+  codecopy
+  0x00
+  return
+stop
+
+sub_0: assembly {
+        /* "contracts/queue/HeapMapping.sol":272:13553  contract HeapMapping {... */
+      mstore(0x40, 0x80)
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_1
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x00
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_1:
+        /* "contracts/queue/HeapMapping.sol":272:13553  contract HeapMapping {... */
+      pop
+      jumpi(tag_2, lt(calldatasize, 0x04))
+      shr(0xe0, calldataload(0x00))
+      dup1
+      0x9484d404
+      gt
+      tag_15
+      jumpi
+      dup1
+      0x9484d404
+      eq
+      tag_9
+      jumpi
+      dup1
+      0x9ecf86c8
+      eq
+      tag_10
+      jumpi
+      dup1
+      0xa78b7907
+      eq
+      tag_11
+      jumpi
+      dup1
+      0xa7da8ee8
+      eq
+      tag_12
+      jumpi
+      dup1
+      0xc4a4ddb3
+      eq
+      tag_13
+      jumpi
+      dup1
+      0xcc0ba670
+      eq
+      tag_14
+      jumpi
+      jump(tag_2)
+    tag_15:
+      dup1
+      0x1b44d8d0
+      eq
+      tag_3
+      jumpi
+      dup1
+      0x211b0d3c
+      eq
+      tag_4
+      jumpi
+      dup1
+      0x502f8609
+      eq
+      tag_5
+      jumpi
+      dup1
+      0x7397e5e8
+      eq
+      tag_6
+      jumpi
+      dup1
+      0x8a07bb65
+      eq
+      tag_7
+      jumpi
+      dup1
+      0x91447d32
+      eq
+      tag_8
+      jumpi
+    tag_2:
+      0x00
+      dup1
+      revert
+        /* "contracts/queue/HeapMapping.sol":3268:4652  function buyListMaxDelete()... */
+    tag_3:
+      tag_16
+      tag_17
+      jump	// in
+    tag_16:
+      mload(0x40)
+      dup1
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap4
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":7033:7212  function buyListisEmpty() external view returns (bool) {... */
+    tag_4:
+      tag_18
+      tag_19
+      jump	// in
+    tag_18:
+      mload(0x40)
+      dup1
+      dup3
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":1668:2030  function insertBid(... */
+    tag_5:
+      tag_20
+      0x04
+      dup1
+      calldatasize
+      sub
+        /* "--CODEGEN--":13:16   */
+      0x80
+        /* "--CODEGEN--":8:11   */
+      dup2
+        /* "--CODEGEN--":5:17   */
+      lt
+        /* "--CODEGEN--":2:4   */
+      iszero
+      tag_21
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x00
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":2:4   */
+    tag_21:
+        /* "contracts/queue/HeapMapping.sol":1668:2030  function insertBid(... */
+      dup2
+      add
+      swap1
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      pop
+      pop
+      pop
+      tag_22
+      jump	// in
+    tag_20:
+      stop
+        /* "contracts/queue/HeapMapping.sol":1296:1321  uint256 public buyListKey */
+    tag_6:
+      tag_23
+      tag_24
+      jump	// in
+    tag_23:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":10929:11356  function sellListMax()... */
+    tag_7:
+      tag_25
+      tag_26
+      jump	// in
+    tag_25:
+      mload(0x40)
+      dup1
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap4
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":9285:10726  function sellListMaxDelete()... */
+    tag_8:
+      tag_27
+      tag_28
+      jump	// in
+    tag_27:
+      mload(0x40)
+      dup1
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap4
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":4776:5193  function buyListMax()... */
+    tag_9:
+      tag_29
+      tag_30
+      jump	// in
+    tag_29:
+      mload(0x40)
+      dup1
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap4
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":1191:1237  mapping(uint256 => OrderStruct) public buyList */
+    tag_10:
+      tag_31
+      0x04
+      dup1
+      calldatasize
+      sub
+        /* "--CODEGEN--":13:15   */
+      0x20
+        /* "--CODEGEN--":8:11   */
+      dup2
+        /* "--CODEGEN--":5:16   */
+      lt
+        /* "--CODEGEN--":2:4   */
+      iszero
+      tag_32
+      jumpi
+        /* "--CODEGEN--":29:30   */
+      0x00
+        /* "--CODEGEN--":26:27   */
+      dup1
+        /* "--CODEGEN--":19:31   */
+      revert
+        /* "--CODEGEN--":2:4   */
+    tag_32:
+        /* "contracts/queue/HeapMapping.sol":1191:1237  mapping(uint256 => OrderStruct) public buyList */
+      dup2
+      add
+      swap1
+      dup1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      pop
+      pop
+      pop
+      tag_33
+      jump	// in
+    tag_31:
+      mload(0x40)
+      dup1
+      dup6
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap5
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":7453:7820  function insertAsk(... */
+    tag_11:
+      tag_34
+      0x04
+      dup1
+      calldatasize
+      sub
+        /* "--CODEGEN--":13:16   */
+      0x80
+        /* "--CODEGEN--":8:11   */
+      dup2
+        /* "--CODEGEN--":5:17   */
+      lt
+        /* "--CODEGEN--":2:4   */
+      iszero
+      tag_35
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x00
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":2:4   */
+    tag_35:
+        /* "contracts/queue/HeapMapping.sol":7453:7820  function insertAsk(... */
+      dup2
+      add
+      swap1
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      pop
+      pop
+      pop
+      tag_36
+      jump	// in
+    tag_34:
+      stop
+        /* "contracts/queue/HeapMapping.sol":1243:1290  mapping(uint256 => OrderStruct) public sellList */
+    tag_12:
+      tag_37
+      0x04
+      dup1
+      calldatasize
+      sub
+        /* "--CODEGEN--":13:15   */
+      0x20
+        /* "--CODEGEN--":8:11   */
+      dup2
+        /* "--CODEGEN--":5:16   */
+      lt
+        /* "--CODEGEN--":2:4   */
+      iszero
+      tag_38
+      jumpi
+        /* "--CODEGEN--":29:30   */
+      0x00
+        /* "--CODEGEN--":26:27   */
+      dup1
+        /* "--CODEGEN--":19:31   */
+      revert
+        /* "--CODEGEN--":2:4   */
+    tag_38:
+        /* "contracts/queue/HeapMapping.sol":1243:1290  mapping(uint256 => OrderStruct) public sellList */
+      dup2
+      add
+      swap1
+      dup1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      pop
+      pop
+      pop
+      tag_39
+      jump	// in
+    tag_37:
+      mload(0x40)
+      dup1
+      dup6
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap5
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":1327:1353  uint256 public sellListKey */
+    tag_13:
+      tag_40
+      tag_41
+      jump	// in
+    tag_40:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":13370:13551  function sellListisEmpty() external view returns (bool) {... */
+    tag_14:
+      tag_42
+      tag_43
+      jump	// in
+    tag_42:
+      mload(0x40)
+      dup1
+      dup3
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapMapping.sol":3268:4652  function buyListMaxDelete()... */
+    tag_17:
+        /* "contracts/queue/HeapMapping.sol":3343:3350  uint256 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3364:3371  address */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":3385:3392  uint256 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3447:3448  0 */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":3425:3436  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":3425:3443  buyListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":3425:3448  buyListHeap.length != 0 */
+      eq
+      iszero
+        /* "contracts/queue/HeapMapping.sol":3417:3470  require(buyListHeap.length != 0, "buyList is empty!") */
+      tag_45
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x11
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x6275794c69737420697320656d70747921000000000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_45:
+        /* "contracts/queue/HeapMapping.sol":3547:3548  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":3525:3536  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":3525:3543  buyListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":3525:3548  buyListHeap.length == 1 */
+      eq
+        /* "contracts/queue/HeapMapping.sol":3521:3995  if (buyListHeap.length == 1) {... */
+      iszero
+      tag_46
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":3610:3624  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3627:3634  buyList */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":3627:3650  buyList[buyListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3635:3646  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":3647:3648  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3635:3649  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_47
+      jumpi
+      invalid
+    tag_47:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":3627:3650  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":3627:3656  buyList[buyListHeap[0]].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":3610:3656  uint256 _price = buyList[buyListHeap[0]].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":3670:3685  address _sender */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3688:3695  buyList */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":3688:3711  buyList[buyListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3696:3707  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":3708:3709  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3696:3710  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_49
+      jumpi
+      invalid
+    tag_49:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":3688:3711  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":3688:3718  buyList[buyListHeap[0]].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapMapping.sol":3670:3718  address _sender = buyList[buyListHeap[0]].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":3732:3747  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3750:3757  buyList */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":3750:3773  buyList[buyListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3758:3769  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":3770:3771  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3758:3772  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_51
+      jumpi
+      invalid
+    tag_51:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":3750:3773  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":3750:3780  buyList[buyListHeap[0]].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":3732:3780  uint256 _volume = buyList[buyListHeap[0]].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":3802:3809  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3802:3825  buyList[buyListHeap[0]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":3810:3821  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":3822:3823  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3810:3824  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_53
+      jumpi
+      invalid
+    tag_53:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":3802:3825  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3795:3825  delete buyList[buyListHeap[0]] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":3839:3850  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":3839:3856  buyListHeap.pop() */
+      dup1
+      sload
+      dup1
+      tag_55
+      jumpi
+      invalid
+    tag_55:
+      0x01
+      swap1
+      sub
+      dup2
+      dup2
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      0x00
+      swap1
+      sstore
+      swap1
+      sstore
+        /* "contracts/queue/HeapMapping.sol":3925:3935  buyListKey */
+      0x02
+      0x00
+        /* "contracts/queue/HeapMapping.sol":3925:3937  buyListKey-- */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      swap1
+      sub
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":3959:3965  _price */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":3967:3974  _sender */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":3976:3983  _volume */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":3951:3984  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+      jump(tag_44)
+        /* "contracts/queue/HeapMapping.sol":3521:3995  if (buyListHeap.length == 1) {... */
+    tag_46:
+        /* "contracts/queue/HeapMapping.sol":4123:4137  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4140:4147  buyList */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":4140:4163  buyList[buyListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4148:4159  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4160:4161  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4148:4162  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_57
+      jumpi
+      invalid
+    tag_57:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":4140:4163  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":4140:4169  buyList[buyListHeap[0]].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":4123:4169  uint256 _price = buyList[buyListHeap[0]].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":4179:4194  address _sender */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4197:4204  buyList */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":4197:4220  buyList[buyListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4205:4216  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4217:4218  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4205:4219  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_59
+      jumpi
+      invalid
+    tag_59:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":4197:4220  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":4197:4227  buyList[buyListHeap[0]].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapMapping.sol":4179:4227  address _sender = buyList[buyListHeap[0]].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":4237:4252  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4255:4262  buyList */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":4255:4278  buyList[buyListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4263:4274  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4275:4276  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4263:4277  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_61
+      jumpi
+      invalid
+    tag_61:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":4255:4278  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":4255:4285  buyList[buyListHeap[0]].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":4237:4285  uint256 _volume = buyList[buyListHeap[0]].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":4303:4310  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4303:4326  buyList[buyListHeap[0]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":4311:4322  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4323:4324  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4311:4325  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_63
+      jumpi
+      invalid
+    tag_63:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":4303:4326  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4296:4326  delete buyList[buyListHeap[0]] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":4353:4364  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4386:4387  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":4365:4376  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4365:4383  buyListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":4365:4387  buyListHeap.length - 1 */
+      sub
+        /* "contracts/queue/HeapMapping.sol":4353:4388  buyListHeap[buyListHeap.length - 1] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_65
+      jumpi
+      invalid
+    tag_65:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":4336:4347  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4348:4349  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4336:4350  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_67
+      jumpi
+      invalid
+    tag_67:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":4336:4388  buyListHeap[0] = buyListHeap[buyListHeap.length - 1] */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":4475:4486  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4475:4492  buyListHeap.pop() */
+      dup1
+      sload
+      dup1
+      tag_69
+      jumpi
+      invalid
+    tag_69:
+      0x01
+      swap1
+      sub
+      dup2
+      dup2
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      0x00
+      swap1
+      sstore
+      swap1
+      sstore
+        /* "contracts/queue/HeapMapping.sol":4502:4522  maxheapHeapifyDown() */
+      tag_71
+        /* "contracts/queue/HeapMapping.sol":4502:4520  maxheapHeapifyDown */
+      tag_72
+        /* "contracts/queue/HeapMapping.sol":4502:4522  maxheapHeapifyDown() */
+      jump	// in
+    tag_71:
+      pop
+        /* "contracts/queue/HeapMapping.sol":4590:4600  buyListKey */
+      0x02
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4590:4602  buyListKey-- */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      swap1
+      sub
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":4620:4626  _price */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":4628:4635  _sender */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":4637:4644  _volume */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":4612:4645  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":3268:4652  function buyListMaxDelete()... */
+    tag_44:
+      swap1
+      swap2
+      swap3
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":7033:7212  function buyListisEmpty() external view returns (bool) {... */
+    tag_19:
+        /* "contracts/queue/HeapMapping.sol":7082:7086  bool */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":7124:7125  0 */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":7102:7113  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":7102:7120  buyListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":7102:7125  buyListHeap.length == 0 */
+      eq
+        /* "contracts/queue/HeapMapping.sol":7098:7206  if (buyListHeap.length == 0) {... */
+      iszero
+      tag_74
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":7148:7152  true */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":7141:7152  return true */
+      swap1
+      pop
+      jump(tag_73)
+        /* "contracts/queue/HeapMapping.sol":7098:7206  if (buyListHeap.length == 0) {... */
+    tag_74:
+        /* "contracts/queue/HeapMapping.sol":7190:7195  false */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":7183:7195  return false */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":7033:7212  function buyListisEmpty() external view returns (bool) {... */
+    tag_73:
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":1668:2030  function insertBid(... */
+    tag_22:
+        /* "contracts/queue/HeapMapping.sol":1809:1836  OrderStruct memory neworder */
+      tag_77
+      tag_78
+      jump	// in
+    tag_77:
+        /* "contracts/queue/HeapMapping.sol":1851:1895  OrderStruct(sender, price, volume, auxprice) */
+      mload(0x40)
+      dup1
+      0x80
+      add
+      0x40
+      mstore
+      dup1
+        /* "contracts/queue/HeapMapping.sol":1863:1869  sender */
+      dup7
+        /* "contracts/queue/HeapMapping.sol":1851:1895  OrderStruct(sender, price, volume, auxprice) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapMapping.sol":1871:1876  price */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":1851:1895  OrderStruct(sender, price, volume, auxprice) */
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapMapping.sol":1878:1884  volume */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":1851:1895  OrderStruct(sender, price, volume, auxprice) */
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapMapping.sol":1886:1894  auxprice */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":1851:1895  OrderStruct(sender, price, volume, auxprice) */
+      dup2
+      mstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":1809:1895  OrderStruct memory neworder =... */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":1927:1935  neworder */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":1905:1912  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":1905:1924  buyList[buyListKey] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":1913:1923  buyListKey */
+      sload(0x02)
+        /* "contracts/queue/HeapMapping.sol":1905:1924  buyList[buyListKey] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":1905:1935  buyList[buyListKey] = neworder */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":1945:1956  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":1962:1972  buyListKey */
+      sload(0x02)
+        /* "contracts/queue/HeapMapping.sol":1945:1973  buyListHeap.push(buyListKey) */
+      swap1
+      dup1
+        /* "--CODEGEN--":39:40   */
+      0x01
+        /* "--CODEGEN--":33:36   */
+      dup2
+        /* "--CODEGEN--":27:37   */
+      sload
+        /* "--CODEGEN--":23:41   */
+      add
+        /* "--CODEGEN--":57:67   */
+      dup1
+        /* "--CODEGEN--":52:55   */
+      dup3
+        /* "--CODEGEN--":45:68   */
+      sstore
+        /* "--CODEGEN--":79:89   */
+      dup1
+        /* "--CODEGEN--":72:89   */
+      swap2
+      pop
+        /* "--CODEGEN--":0:93   */
+      pop
+        /* "contracts/queue/HeapMapping.sol":1945:1973  buyListHeap.push(buyListKey) */
+      swap1
+      0x01
+      dup3
+      sub
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      0x00
+      swap1
+      swap2
+      swap3
+      swap1
+      swap2
+      swap1
+      swap2
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":1983:1993  buyListKey */
+      0x02
+      0x00
+        /* "contracts/queue/HeapMapping.sol":1983:1995  buyListKey++ */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      add
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":2005:2023  maxheapHeapifyUp() */
+      tag_80
+        /* "contracts/queue/HeapMapping.sol":2005:2021  maxheapHeapifyUp */
+      tag_81
+        /* "contracts/queue/HeapMapping.sol":2005:2023  maxheapHeapifyUp() */
+      jump	// in
+    tag_80:
+      pop
+        /* "contracts/queue/HeapMapping.sol":1668:2030  function insertBid(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":1296:1321  uint256 public buyListKey */
+    tag_24:
+      sload(0x02)
+      dup2
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":10929:11356  function sellListMax()... */
+    tag_26:
+        /* "contracts/queue/HeapMapping.sol":11012:11019  uint256 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11033:11040  address */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":11054:11061  uint256 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11117:11118  0 */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":11094:11106  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":11094:11113  sellListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":11094:11118  sellListHeap.length != 0 */
+      eq
+      iszero
+        /* "contracts/queue/HeapMapping.sol":11086:11141  require(sellListHeap.length != 0, "sellList is empty!") */
+      tag_83
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x12
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x73656c6c4c69737420697320656d707479210000000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_83:
+        /* "contracts/queue/HeapMapping.sol":11216:11224  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":11216:11241  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11225:11237  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":11238:11239  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11225:11240  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_84
+      jumpi
+      invalid
+    tag_84:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":11216:11241  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":11216:11247  sellList[sellListHeap[0]].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":11261:11269  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":11261:11286  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11270:11282  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":11283:11284  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11270:11285  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_86
+      jumpi
+      invalid
+    tag_86:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":11261:11286  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":11261:11293  sellList[sellListHeap[0]].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapMapping.sol":11307:11315  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":11307:11332  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11316:11328  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":11329:11330  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11316:11331  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_88
+      jumpi
+      invalid
+    tag_88:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":11307:11332  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":11307:11339  sellList[sellListHeap[0]].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":11195:11349  return (... */
+      swap3
+      pop
+      swap3
+      pop
+      swap3
+      pop
+        /* "contracts/queue/HeapMapping.sol":10929:11356  function sellListMax()... */
+      swap1
+      swap2
+      swap3
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":9285:10726  function sellListMaxDelete()... */
+    tag_28:
+        /* "contracts/queue/HeapMapping.sol":9361:9368  uint256 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9382:9389  address */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":9403:9410  uint256 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9466:9467  0 */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":9443:9455  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":9443:9462  sellListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":9443:9467  sellListHeap.length != 0 */
+      eq
+      iszero
+        /* "contracts/queue/HeapMapping.sol":9435:9490  require(sellListHeap.length != 0, "sellList is empty!") */
+      tag_91
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x12
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x73656c6c4c69737420697320656d707479210000000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_91:
+        /* "contracts/queue/HeapMapping.sol":9588:9589  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":9565:9577  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":9565:9584  sellListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":9565:9589  sellListHeap.length == 1 */
+      eq
+        /* "contracts/queue/HeapMapping.sol":9561:10046  if (sellListHeap.length == 1) {... */
+      iszero
+      tag_92
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":9651:9665  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9668:9676  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":9668:9693  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9677:9689  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":9690:9691  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9677:9692  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_93
+      jumpi
+      invalid
+    tag_93:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":9668:9693  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":9668:9699  sellList[sellListHeap[0]].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":9651:9699  uint256 _price = sellList[sellListHeap[0]].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":9713:9728  address _sender */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9731:9739  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":9731:9756  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9740:9752  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":9753:9754  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9740:9755  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_95
+      jumpi
+      invalid
+    tag_95:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":9731:9756  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":9731:9763  sellList[sellListHeap[0]].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapMapping.sol":9713:9763  address _sender = sellList[sellListHeap[0]].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":9777:9792  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9795:9803  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":9795:9820  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9804:9816  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":9817:9818  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9804:9819  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_97
+      jumpi
+      invalid
+    tag_97:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":9795:9820  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":9795:9827  sellList[sellListHeap[0]].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":9777:9827  uint256 _volume = sellList[sellListHeap[0]].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":9849:9857  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":9849:9874  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9858:9870  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":9871:9872  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9858:9873  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_99
+      jumpi
+      invalid
+    tag_99:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":9849:9874  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9842:9874  delete sellList[sellListHeap[0]] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":9888:9900  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":9888:9906  sellListHeap.pop() */
+      dup1
+      sload
+      dup1
+      tag_101
+      jumpi
+      invalid
+    tag_101:
+      0x01
+      swap1
+      sub
+      dup2
+      dup2
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      0x00
+      swap1
+      sstore
+      swap1
+      sstore
+        /* "contracts/queue/HeapMapping.sol":9975:9986  sellListKey */
+      0x03
+      0x00
+        /* "contracts/queue/HeapMapping.sol":9975:9988  sellListKey-- */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      swap1
+      sub
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":10010:10016  _price */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":10018:10025  _sender */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":10027:10034  _volume */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":10002:10035  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+      jump(tag_90)
+        /* "contracts/queue/HeapMapping.sol":9561:10046  if (sellListHeap.length == 1) {... */
+    tag_92:
+        /* "contracts/queue/HeapMapping.sol":10174:10188  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10191:10199  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":10191:10216  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10200:10212  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":10213:10214  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10200:10215  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_103
+      jumpi
+      invalid
+    tag_103:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":10191:10216  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":10191:10222  sellList[sellListHeap[0]].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":10174:10222  uint256 _price = sellList[sellListHeap[0]].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":10232:10247  address _sender */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10250:10258  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":10250:10275  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10259:10271  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":10272:10273  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10259:10274  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_105
+      jumpi
+      invalid
+    tag_105:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":10250:10275  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":10250:10282  sellList[sellListHeap[0]].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapMapping.sol":10232:10282  address _sender = sellList[sellListHeap[0]].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":10292:10307  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10310:10318  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":10310:10335  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10319:10331  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":10332:10333  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10319:10334  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_107
+      jumpi
+      invalid
+    tag_107:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":10310:10335  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":10310:10342  sellList[sellListHeap[0]].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":10292:10342  uint256 _volume = sellList[sellListHeap[0]].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":10360:10368  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":10360:10385  sellList[sellListHeap[0]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10369:10381  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":10382:10383  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10369:10384  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_109
+      jumpi
+      invalid
+    tag_109:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":10360:10385  sellList[sellListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10353:10385  delete sellList[sellListHeap[0]] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":10413:10425  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":10448:10449  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":10426:10438  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":10426:10445  sellListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":10426:10449  sellListHeap.length - 1 */
+      sub
+        /* "contracts/queue/HeapMapping.sol":10413:10450  sellListHeap[sellListHeap.length - 1] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_111
+      jumpi
+      invalid
+    tag_111:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":10395:10407  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":10408:10409  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10395:10410  sellListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_113
+      jumpi
+      invalid
+    tag_113:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":10395:10450  sellListHeap[0] = sellListHeap[sellListHeap.length - 1] */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":10537:10549  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":10537:10555  sellListHeap.pop() */
+      dup1
+      sload
+      dup1
+      tag_115
+      jumpi
+      invalid
+    tag_115:
+      0x01
+      swap1
+      sub
+      dup2
+      dup2
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      0x00
+      swap1
+      sstore
+      swap1
+      sstore
+        /* "contracts/queue/HeapMapping.sol":10565:10585  minheapHeapifyDown() */
+      tag_117
+        /* "contracts/queue/HeapMapping.sol":10565:10583  minheapHeapifyDown */
+      tag_118
+        /* "contracts/queue/HeapMapping.sol":10565:10585  minheapHeapifyDown() */
+      jump	// in
+    tag_117:
+      pop
+        /* "contracts/queue/HeapMapping.sol":10663:10674  sellListKey */
+      0x03
+      0x00
+        /* "contracts/queue/HeapMapping.sol":10663:10676  sellListKey-- */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      swap1
+      sub
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":10694:10700  _price */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":10702:10709  _sender */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":10711:10718  _volume */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":10686:10719  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":9285:10726  function sellListMaxDelete()... */
+    tag_90:
+      swap1
+      swap2
+      swap3
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":4776:5193  function buyListMax()... */
+    tag_30:
+        /* "contracts/queue/HeapMapping.sol":4858:4865  uint256 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4879:4886  address */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":4900:4907  uint256 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":4962:4963  0 */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":4940:4951  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":4940:4958  buyListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":4940:4963  buyListHeap.length != 0 */
+      eq
+      iszero
+        /* "contracts/queue/HeapMapping.sol":4932:4985  require(buyListHeap.length != 0, "buyList is empty!") */
+      tag_120
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x11
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x6275794c69737420697320656d70747921000000000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_120:
+        /* "contracts/queue/HeapMapping.sol":5059:5066  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5059:5082  buyList[buyListHeap[0]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":5067:5078  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":5079:5080  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5067:5081  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_121
+      jumpi
+      invalid
+    tag_121:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5059:5082  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":5059:5088  buyList[buyListHeap[0]].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5102:5109  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5102:5125  buyList[buyListHeap[0]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":5110:5121  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":5122:5123  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5110:5124  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_123
+      jumpi
+      invalid
+    tag_123:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5102:5125  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":5102:5132  buyList[buyListHeap[0]].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapMapping.sol":5146:5153  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5146:5169  buyList[buyListHeap[0]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":5154:5165  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":5166:5167  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5154:5168  buyListHeap[0] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_125
+      jumpi
+      invalid
+    tag_125:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5146:5169  buyList[buyListHeap[0]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":5146:5176  buyList[buyListHeap[0]].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5038:5186  return (... */
+      swap3
+      pop
+      swap3
+      pop
+      swap3
+      pop
+        /* "contracts/queue/HeapMapping.sol":4776:5193  function buyListMax()... */
+      swap1
+      swap2
+      swap3
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":1191:1237  mapping(uint256 => OrderStruct) public buyList */
+    tag_33:
+      mstore(0x20, 0x00)
+      dup1
+      0x00
+      mstore
+      keccak256(0x00, 0x40)
+      0x00
+      swap2
+      pop
+      swap1
+      pop
+      dup1
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      dup1
+      0x01
+      add
+      sload
+      swap1
+      dup1
+      0x02
+      add
+      sload
+      swap1
+      dup1
+      0x03
+      add
+      sload
+      swap1
+      pop
+      dup5
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":7453:7820  function insertAsk(... */
+    tag_36:
+        /* "contracts/queue/HeapMapping.sol":7594:7621  OrderStruct memory neworder */
+      tag_128
+      tag_78
+      jump	// in
+    tag_128:
+        /* "contracts/queue/HeapMapping.sol":7636:7680  OrderStruct(sender, price, volume, auxprice) */
+      mload(0x40)
+      dup1
+      0x80
+      add
+      0x40
+      mstore
+      dup1
+        /* "contracts/queue/HeapMapping.sol":7648:7654  sender */
+      dup7
+        /* "contracts/queue/HeapMapping.sol":7636:7680  OrderStruct(sender, price, volume, auxprice) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapMapping.sol":7656:7661  price */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":7636:7680  OrderStruct(sender, price, volume, auxprice) */
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapMapping.sol":7663:7669  volume */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":7636:7680  OrderStruct(sender, price, volume, auxprice) */
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapMapping.sol":7671:7679  auxprice */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":7636:7680  OrderStruct(sender, price, volume, auxprice) */
+      dup2
+      mstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":7594:7680  OrderStruct memory neworder =... */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":7714:7722  neworder */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":7690:7698  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":7690:7711  sellList[sellListKey] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":7699:7710  sellListKey */
+      sload(0x03)
+        /* "contracts/queue/HeapMapping.sol":7690:7711  sellList[sellListKey] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":7690:7722  sellList[sellListKey] = neworder */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":7732:7744  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":7750:7761  sellListKey */
+      sload(0x03)
+        /* "contracts/queue/HeapMapping.sol":7732:7762  sellListHeap.push(sellListKey) */
+      swap1
+      dup1
+        /* "--CODEGEN--":39:40   */
+      0x01
+        /* "--CODEGEN--":33:36   */
+      dup2
+        /* "--CODEGEN--":27:37   */
+      sload
+        /* "--CODEGEN--":23:41   */
+      add
+        /* "--CODEGEN--":57:67   */
+      dup1
+        /* "--CODEGEN--":52:55   */
+      dup3
+        /* "--CODEGEN--":45:68   */
+      sstore
+        /* "--CODEGEN--":79:89   */
+      dup1
+        /* "--CODEGEN--":72:89   */
+      swap2
+      pop
+        /* "--CODEGEN--":0:93   */
+      pop
+        /* "contracts/queue/HeapMapping.sol":7732:7762  sellListHeap.push(sellListKey) */
+      swap1
+      0x01
+      dup3
+      sub
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      0x00
+      swap1
+      swap2
+      swap3
+      swap1
+      swap2
+      swap1
+      swap2
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":7772:7783  sellListKey */
+      0x03
+      0x00
+        /* "contracts/queue/HeapMapping.sol":7772:7785  sellListKey++ */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      add
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":7795:7813  minheapHeapifyUp() */
+      tag_130
+        /* "contracts/queue/HeapMapping.sol":7795:7811  minheapHeapifyUp */
+      tag_131
+        /* "contracts/queue/HeapMapping.sol":7795:7813  minheapHeapifyUp() */
+      jump	// in
+    tag_130:
+      pop
+        /* "contracts/queue/HeapMapping.sol":7453:7820  function insertAsk(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":1243:1290  mapping(uint256 => OrderStruct) public sellList */
+    tag_39:
+      mstore(0x20, 0x01)
+      dup1
+      0x00
+      mstore
+      keccak256(0x00, 0x40)
+      0x00
+      swap2
+      pop
+      swap1
+      pop
+      dup1
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      dup1
+      0x01
+      add
+      sload
+      swap1
+      dup1
+      0x02
+      add
+      sload
+      swap1
+      dup1
+      0x03
+      add
+      sload
+      swap1
+      pop
+      dup5
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":1327:1353  uint256 public sellListKey */
+    tag_41:
+      sload(0x03)
+      dup2
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":13370:13551  function sellListisEmpty() external view returns (bool) {... */
+    tag_43:
+        /* "contracts/queue/HeapMapping.sol":13420:13424  bool */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":13463:13464  0 */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":13440:13452  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":13440:13459  sellListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":13440:13464  sellListHeap.length == 0 */
+      eq
+        /* "contracts/queue/HeapMapping.sol":13436:13545  if (sellListHeap.length == 0) {... */
+      iszero
+      tag_133
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":13487:13491  true */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":13480:13491  return true */
+      swap1
+      pop
+      jump(tag_132)
+        /* "contracts/queue/HeapMapping.sol":13436:13545  if (sellListHeap.length == 0) {... */
+    tag_133:
+        /* "contracts/queue/HeapMapping.sol":13529:13534  false */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":13522:13534  return false */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":13370:13551  function sellListisEmpty() external view returns (bool) {... */
+    tag_132:
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":5387:6958  function maxheapHeapifyDown() internal returns (bool) {... */
+    tag_72:
+        /* "contracts/queue/HeapMapping.sol":5435:5439  bool */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5451:5460  uint256 k */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":5463:5464  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5451:5464  uint256 k = 0 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":5474:5491  uint256 leftchild */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5502:5503  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":5498:5499  k */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":5494:5495  2 */
+      0x02
+        /* "contracts/queue/HeapMapping.sol":5494:5499  2 * k */
+      mul
+        /* "contracts/queue/HeapMapping.sol":5494:5503  2 * k + 1 */
+      add
+        /* "contracts/queue/HeapMapping.sol":5474:5503  uint256 leftchild = 2 * k + 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":5513:6931  while (leftchild < buyListHeap.length) {... */
+    tag_136:
+        /* "contracts/queue/HeapMapping.sol":5532:5543  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":5532:5550  buyListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":5520:5529  leftchild */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":5520:5550  leftchild < buyListHeap.length */
+      lt
+        /* "contracts/queue/HeapMapping.sol":5513:6931  while (leftchild < buyListHeap.length) {... */
+      iszero
+      tag_137
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":5649:5660  uint256 max */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5663:5672  leftchild */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":5649:5672  uint256 max = leftchild */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":5686:5704  uint256 rightchild */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5719:5720  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":5707:5716  leftchild */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":5707:5720  leftchild + 1 */
+      add
+        /* "contracts/queue/HeapMapping.sol":5686:5720  uint256 rightchild = leftchild + 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":5772:5783  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":5772:5790  buyListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":5759:5769  rightchild */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":5759:5790  rightchild < buyListHeap.length */
+      lt
+        /* "contracts/queue/HeapMapping.sol":5755:6198  if (rightchild < buyListHeap.length) //if there is a rightchild... */
+      iszero
+      tag_138
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":5938:5945  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5938:5969  buyList[buyListHeap[leftchild]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":5946:5957  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":5958:5967  leftchild */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":5946:5968  buyListHeap[leftchild] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_139
+      jumpi
+      invalid
+    tag_139:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5938:5969  buyList[buyListHeap[leftchild]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":5938:5978  buyList[buyListHeap[leftchild]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5874:5881  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":5874:5906  buyList[buyListHeap[rightchild]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":5882:5893  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":5894:5904  rightchild */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":5882:5905  buyListHeap[rightchild] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_141
+      jumpi
+      invalid
+    tag_141:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5874:5906  buyList[buyListHeap[rightchild]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":5874:5915  buyList[buyListHeap[rightchild]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":5874:5978  buyList[buyListHeap[rightchild]].AuxPrice >... */
+      gt
+        /* "contracts/queue/HeapMapping.sol":5849:6184  if (... */
+      iszero
+      tag_143
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":6086:6091  max++ */
+      dup2
+      dup1
+      0x01
+      add
+      swap3
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":5849:6184  if (... */
+    tag_143:
+        /* "contracts/queue/HeapMapping.sol":5755:6198  if (rightchild < buyListHeap.length) //if there is a rightchild... */
+    tag_138:
+        /* "contracts/queue/HeapMapping.sol":6284:6291  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":6284:6309  buyList[buyListHeap[max]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":6292:6303  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":6304:6307  max */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":6292:6308  buyListHeap[max] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_144
+      jumpi
+      invalid
+    tag_144:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":6284:6309  buyList[buyListHeap[max]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":6284:6318  buyList[buyListHeap[max]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":6233:6240  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":6233:6256  buyList[buyListHeap[k]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":6241:6252  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":6253:6254  k */
+      dup8
+        /* "contracts/queue/HeapMapping.sol":6241:6255  buyListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_146
+      jumpi
+      invalid
+    tag_146:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":6233:6256  buyList[buyListHeap[k]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":6233:6265  buyList[buyListHeap[k]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":6233:6318  buyList[buyListHeap[k]].AuxPrice <... */
+      lt
+        /* "contracts/queue/HeapMapping.sol":6212:6921  if (... */
+      iszero
+      tag_148
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":6467:6479  uint256 temp */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":6482:6493  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":6494:6495  k */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":6482:6496  buyListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_149
+      jumpi
+      invalid
+    tag_149:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":6467:6496  uint256 temp = buyListHeap[k] */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":6577:6588  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":6589:6592  max */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":6577:6593  buyListHeap[max] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_151
+      jumpi
+      invalid
+    tag_151:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":6560:6571  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":6572:6573  k */
+      dup7
+        /* "contracts/queue/HeapMapping.sol":6560:6574  buyListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_153
+      jumpi
+      invalid
+    tag_153:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":6560:6593  buyListHeap[k] = buyListHeap[max] */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":6630:6634  temp */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":6611:6622  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":6623:6626  max */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":6611:6627  buyListHeap[max] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_155
+      jumpi
+      invalid
+    tag_155:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":6611:6634  buyListHeap[max] = temp */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":6656:6659  max */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":6652:6659  k = max */
+      swap5
+      pop
+        /* "contracts/queue/HeapMapping.sol":6715:6716  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":6711:6712  k */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":6707:6708  2 */
+      0x02
+        /* "contracts/queue/HeapMapping.sol":6707:6712  2 * k */
+      mul
+        /* "contracts/queue/HeapMapping.sol":6707:6716  2 * k + 1 */
+      add
+        /* "contracts/queue/HeapMapping.sol":6695:6716  leftchild = 2 * k + 1 */
+      swap4
+      pop
+        /* "contracts/queue/HeapMapping.sol":6212:6921  if (... */
+      pop
+      jump(tag_157)
+    tag_148:
+        /* "contracts/queue/HeapMapping.sol":6901:6906  break */
+      pop
+      pop
+      jump(tag_137)
+        /* "contracts/queue/HeapMapping.sol":6212:6921  if (... */
+    tag_157:
+        /* "contracts/queue/HeapMapping.sol":5513:6931  while (leftchild < buyListHeap.length) {... */
+      pop
+      pop
+      jump(tag_136)
+    tag_137:
+        /* "contracts/queue/HeapMapping.sol":6947:6951  true */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":6940:6951  return true */
+      swap3
+      pop
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":5387:6958  function maxheapHeapifyDown() internal returns (bool) {... */
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":2082:3064  function maxheapHeapifyUp() internal returns (bool) {... */
+    tag_81:
+        /* "contracts/queue/HeapMapping.sol":2128:2132  bool */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":2144:2153  uint256 k */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":2177:2178  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":2156:2167  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":2156:2174  buyListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":2156:2178  buyListHeap.length - 1 */
+      sub
+        /* "contracts/queue/HeapMapping.sol":2144:2178  uint256 k = buyListHeap.length - 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":2307:3037  while (k > 0) {... */
+    tag_159:
+        /* "contracts/queue/HeapMapping.sol":2318:2319  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":2314:2315  k */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":2314:2319  k > 0 */
+      gt
+        /* "contracts/queue/HeapMapping.sol":2307:3037  while (k > 0) {... */
+      iszero
+      tag_160
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":2396:2405  uint256 p */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":2418:2419  2 */
+      0x02
+        /* "contracts/queue/HeapMapping.sol":2413:2414  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":2409:2410  k */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":2409:2414  k - 1 */
+      sub
+        /* "contracts/queue/HeapMapping.sol":2408:2419  (k - 1) / 2 */
+      dup2
+      tag_161
+      jumpi
+      invalid
+    tag_161:
+      div
+        /* "contracts/queue/HeapMapping.sol":2396:2419  uint256 p = (k - 1) / 2 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":2579:2586  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":2579:2602  buyList[buyListHeap[p]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":2587:2598  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":2599:2600  p */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":2587:2601  buyListHeap[p] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_162
+      jumpi
+      invalid
+    tag_162:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":2579:2602  buyList[buyListHeap[p]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":2579:2611  buyList[buyListHeap[p]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":2528:2535  buyList */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":2528:2551  buyList[buyListHeap[k]] */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":2536:2547  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":2548:2549  k */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":2536:2550  buyListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_164
+      jumpi
+      invalid
+    tag_164:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":2528:2551  buyList[buyListHeap[k]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":2528:2560  buyList[buyListHeap[k]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":2528:2611  buyList[buyListHeap[k]].AuxPrice >... */
+      gt
+        /* "contracts/queue/HeapMapping.sol":2507:2912  if (... */
+      iszero
+      tag_166
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":2644:2656  uint256 temp */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":2659:2670  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":2671:2672  k */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":2659:2673  buyListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_167
+      jumpi
+      invalid
+    tag_167:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":2644:2673  uint256 temp = buyListHeap[k] */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":2754:2765  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":2766:2767  p */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":2754:2768  buyListHeap[p] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_169
+      jumpi
+      invalid
+    tag_169:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":2737:2748  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":2749:2750  k */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":2737:2751  buyListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_171
+      jumpi
+      invalid
+    tag_171:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":2737:2768  buyListHeap[k] = buyListHeap[p] */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":2803:2807  temp */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":2786:2797  buyListHeap */
+      0x04
+        /* "contracts/queue/HeapMapping.sol":2798:2799  p */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":2786:2800  buyListHeap[p] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_173
+      jumpi
+      invalid
+    tag_173:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":2786:2807  buyListHeap[p] = temp */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":2829:2830  p */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":2825:2830  k = p */
+      swap3
+      pop
+        /* "contracts/queue/HeapMapping.sol":2507:2912  if (... */
+      pop
+      jump(tag_175)
+    tag_166:
+        /* "contracts/queue/HeapMapping.sol":2892:2897  break */
+      pop
+      jump(tag_160)
+        /* "contracts/queue/HeapMapping.sol":2507:2912  if (... */
+    tag_175:
+        /* "contracts/queue/HeapMapping.sol":2307:3037  while (k > 0) {... */
+      pop
+      jump(tag_159)
+    tag_160:
+        /* "contracts/queue/HeapMapping.sol":3053:3057  true */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":3046:3057  return true */
+      swap2
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":2082:3064  function maxheapHeapifyUp() internal returns (bool) {... */
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":11632:13215  function minheapHeapifyDown() internal returns (bool) {... */
+    tag_118:
+        /* "contracts/queue/HeapMapping.sol":11680:11684  bool */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11696:11705  uint256 k */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":11708:11709  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11696:11709  uint256 k = 0 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":11719:11736  uint256 leftchild */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11747:11748  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":11743:11744  k */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":11739:11740  2 */
+      0x02
+        /* "contracts/queue/HeapMapping.sol":11739:11744  2 * k */
+      mul
+        /* "contracts/queue/HeapMapping.sol":11739:11748  2 * k + 1 */
+      add
+        /* "contracts/queue/HeapMapping.sol":11719:11748  uint256 leftchild = 2 * k + 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":11758:13188  while (leftchild < sellListHeap.length) {... */
+    tag_177:
+        /* "contracts/queue/HeapMapping.sol":11777:11789  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":11777:11796  sellListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":11765:11774  leftchild */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":11765:11796  leftchild < sellListHeap.length */
+      lt
+        /* "contracts/queue/HeapMapping.sol":11758:13188  while (leftchild < sellListHeap.length) {... */
+      iszero
+      tag_178
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":11895:11906  uint256 min */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11909:11918  leftchild */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":11895:11918  uint256 min = leftchild */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":11932:11950  uint256 rightchild */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":11965:11966  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":11953:11962  leftchild */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":11953:11966  leftchild + 1 */
+      add
+        /* "contracts/queue/HeapMapping.sol":11932:11966  uint256 rightchild = leftchild + 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":12035:12047  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12035:12054  sellListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":12022:12032  rightchild */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":12022:12054  rightchild < sellListHeap.length */
+      lt
+        /* "contracts/queue/HeapMapping.sol":12001:12462  if (... */
+      iszero
+      tag_179
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":12267:12275  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":12267:12300  sellList[sellListHeap[leftchild]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":12276:12288  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12289:12298  leftchild */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":12276:12299  sellListHeap[leftchild] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_180
+      jumpi
+      invalid
+    tag_180:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12267:12300  sellList[sellListHeap[leftchild]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":12267:12309  sellList[sellListHeap[leftchild]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12201:12209  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":12201:12235  sellList[sellListHeap[rightchild]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":12210:12222  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12223:12233  rightchild */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":12210:12234  sellListHeap[rightchild] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_182
+      jumpi
+      invalid
+    tag_182:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12201:12235  sellList[sellListHeap[rightchild]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":12201:12244  sellList[sellListHeap[rightchild]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12201:12309  sellList[sellListHeap[rightchild]].AuxPrice <... */
+      lt
+        /* "contracts/queue/HeapMapping.sol":12176:12374  if (... */
+      iszero
+      tag_184
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":12350:12355  min++ */
+      dup2
+      dup1
+      0x01
+      add
+      swap3
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":12176:12374  if (... */
+    tag_184:
+        /* "contracts/queue/HeapMapping.sol":12001:12462  if (... */
+    tag_179:
+        /* "contracts/queue/HeapMapping.sol":12552:12560  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":12552:12577  sellList[sellListHeap[k]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":12561:12573  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12574:12575  k */
+      dup7
+        /* "contracts/queue/HeapMapping.sol":12561:12576  sellListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_185
+      jumpi
+      invalid
+    tag_185:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12552:12577  sellList[sellListHeap[k]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":12552:12586  sellList[sellListHeap[k]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12497:12505  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":12497:12524  sellList[sellListHeap[min]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":12506:12518  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12519:12522  min */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":12506:12523  sellListHeap[min] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_187
+      jumpi
+      invalid
+    tag_187:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12497:12524  sellList[sellListHeap[min]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":12497:12533  sellList[sellListHeap[min]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12497:12586  sellList[sellListHeap[min]].AuxPrice <... */
+      lt
+        /* "contracts/queue/HeapMapping.sol":12476:13178  if (... */
+      iszero
+      tag_189
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":12704:12716  uint256 temp */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":12719:12731  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12732:12733  k */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":12719:12734  sellListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_190
+      jumpi
+      invalid
+    tag_190:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12704:12734  uint256 temp = sellListHeap[k] */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":12816:12828  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12829:12832  min */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":12816:12833  sellListHeap[min] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_192
+      jumpi
+      invalid
+    tag_192:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":12798:12810  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12811:12812  k */
+      dup7
+        /* "contracts/queue/HeapMapping.sol":12798:12813  sellListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_194
+      jumpi
+      invalid
+    tag_194:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":12798:12833  sellListHeap[k] = sellListHeap[min] */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":12871:12875  temp */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":12851:12863  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":12864:12867  min */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":12851:12868  sellListHeap[min] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_196
+      jumpi
+      invalid
+    tag_196:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":12851:12875  sellListHeap[min] = temp */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":12898:12901  min */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":12894:12901  k = min */
+      swap5
+      pop
+        /* "contracts/queue/HeapMapping.sol":12957:12958  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":12953:12954  k */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":12949:12950  2 */
+      0x02
+        /* "contracts/queue/HeapMapping.sol":12949:12954  2 * k */
+      mul
+        /* "contracts/queue/HeapMapping.sol":12949:12958  2 * k + 1 */
+      add
+        /* "contracts/queue/HeapMapping.sol":12937:12958  leftchild = 2 * k + 1 */
+      swap4
+      pop
+        /* "contracts/queue/HeapMapping.sol":12476:13178  if (... */
+      pop
+      jump(tag_198)
+    tag_189:
+        /* "contracts/queue/HeapMapping.sol":13158:13163  break */
+      pop
+      pop
+      jump(tag_178)
+        /* "contracts/queue/HeapMapping.sol":12476:13178  if (... */
+    tag_198:
+        /* "contracts/queue/HeapMapping.sol":11758:13188  while (leftchild < sellListHeap.length) {... */
+      pop
+      pop
+      jump(tag_177)
+    tag_178:
+        /* "contracts/queue/HeapMapping.sol":13204:13208  true */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":13197:13208  return true */
+      swap3
+      pop
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":11632:13215  function minheapHeapifyDown() internal returns (bool) {... */
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":7952:9000  function minheapHeapifyUp() internal returns (bool) {... */
+    tag_131:
+        /* "contracts/queue/HeapMapping.sol":7998:8002  bool */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":8014:8023  uint256 k */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":8048:8049  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":8026:8038  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":8026:8045  sellListHeap.length */
+      dup1
+      sload
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":8026:8049  sellListHeap.length - 1 */
+      sub
+        /* "contracts/queue/HeapMapping.sol":8014:8049  uint256 k = sellListHeap.length - 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":8177:8972  while (k > 0) {... */
+    tag_200:
+        /* "contracts/queue/HeapMapping.sol":8188:8189  0 */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":8184:8185  k */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":8184:8189  k > 0 */
+      gt
+        /* "contracts/queue/HeapMapping.sol":8177:8972  while (k > 0) {... */
+      iszero
+      tag_201
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":8266:8275  uint256 p */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":8288:8289  2 */
+      0x02
+        /* "contracts/queue/HeapMapping.sol":8283:8284  1 */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":8279:8280  k */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":8279:8284  k - 1 */
+      sub
+        /* "contracts/queue/HeapMapping.sol":8278:8289  (k - 1) / 2 */
+      dup2
+      tag_202
+      jumpi
+      invalid
+    tag_202:
+      div
+        /* "contracts/queue/HeapMapping.sol":8266:8289  uint256 p = (k - 1) / 2 */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":8451:8459  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":8451:8476  sellList[sellListHeap[p]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":8460:8472  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":8473:8474  p */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":8460:8475  sellListHeap[p] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_203
+      jumpi
+      invalid
+    tag_203:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":8451:8476  sellList[sellListHeap[p]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":8451:8485  sellList[sellListHeap[p]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":8398:8406  sellList */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":8398:8423  sellList[sellListHeap[k]] */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":8407:8419  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":8420:8421  k */
+      dup6
+        /* "contracts/queue/HeapMapping.sol":8407:8422  sellListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_205
+      jumpi
+      invalid
+    tag_205:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":8398:8423  sellList[sellListHeap[k]] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      keccak256
+        /* "contracts/queue/HeapMapping.sol":8398:8432  sellList[sellListHeap[k]].AuxPrice */
+      0x03
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":8398:8485  sellList[sellListHeap[k]].AuxPrice <... */
+      lt
+        /* "contracts/queue/HeapMapping.sol":8377:8847  if (... */
+      iszero
+      tag_207
+      jumpi
+        /* "contracts/queue/HeapMapping.sol":8574:8586  uint256 temp */
+      0x00
+        /* "contracts/queue/HeapMapping.sol":8589:8601  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":8602:8603  k */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":8589:8604  sellListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_208
+      jumpi
+      invalid
+    tag_208:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":8574:8604  uint256 temp = sellListHeap[k] */
+      swap1
+      pop
+        /* "contracts/queue/HeapMapping.sol":8686:8698  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":8699:8700  p */
+      dup3
+        /* "contracts/queue/HeapMapping.sol":8686:8701  sellListHeap[p] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_210
+      jumpi
+      invalid
+    tag_210:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+      sload
+        /* "contracts/queue/HeapMapping.sol":8668:8680  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":8681:8682  k */
+      dup5
+        /* "contracts/queue/HeapMapping.sol":8668:8683  sellListHeap[k] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_212
+      jumpi
+      invalid
+    tag_212:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":8668:8701  sellListHeap[k] = sellListHeap[p] */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":8737:8741  temp */
+      dup1
+        /* "contracts/queue/HeapMapping.sol":8719:8731  sellListHeap */
+      0x05
+        /* "contracts/queue/HeapMapping.sol":8732:8733  p */
+      dup4
+        /* "contracts/queue/HeapMapping.sol":8719:8734  sellListHeap[p] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_214
+      jumpi
+      invalid
+    tag_214:
+      swap1
+      0x00
+      mstore
+      keccak256(0x00, 0x20)
+      add
+        /* "contracts/queue/HeapMapping.sol":8719:8741  sellListHeap[p] = temp */
+      dup2
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/HeapMapping.sol":8764:8765  p */
+      dup2
+        /* "contracts/queue/HeapMapping.sol":8760:8765  k = p */
+      swap3
+      pop
+        /* "contracts/queue/HeapMapping.sol":8377:8847  if (... */
+      pop
+      jump(tag_216)
+    tag_207:
+        /* "contracts/queue/HeapMapping.sol":8827:8832  break */
+      pop
+      jump(tag_201)
+        /* "contracts/queue/HeapMapping.sol":8377:8847  if (... */
+    tag_216:
+        /* "contracts/queue/HeapMapping.sol":8177:8972  while (k > 0) {... */
+      pop
+      jump(tag_200)
+    tag_201:
+        /* "contracts/queue/HeapMapping.sol":8989:8993  true */
+      0x01
+        /* "contracts/queue/HeapMapping.sol":8982:8993  return true */
+      swap2
+      pop
+      pop
+        /* "contracts/queue/HeapMapping.sol":7952:9000  function minheapHeapifyUp() internal returns (bool) {... */
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapMapping.sol":272:13553  contract HeapMapping {... */
+    tag_78:
+      mload(0x40)
+      dup1
+      0x80
+      add
+      0x40
+      mstore
+      dup1
+      and(0xffffffffffffffffffffffffffffffffffffffff, 0x00)
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      dup2
+      mstore
+      pop
+      swap1
+      jump	// out
+
+    auxdata: 0xa265627a7a723158204ca9bf1cff3e56e3c4184852ae7767c80d3f5c91c04dfecd485f5e6ebcef512f64736f6c63430005110032
+}

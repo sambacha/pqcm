@@ -1,0 +1,612 @@
+    /* "contracts/queue/LinkedList.sol":8132:9292  contract BuyList {... */
+  mstore(0x40, 0x80)
+    /* "contracts/queue/LinkedList.sol":8713:9001  constructor(... */
+  callvalue
+    /* "--CODEGEN--":8:17   */
+  dup1
+    /* "--CODEGEN--":5:7   */
+  iszero
+  tag_1
+  jumpi
+    /* "--CODEGEN--":30:31   */
+  0x00
+    /* "--CODEGEN--":27:28   */
+  dup1
+    /* "--CODEGEN--":20:32   */
+  revert
+    /* "--CODEGEN--":5:7   */
+tag_1:
+    /* "contracts/queue/LinkedList.sol":8713:9001  constructor(... */
+  pop
+  mload(0x40)
+  sub(codesize, bytecodeSize)
+  dup1
+  bytecodeSize
+  dup4
+  codecopy
+  dup2
+  dup2
+  add
+  0x40
+  mstore
+    /* "--CODEGEN--":13:16   */
+  0x80
+    /* "--CODEGEN--":8:11   */
+  dup2
+    /* "--CODEGEN--":5:17   */
+  lt
+    /* "--CODEGEN--":2:4   */
+  iszero
+  tag_2
+  jumpi
+    /* "--CODEGEN--":30:31   */
+  0x00
+    /* "--CODEGEN--":27:28   */
+  dup1
+    /* "--CODEGEN--":20:32   */
+  revert
+    /* "--CODEGEN--":2:4   */
+tag_2:
+    /* "contracts/queue/LinkedList.sol":8713:9001  constructor(... */
+  dup2
+  add
+  swap1
+  dup1
+  dup1
+  mload
+  swap1
+  0x20
+  add
+  swap1
+  swap3
+  swap2
+  swap1
+  dup1
+  mload
+  swap1
+  0x20
+  add
+  swap1
+  swap3
+  swap2
+  swap1
+  dup1
+  mload
+  swap1
+  0x20
+  add
+  swap1
+  swap3
+  swap2
+  swap1
+  dup1
+  mload
+  swap1
+  0x20
+  add
+  swap1
+  swap3
+  swap2
+  swap1
+  pop
+  pop
+  pop
+    /* "contracts/queue/LinkedList.sol":8869:8880  orderSender */
+  dup4
+    /* "contracts/queue/LinkedList.sol":8860:8866  sender */
+  0x01
+  0x00
+    /* "contracts/queue/LinkedList.sol":8860:8880  sender = orderSender */
+  0x0100
+  exp
+  dup2
+  sload
+  dup2
+  0xffffffffffffffffffffffffffffffffffffffff
+  mul
+  not
+  and
+  swap1
+  dup4
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  mul
+  or
+  swap1
+  sstore
+  pop
+    /* "contracts/queue/LinkedList.sol":8898:8908  orderPrice */
+  dup3
+    /* "contracts/queue/LinkedList.sol":8890:8895  price */
+  0x02
+    /* "contracts/queue/LinkedList.sol":8890:8908  price = orderPrice */
+  dup2
+  swap1
+  sstore
+  pop
+    /* "contracts/queue/LinkedList.sol":8927:8938  orderVolume */
+  dup2
+    /* "contracts/queue/LinkedList.sol":8918:8924  volume */
+  0x03
+    /* "contracts/queue/LinkedList.sol":8918:8938  volume = orderVolume */
+  dup2
+  swap1
+  sstore
+  pop
+    /* "contracts/queue/LinkedList.sol":8959:8967  auxprice */
+  dup1
+    /* "contracts/queue/LinkedList.sol":8948:8956  auxPrice */
+  0x04
+    /* "contracts/queue/LinkedList.sol":8948:8967  auxPrice = auxprice */
+  dup2
+  swap1
+  sstore
+  pop
+    /* "contracts/queue/LinkedList.sol":8992:8993  0 */
+  0x00
+    /* "contracts/queue/LinkedList.sol":8977:8981  next */
+  dup1
+  0x00
+    /* "contracts/queue/LinkedList.sol":8977:8994  next = BuyList(0) */
+  0x0100
+  exp
+  dup2
+  sload
+  dup2
+  0xffffffffffffffffffffffffffffffffffffffff
+  mul
+  not
+  and
+  swap1
+  dup4
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  mul
+  or
+  swap1
+  sstore
+  pop
+    /* "contracts/queue/LinkedList.sol":8713:9001  constructor(... */
+  pop
+  pop
+  pop
+  pop
+    /* "contracts/queue/LinkedList.sol":8132:9292  contract BuyList {... */
+  dataSize(sub_0)
+  dup1
+  dataOffset(sub_0)
+  0x00
+  codecopy
+  0x00
+  return
+stop
+
+sub_0: assembly {
+        /* "contracts/queue/LinkedList.sol":8132:9292  contract BuyList {... */
+      mstore(0x40, 0x80)
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_1
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x00
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_1:
+        /* "contracts/queue/LinkedList.sol":8132:9292  contract BuyList {... */
+      pop
+      jumpi(tag_2, lt(calldatasize, 0x04))
+      shr(0xe0, calldataload(0x00))
+      dup1
+      0xa035b1fe
+      gt
+      tag_10
+      jumpi
+      dup1
+      0xa035b1fe
+      eq
+      tag_6
+      jumpi
+      dup1
+      0xc618a1e4
+      eq
+      tag_7
+      jumpi
+      dup1
+      0xd7ef453f
+      eq
+      tag_8
+      jumpi
+      dup1
+      0xf9f52dea
+      eq
+      tag_9
+      jumpi
+      jump(tag_2)
+    tag_10:
+      dup1
+      0x4c8fe526
+      eq
+      tag_3
+      jumpi
+      dup1
+      0x5a5339f1
+      eq
+      tag_4
+      jumpi
+      dup1
+      0x67e404ce
+      eq
+      tag_5
+      jumpi
+    tag_2:
+      0x00
+      dup1
+      revert
+        /* "contracts/queue/LinkedList.sol":8577:8596  BuyList public next */
+    tag_3:
+      tag_11
+      tag_12
+      jump	// in
+    tag_11:
+      mload(0x40)
+      dup1
+      dup3
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/LinkedList.sol":8683:8706  uint256 public auxPrice */
+    tag_4:
+      tag_13
+      tag_14
+      jump	// in
+    tag_13:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/LinkedList.sol":8602:8623  address public sender */
+    tag_5:
+      tag_15
+      tag_16
+      jump	// in
+    tag_15:
+      mload(0x40)
+      dup1
+      dup3
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/LinkedList.sol":8629:8649  uint256 public price */
+    tag_6:
+      tag_17
+      tag_18
+      jump	// in
+    tag_17:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/LinkedList.sol":8655:8676  uint256 public volume */
+    tag_7:
+      tag_19
+      tag_20
+      jump	// in
+    tag_19:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/LinkedList.sol":9007:9082  function addNew(BuyList bidorder) external {... */
+    tag_8:
+      tag_21
+      0x04
+      dup1
+      calldatasize
+      sub
+        /* "--CODEGEN--":13:15   */
+      0x20
+        /* "--CODEGEN--":8:11   */
+      dup2
+        /* "--CODEGEN--":5:16   */
+      lt
+        /* "--CODEGEN--":2:4   */
+      iszero
+      tag_22
+      jumpi
+        /* "--CODEGEN--":29:30   */
+      0x00
+        /* "--CODEGEN--":26:27   */
+      dup1
+        /* "--CODEGEN--":19:31   */
+      revert
+        /* "--CODEGEN--":2:4   */
+    tag_22:
+        /* "contracts/queue/LinkedList.sol":9007:9082  function addNew(BuyList bidorder) external {... */
+      dup2
+      add
+      swap1
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      pop
+      pop
+      pop
+      tag_23
+      jump	// in
+    tag_21:
+      stop
+        /* "contracts/queue/LinkedList.sol":9088:9290  function deletenode(address payable callmarket, address ownerContract)... */
+    tag_9:
+      tag_24
+      0x04
+      dup1
+      calldatasize
+      sub
+        /* "--CODEGEN--":13:15   */
+      0x40
+        /* "--CODEGEN--":8:11   */
+      dup2
+        /* "--CODEGEN--":5:16   */
+      lt
+        /* "--CODEGEN--":2:4   */
+      iszero
+      tag_25
+      jumpi
+        /* "--CODEGEN--":29:30   */
+      0x00
+        /* "--CODEGEN--":26:27   */
+      dup1
+        /* "--CODEGEN--":19:31   */
+      revert
+        /* "--CODEGEN--":2:4   */
+    tag_25:
+        /* "contracts/queue/LinkedList.sol":9088:9290  function deletenode(address payable callmarket, address ownerContract)... */
+      dup2
+      add
+      swap1
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      pop
+      pop
+      pop
+      tag_26
+      jump	// in
+    tag_24:
+      stop
+        /* "contracts/queue/LinkedList.sol":8577:8596  BuyList public next */
+    tag_12:
+      0x00
+      dup1
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      jump	// out
+        /* "contracts/queue/LinkedList.sol":8683:8706  uint256 public auxPrice */
+    tag_14:
+      sload(0x04)
+      dup2
+      jump	// out
+        /* "contracts/queue/LinkedList.sol":8602:8623  address public sender */
+    tag_16:
+      0x01
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      jump	// out
+        /* "contracts/queue/LinkedList.sol":8629:8649  uint256 public price */
+    tag_18:
+      sload(0x02)
+      dup2
+      jump	// out
+        /* "contracts/queue/LinkedList.sol":8655:8676  uint256 public volume */
+    tag_20:
+      sload(0x03)
+      dup2
+      jump	// out
+        /* "contracts/queue/LinkedList.sol":9007:9082  function addNew(BuyList bidorder) external {... */
+    tag_23:
+        /* "contracts/queue/LinkedList.sol":9067:9075  bidorder */
+      dup1
+        /* "contracts/queue/LinkedList.sol":9060:9064  next */
+      0x00
+      dup1
+        /* "contracts/queue/LinkedList.sol":9060:9075  next = bidorder */
+      0x0100
+      exp
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "contracts/queue/LinkedList.sol":9007:9082  function addNew(BuyList bidorder) external {... */
+      pop
+      jump	// out
+        /* "contracts/queue/LinkedList.sol":9088:9290  function deletenode(address payable callmarket, address ownerContract)... */
+    tag_26:
+        /* "contracts/queue/LinkedList.sol":9212:9225  ownerContract */
+      dup1
+        /* "contracts/queue/LinkedList.sol":9198:9225  msg.sender == ownerContract */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/LinkedList.sol":9198:9208  msg.sender */
+      caller
+        /* "contracts/queue/LinkedList.sol":9198:9225  msg.sender == ownerContract */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      eq
+        /* "contracts/queue/LinkedList.sol":9190:9249  require(msg.sender == ownerContract, "Should be the Owner") */
+      tag_29
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x13
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x53686f756c6420626520746865204f776e657200000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_29:
+        /* "contracts/queue/LinkedList.sol":9272:9282  callmarket */
+      dup2
+        /* "contracts/queue/LinkedList.sol":9259:9283  selfdestruct(callmarket) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      selfdestruct
+
+    auxdata: 0xa265627a7a72315820fd7f75568d0394bf0c085048765b39da86956b72cef5bf0cbc2732b415719f8f64736f6c63430005110032
+}

@@ -1,0 +1,1419 @@
+PragmaDirective
+   Source: "pragma solidity >=0.5.7 <0.6.0;"
+ContractDefinition "LinkedList"
+   Source: "contract LinkedList {\n    /**\n*   @dev \n    sellFirst: The head node of the SellList (each node is a contract itself, so it's a contract from the type \"SellList\")\n    buyFirst: The head node of the BuyList (each node is a contract itself, so it's a contract from the type \"BuyList\")\n*/\n\n    SellList public sellFirst;\n    BuyList public buyFirst;\n    SellList internal selltemp;\n    BuyList internal buytemp;\n    address payable callmarket;\n    address internal owner;\n\n    constructor(address _callmarket) public {\n        callmarket = address(uint160(_callmarket));\n        sellFirst = SellList(0);\n        buyFirst = BuyList(0);\n        owner = address(this);\n    }\n\n    //**********************  buyList Functions  **********************//\n\n    /**\n     *   @dev Adds the incoming bid orders to its right position in the list\n     */\n    function insertBid(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        BuyList newitem = new BuyList(sender, price, volume, auxprice);\n        BuyList current = buyFirst;\n        BuyList previous = BuyList(0);\n\n        //we iterate through our list with 2 conditions:\n        while (\n            current != BuyList(0) && auxprice <= current.auxPrice() //The linkedlist is sorted in an descending order (descreasing)\n        ) {\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }\n        //now if we have to check if we have to insert the node to the begining of the list:\n        if (\n            previous == BuyList(0)\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            buyFirst = newitem;\n        }\n        //the node next to the privious is no longer the current but it's our new node\n        else {\n            previous.addNew(newitem);\n        }\n\n        //and in all cases regardless of if it's a first node or not, we must say we have to say the node next to our new node is current\n\n        newitem.addNew(current);\n    }\n\n    /**\n    *   @dev Removes and returns the highest bid of the list\n        Only if the list is not empty\n    */\n    function buyListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(buyFirst != BuyList(0), \"buyList is empty!\"); //throws exception if the buyList is empty\n        buytemp = buyFirst;\n        buyFirst = buytemp.next();\n        buytemp.deletenode(callmarket, owner);\n        //buyFirst.deletenode(callmarket);\n        //buyFirst = buytemp.next();\n        return (buytemp.price(), buytemp.sender(), buytemp.volume());\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Returns the sender, price, and volume of the highest priority element (The highest bid)\n     */\n    function buyListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(buyFirst != BuyList(0), \"buyList is empty!\"); //throws exception if the buyList is empty\n        return (buyFirst.price(), buyFirst.sender(), buyFirst.volume());\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Checks if the buyList is empty or not\n     */\n\n    function buyListisEmpty() external view returns (bool) {\n        if (buyFirst == BuyList(0)) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n\n    //**********************  SellList Functions  *********************//\n\n    /**\n     *   @dev Adds the incoming ask orders to its right position in the list\n     */\n    function insertAsk(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        SellList newitem = new SellList(sender, price, volume, auxprice);\n        SellList current = sellFirst;\n        SellList previous = SellList(0);\n\n        //we iterate through our list with 2 conditions:\n        while (\n            current != SellList(0) && auxprice >= current.auxPrice() //The linkedlist is sorted in an ascending order (increasing)\n        ) {\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }\n        //now if we have to check if we have to insert the node to the begining of the list:\n        if (\n            previous == SellList(0)\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            sellFirst = newitem;\n        }\n        //the node next to the privious is no longer the current but it's our new node\n        else {\n            previous.addNew(newitem);\n        }\n\n        //and in all cases regardless of if it's a first node or not, we must say we have to say the node next to our new node is current\n\n        newitem.addNew(current);\n    }\n\n    //***********************************************************************//\n\n    /**\n    *   @dev Removes and returns the lowest ask of the list (highest priority element)\n        Only if the list is not empty\n    */\n    function sellListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellFirst != SellList(0), \"sellList is empty!\"); //throws exception if the sellList is empty\n        selltemp = sellFirst;\n        sellFirst = selltemp.next();\n        selltemp.deletenode(callmarket, owner);\n        //sellFirst.deletenode(callmarket);\n        //sellFirst = selltemp.next();\n        return (selltemp.price(), selltemp.sender(), selltemp.volume());\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Returns the sender, price, and volume of the highest priority element (The lowest ask)\n     */\n    function sellListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellFirst != SellList(0), \"sellList is empty!\"); //throws exception if the sellList is empty\n        return (sellFirst.price(), sellFirst.sender(), sellFirst.volume());\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Checks if the sellList is empty or not\n     */\n    function sellListisEmpty() external view returns (bool) {\n        if (sellFirst == SellList(0)) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n}"
+  VariableDeclaration "sellFirst"
+     Type: contract SellList
+     Source: "SellList public sellFirst"
+    UserDefinedTypeName "SellList"
+       Source: "SellList"
+  VariableDeclaration "buyFirst"
+     Type: contract BuyList
+     Source: "BuyList public buyFirst"
+    UserDefinedTypeName "BuyList"
+       Source: "BuyList"
+  VariableDeclaration "selltemp"
+     Type: contract SellList
+     Source: "SellList internal selltemp"
+    UserDefinedTypeName "SellList"
+       Source: "SellList"
+  VariableDeclaration "buytemp"
+     Type: contract BuyList
+     Source: "BuyList internal buytemp"
+    UserDefinedTypeName "BuyList"
+       Source: "BuyList"
+  VariableDeclaration "callmarket"
+     Type: address payable
+     Source: "address payable callmarket"
+    ElementaryTypeName address
+       Source: "address payable"
+  VariableDeclaration "owner"
+     Type: address
+     Source: "address internal owner"
+    ElementaryTypeName address
+       Source: "address"
+  FunctionDefinition "" - public
+     Source: "constructor(address _callmarket) public {\n        callmarket = address(uint160(_callmarket));\n        sellFirst = SellList(0);\n        buyFirst = BuyList(0);\n        owner = address(this);\n    }"
+    ParameterList
+       Source: "(address _callmarket)"
+      VariableDeclaration "_callmarket"
+         Type: address
+         Source: "address _callmarket"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        callmarket = address(uint160(_callmarket));\n        sellFirst = SellList(0);\n        buyFirst = BuyList(0);\n        owner = address(this);\n    }"
+      ExpressionStatement
+         Source: "callmarket = address(uint160(_callmarket))"
+        Assignment using operator =
+           Type: address payable
+           Source: "callmarket = address(uint160(_callmarket))"
+          Identifier callmarket
+             Type: address payable
+             Source: "callmarket"
+          FunctionCall
+             Type: address payable
+             Source: "address(uint160(_callmarket))"
+            ElementaryTypeNameExpression address
+               Type: type(address)
+               Source: "address"
+            FunctionCall
+               Type: uint160
+               Source: "uint160(_callmarket)"
+              ElementaryTypeNameExpression uint160
+                 Type: type(uint160)
+                 Source: "uint160"
+              Identifier _callmarket
+                 Type: address
+                 Source: "_callmarket"
+      ExpressionStatement
+         Source: "sellFirst = SellList(0)"
+        Assignment using operator =
+           Type: contract SellList
+           Source: "sellFirst = SellList(0)"
+          Identifier sellFirst
+             Type: contract SellList
+             Source: "sellFirst"
+          FunctionCall
+             Type: contract SellList
+             Source: "SellList(0)"
+            Identifier SellList
+               Type: type(contract SellList)
+               Source: "SellList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+      ExpressionStatement
+         Source: "buyFirst = BuyList(0)"
+        Assignment using operator =
+           Type: contract BuyList
+           Source: "buyFirst = BuyList(0)"
+          Identifier buyFirst
+             Type: contract BuyList
+             Source: "buyFirst"
+          FunctionCall
+             Type: contract BuyList
+             Source: "BuyList(0)"
+            Identifier BuyList
+               Type: type(contract BuyList)
+               Source: "BuyList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+      ExpressionStatement
+         Source: "owner = address(this)"
+        Assignment using operator =
+           Type: address
+           Source: "owner = address(this)"
+          Identifier owner
+             Type: address
+             Source: "owner"
+          FunctionCall
+             Type: address
+             Source: "address(this)"
+            ElementaryTypeNameExpression address
+               Type: type(address)
+               Source: "address"
+            Identifier this
+               Type: contract LinkedList
+               Source: "this"
+  FunctionDefinition "insertBid" - public
+     Source: "function insertBid(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        BuyList newitem = new BuyList(sender, price, volume, auxprice);\n        BuyList current = buyFirst;\n        BuyList previous = BuyList(0);\n\n        //we iterate through our list with 2 conditions:\n        while (\n            current != BuyList(0) && auxprice <= current.auxPrice() //The linkedlist is sorted in an descending order (descreasing)\n        ) {\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }\n        //now if we have to check if we have to insert the node to the begining of the list:\n        if (\n            previous == BuyList(0)\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            buyFirst = newitem;\n        }\n        //the node next to the privious is no longer the current but it's our new node\n        else {\n            previous.addNew(newitem);\n        }\n\n        //and in all cases regardless of if it's a first node or not, we must say we have to say the node next to our new node is current\n\n        newitem.addNew(current);\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        BuyList newitem = new BuyList(sender, price, volume, auxprice);\n        BuyList current = buyFirst;\n        BuyList previous = BuyList(0);\n\n        //we iterate through our list with 2 conditions:\n        while (\n            current != BuyList(0) && auxprice <= current.auxPrice() //The linkedlist is sorted in an descending order (descreasing)\n        ) {\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }\n        //now if we have to check if we have to insert the node to the begining of the list:\n        if (\n            previous == BuyList(0)\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            buyFirst = newitem;\n        }\n        //the node next to the privious is no longer the current but it's our new node\n        else {\n            previous.addNew(newitem);\n        }\n\n        //and in all cases regardless of if it's a first node or not, we must say we have to say the node next to our new node is current\n\n        newitem.addNew(current);\n    }"
+      VariableDeclarationStatement
+         Source: "BuyList newitem = new BuyList(sender, price, volume, auxprice)"
+        VariableDeclaration "newitem"
+           Type: contract BuyList
+           Source: "BuyList newitem"
+          UserDefinedTypeName "BuyList"
+             Source: "BuyList"
+        FunctionCall
+           Type: contract BuyList
+           Source: "new BuyList(sender, price, volume, auxprice)"
+          NewExpression
+             Type: function (address,uint256,uint256,uint256) returns (contract BuyList)
+             Source: "new BuyList"
+            UserDefinedTypeName "BuyList"
+               Source: "BuyList"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+      VariableDeclarationStatement
+         Source: "BuyList current = buyFirst"
+        VariableDeclaration "current"
+           Type: contract BuyList
+           Source: "BuyList current"
+          UserDefinedTypeName "BuyList"
+             Source: "BuyList"
+        Identifier buyFirst
+           Type: contract BuyList
+           Source: "buyFirst"
+      VariableDeclarationStatement
+         Source: "BuyList previous = BuyList(0)"
+        VariableDeclaration "previous"
+           Type: contract BuyList
+           Source: "BuyList previous"
+          UserDefinedTypeName "BuyList"
+             Source: "BuyList"
+        FunctionCall
+           Type: contract BuyList
+           Source: "BuyList(0)"
+          Identifier BuyList
+             Type: type(contract BuyList)
+             Source: "BuyList"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      WhileStatement
+         Source: "while (\n            current != BuyList(0) && auxprice <= current.auxPrice() //The linkedlist is sorted in an descending order (descreasing)\n        ) {\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }"
+        BinaryOperation using operator &&
+           Type: bool
+           Source: "current != BuyList(0) && auxprice <= current.auxPrice()"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "current != BuyList(0)"
+            Identifier current
+               Type: contract BuyList
+               Source: "current"
+            FunctionCall
+               Type: contract BuyList
+               Source: "BuyList(0)"
+              Identifier BuyList
+                 Type: type(contract BuyList)
+                 Source: "BuyList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          BinaryOperation using operator <=
+             Type: bool
+             Source: "auxprice <= current.auxPrice()"
+            Identifier auxprice
+               Type: uint256
+               Source: "auxprice"
+            FunctionCall
+               Type: uint256
+               Source: "current.auxPrice()"
+              MemberAccess to member auxPrice
+                 Type: function () view external returns (uint256)
+                 Source: "current.auxPrice"
+                Identifier current
+                   Type: contract BuyList
+                   Source: "current"
+        Block
+           Source: "{\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }"
+          ExpressionStatement
+             Source: "previous = current"
+            Assignment using operator =
+               Type: contract BuyList
+               Source: "previous = current"
+              Identifier previous
+                 Type: contract BuyList
+                 Source: "previous"
+              Identifier current
+                 Type: contract BuyList
+                 Source: "current"
+          ExpressionStatement
+             Source: "current = current.next()"
+            Assignment using operator =
+               Type: contract BuyList
+               Source: "current = current.next()"
+              Identifier current
+                 Type: contract BuyList
+                 Source: "current"
+              FunctionCall
+                 Type: contract BuyList
+                 Source: "current.next()"
+                MemberAccess to member next
+                   Type: function () view external returns (contract BuyList)
+                   Source: "current.next"
+                  Identifier current
+                     Type: contract BuyList
+                     Source: "current"
+      IfStatement
+         Source: "if (\n            previous == BuyList(0)\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            buyFirst = newitem;\n        }\n        //the node next to the privious is no longer the current but it's our new node\n        else {\n            previous.addNew(newitem);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "previous == BuyList(0)"
+          Identifier previous
+             Type: contract BuyList
+             Source: "previous"
+          FunctionCall
+             Type: contract BuyList
+             Source: "BuyList(0)"
+            Identifier BuyList
+               Type: type(contract BuyList)
+               Source: "BuyList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+        Block
+           Source: "{\n            buyFirst = newitem;\n        }"
+          ExpressionStatement
+             Source: "buyFirst = newitem"
+            Assignment using operator =
+               Type: contract BuyList
+               Source: "buyFirst = newitem"
+              Identifier buyFirst
+                 Type: contract BuyList
+                 Source: "buyFirst"
+              Identifier newitem
+                 Type: contract BuyList
+                 Source: "newitem"
+        Block
+           Source: "{\n            previous.addNew(newitem);\n        }"
+          ExpressionStatement
+             Source: "previous.addNew(newitem)"
+            FunctionCall
+               Type: tuple()
+               Source: "previous.addNew(newitem)"
+              MemberAccess to member addNew
+                 Type: function (contract BuyList) external
+                 Source: "previous.addNew"
+                Identifier previous
+                   Type: contract BuyList
+                   Source: "previous"
+              Identifier newitem
+                 Type: contract BuyList
+                 Source: "newitem"
+      ExpressionStatement
+         Source: "newitem.addNew(current)"
+        FunctionCall
+           Type: tuple()
+           Source: "newitem.addNew(current)"
+          MemberAccess to member addNew
+             Type: function (contract BuyList) external
+             Source: "newitem.addNew"
+            Identifier newitem
+               Type: contract BuyList
+               Source: "newitem"
+          Identifier current
+             Type: contract BuyList
+             Source: "current"
+  FunctionDefinition "buyListMaxDelete" - public
+     Source: "function buyListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(buyFirst != BuyList(0), \"buyList is empty!\"); //throws exception if the buyList is empty\n        buytemp = buyFirst;\n        buyFirst = buytemp.next();\n        buytemp.deletenode(callmarket, owner);\n        //buyFirst.deletenode(callmarket);\n        //buyFirst = buytemp.next();\n        return (buytemp.price(), buytemp.sender(), buytemp.volume());\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(buyFirst != BuyList(0), \"buyList is empty!\"); //throws exception if the buyList is empty\n        buytemp = buyFirst;\n        buyFirst = buytemp.next();\n        buytemp.deletenode(callmarket, owner);\n        //buyFirst.deletenode(callmarket);\n        //buyFirst = buytemp.next();\n        return (buytemp.price(), buytemp.sender(), buytemp.volume());\n    }"
+      ExpressionStatement
+         Source: "require(buyFirst != BuyList(0), \"buyList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(buyFirst != BuyList(0), \"buyList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "buyFirst != BuyList(0)"
+            Identifier buyFirst
+               Type: contract BuyList
+               Source: "buyFirst"
+            FunctionCall
+               Type: contract BuyList
+               Source: "BuyList(0)"
+              Identifier BuyList
+                 Type: type(contract BuyList)
+                 Source: "BuyList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          Literal, token: [no token] value: buyList is empty!
+             Type: literal_string "buyList is empty!"
+             Source: "\"buyList is empty!\""
+      ExpressionStatement
+         Source: "buytemp = buyFirst"
+        Assignment using operator =
+           Type: contract BuyList
+           Source: "buytemp = buyFirst"
+          Identifier buytemp
+             Type: contract BuyList
+             Source: "buytemp"
+          Identifier buyFirst
+             Type: contract BuyList
+             Source: "buyFirst"
+      ExpressionStatement
+         Source: "buyFirst = buytemp.next()"
+        Assignment using operator =
+           Type: contract BuyList
+           Source: "buyFirst = buytemp.next()"
+          Identifier buyFirst
+             Type: contract BuyList
+             Source: "buyFirst"
+          FunctionCall
+             Type: contract BuyList
+             Source: "buytemp.next()"
+            MemberAccess to member next
+               Type: function () view external returns (contract BuyList)
+               Source: "buytemp.next"
+              Identifier buytemp
+                 Type: contract BuyList
+                 Source: "buytemp"
+      ExpressionStatement
+         Source: "buytemp.deletenode(callmarket, owner)"
+        FunctionCall
+           Type: tuple()
+           Source: "buytemp.deletenode(callmarket, owner)"
+          MemberAccess to member deletenode
+             Type: function (address payable,address) external
+             Source: "buytemp.deletenode"
+            Identifier buytemp
+               Type: contract BuyList
+               Source: "buytemp"
+          Identifier callmarket
+             Type: address payable
+             Source: "callmarket"
+          Identifier owner
+             Type: address
+             Source: "owner"
+      Return
+         Source: "return (buytemp.price(), buytemp.sender(), buytemp.volume())"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(buytemp.price(), buytemp.sender(), buytemp.volume())"
+          FunctionCall
+             Type: uint256
+             Source: "buytemp.price()"
+            MemberAccess to member price
+               Type: function () view external returns (uint256)
+               Source: "buytemp.price"
+              Identifier buytemp
+                 Type: contract BuyList
+                 Source: "buytemp"
+          FunctionCall
+             Type: address
+             Source: "buytemp.sender()"
+            MemberAccess to member sender
+               Type: function () view external returns (address)
+               Source: "buytemp.sender"
+              Identifier buytemp
+                 Type: contract BuyList
+                 Source: "buytemp"
+          FunctionCall
+             Type: uint256
+             Source: "buytemp.volume()"
+            MemberAccess to member volume
+               Type: function () view external returns (uint256)
+               Source: "buytemp.volume"
+              Identifier buytemp
+                 Type: contract BuyList
+                 Source: "buytemp"
+  FunctionDefinition "buyListMax" - public - const
+     Source: "function buyListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(buyFirst != BuyList(0), \"buyList is empty!\"); //throws exception if the buyList is empty\n        return (buyFirst.price(), buyFirst.sender(), buyFirst.volume());\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(buyFirst != BuyList(0), \"buyList is empty!\"); //throws exception if the buyList is empty\n        return (buyFirst.price(), buyFirst.sender(), buyFirst.volume());\n    }"
+      ExpressionStatement
+         Source: "require(buyFirst != BuyList(0), \"buyList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(buyFirst != BuyList(0), \"buyList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "buyFirst != BuyList(0)"
+            Identifier buyFirst
+               Type: contract BuyList
+               Source: "buyFirst"
+            FunctionCall
+               Type: contract BuyList
+               Source: "BuyList(0)"
+              Identifier BuyList
+                 Type: type(contract BuyList)
+                 Source: "BuyList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          Literal, token: [no token] value: buyList is empty!
+             Type: literal_string "buyList is empty!"
+             Source: "\"buyList is empty!\""
+      Return
+         Source: "return (buyFirst.price(), buyFirst.sender(), buyFirst.volume())"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(buyFirst.price(), buyFirst.sender(), buyFirst.volume())"
+          FunctionCall
+             Type: uint256
+             Source: "buyFirst.price()"
+            MemberAccess to member price
+               Type: function () view external returns (uint256)
+               Source: "buyFirst.price"
+              Identifier buyFirst
+                 Type: contract BuyList
+                 Source: "buyFirst"
+          FunctionCall
+             Type: address
+             Source: "buyFirst.sender()"
+            MemberAccess to member sender
+               Type: function () view external returns (address)
+               Source: "buyFirst.sender"
+              Identifier buyFirst
+                 Type: contract BuyList
+                 Source: "buyFirst"
+          FunctionCall
+             Type: uint256
+             Source: "buyFirst.volume()"
+            MemberAccess to member volume
+               Type: function () view external returns (uint256)
+               Source: "buyFirst.volume"
+              Identifier buyFirst
+                 Type: contract BuyList
+                 Source: "buyFirst"
+  FunctionDefinition "buyListisEmpty" - public - const
+     Source: "function buyListisEmpty() external view returns (bool) {\n        if (buyFirst == BuyList(0)) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (buyFirst == BuyList(0)) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+      IfStatement
+         Source: "if (buyFirst == BuyList(0)) {\n            return true;\n        } else {\n            return false;\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "buyFirst == BuyList(0)"
+          Identifier buyFirst
+             Type: contract BuyList
+             Source: "buyFirst"
+          FunctionCall
+             Type: contract BuyList
+             Source: "BuyList(0)"
+            Identifier BuyList
+               Type: type(contract BuyList)
+               Source: "BuyList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+        Block
+           Source: "{\n            return true;\n        }"
+          Return
+             Source: "return true"
+            Literal, token: true value: true
+               Type: bool
+               Source: "true"
+        Block
+           Source: "{\n            return false;\n        }"
+          Return
+             Source: "return false"
+            Literal, token: false value: false
+               Type: bool
+               Source: "false"
+  FunctionDefinition "insertAsk" - public
+     Source: "function insertAsk(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        SellList newitem = new SellList(sender, price, volume, auxprice);\n        SellList current = sellFirst;\n        SellList previous = SellList(0);\n\n        //we iterate through our list with 2 conditions:\n        while (\n            current != SellList(0) && auxprice >= current.auxPrice() //The linkedlist is sorted in an ascending order (increasing)\n        ) {\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }\n        //now if we have to check if we have to insert the node to the begining of the list:\n        if (\n            previous == SellList(0)\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            sellFirst = newitem;\n        }\n        //the node next to the privious is no longer the current but it's our new node\n        else {\n            previous.addNew(newitem);\n        }\n\n        //and in all cases regardless of if it's a first node or not, we must say we have to say the node next to our new node is current\n\n        newitem.addNew(current);\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        SellList newitem = new SellList(sender, price, volume, auxprice);\n        SellList current = sellFirst;\n        SellList previous = SellList(0);\n\n        //we iterate through our list with 2 conditions:\n        while (\n            current != SellList(0) && auxprice >= current.auxPrice() //The linkedlist is sorted in an ascending order (increasing)\n        ) {\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }\n        //now if we have to check if we have to insert the node to the begining of the list:\n        if (\n            previous == SellList(0)\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            sellFirst = newitem;\n        }\n        //the node next to the privious is no longer the current but it's our new node\n        else {\n            previous.addNew(newitem);\n        }\n\n        //and in all cases regardless of if it's a first node or not, we must say we have to say the node next to our new node is current\n\n        newitem.addNew(current);\n    }"
+      VariableDeclarationStatement
+         Source: "SellList newitem = new SellList(sender, price, volume, auxprice)"
+        VariableDeclaration "newitem"
+           Type: contract SellList
+           Source: "SellList newitem"
+          UserDefinedTypeName "SellList"
+             Source: "SellList"
+        FunctionCall
+           Type: contract SellList
+           Source: "new SellList(sender, price, volume, auxprice)"
+          NewExpression
+             Type: function (address,uint256,uint256,uint256) returns (contract SellList)
+             Source: "new SellList"
+            UserDefinedTypeName "SellList"
+               Source: "SellList"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+      VariableDeclarationStatement
+         Source: "SellList current = sellFirst"
+        VariableDeclaration "current"
+           Type: contract SellList
+           Source: "SellList current"
+          UserDefinedTypeName "SellList"
+             Source: "SellList"
+        Identifier sellFirst
+           Type: contract SellList
+           Source: "sellFirst"
+      VariableDeclarationStatement
+         Source: "SellList previous = SellList(0)"
+        VariableDeclaration "previous"
+           Type: contract SellList
+           Source: "SellList previous"
+          UserDefinedTypeName "SellList"
+             Source: "SellList"
+        FunctionCall
+           Type: contract SellList
+           Source: "SellList(0)"
+          Identifier SellList
+             Type: type(contract SellList)
+             Source: "SellList"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      WhileStatement
+         Source: "while (\n            current != SellList(0) && auxprice >= current.auxPrice() //The linkedlist is sorted in an ascending order (increasing)\n        ) {\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }"
+        BinaryOperation using operator &&
+           Type: bool
+           Source: "current != SellList(0) && auxprice >= current.auxPrice()"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "current != SellList(0)"
+            Identifier current
+               Type: contract SellList
+               Source: "current"
+            FunctionCall
+               Type: contract SellList
+               Source: "SellList(0)"
+              Identifier SellList
+                 Type: type(contract SellList)
+                 Source: "SellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          BinaryOperation using operator >=
+             Type: bool
+             Source: "auxprice >= current.auxPrice()"
+            Identifier auxprice
+               Type: uint256
+               Source: "auxprice"
+            FunctionCall
+               Type: uint256
+               Source: "current.auxPrice()"
+              MemberAccess to member auxPrice
+                 Type: function () view external returns (uint256)
+                 Source: "current.auxPrice"
+                Identifier current
+                   Type: contract SellList
+                   Source: "current"
+        Block
+           Source: "{\n            previous = current;\n            current = current.next();\n            // we only exit this loop if we find the position to insert our data;\n        }"
+          ExpressionStatement
+             Source: "previous = current"
+            Assignment using operator =
+               Type: contract SellList
+               Source: "previous = current"
+              Identifier previous
+                 Type: contract SellList
+                 Source: "previous"
+              Identifier current
+                 Type: contract SellList
+                 Source: "current"
+          ExpressionStatement
+             Source: "current = current.next()"
+            Assignment using operator =
+               Type: contract SellList
+               Source: "current = current.next()"
+              Identifier current
+                 Type: contract SellList
+                 Source: "current"
+              FunctionCall
+                 Type: contract SellList
+                 Source: "current.next()"
+                MemberAccess to member next
+                   Type: function () view external returns (contract SellList)
+                   Source: "current.next"
+                  Identifier current
+                     Type: contract SellList
+                     Source: "current"
+      IfStatement
+         Source: "if (\n            previous == SellList(0)\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            sellFirst = newitem;\n        }\n        //the node next to the privious is no longer the current but it's our new node\n        else {\n            previous.addNew(newitem);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "previous == SellList(0)"
+          Identifier previous
+             Type: contract SellList
+             Source: "previous"
+          FunctionCall
+             Type: contract SellList
+             Source: "SellList(0)"
+            Identifier SellList
+               Type: type(contract SellList)
+               Source: "SellList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+        Block
+           Source: "{\n            sellFirst = newitem;\n        }"
+          ExpressionStatement
+             Source: "sellFirst = newitem"
+            Assignment using operator =
+               Type: contract SellList
+               Source: "sellFirst = newitem"
+              Identifier sellFirst
+                 Type: contract SellList
+                 Source: "sellFirst"
+              Identifier newitem
+                 Type: contract SellList
+                 Source: "newitem"
+        Block
+           Source: "{\n            previous.addNew(newitem);\n        }"
+          ExpressionStatement
+             Source: "previous.addNew(newitem)"
+            FunctionCall
+               Type: tuple()
+               Source: "previous.addNew(newitem)"
+              MemberAccess to member addNew
+                 Type: function (contract SellList) external
+                 Source: "previous.addNew"
+                Identifier previous
+                   Type: contract SellList
+                   Source: "previous"
+              Identifier newitem
+                 Type: contract SellList
+                 Source: "newitem"
+      ExpressionStatement
+         Source: "newitem.addNew(current)"
+        FunctionCall
+           Type: tuple()
+           Source: "newitem.addNew(current)"
+          MemberAccess to member addNew
+             Type: function (contract SellList) external
+             Source: "newitem.addNew"
+            Identifier newitem
+               Type: contract SellList
+               Source: "newitem"
+          Identifier current
+             Type: contract SellList
+             Source: "current"
+  FunctionDefinition "sellListMaxDelete" - public
+     Source: "function sellListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellFirst != SellList(0), \"sellList is empty!\"); //throws exception if the sellList is empty\n        selltemp = sellFirst;\n        sellFirst = selltemp.next();\n        selltemp.deletenode(callmarket, owner);\n        //sellFirst.deletenode(callmarket);\n        //sellFirst = selltemp.next();\n        return (selltemp.price(), selltemp.sender(), selltemp.volume());\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(sellFirst != SellList(0), \"sellList is empty!\"); //throws exception if the sellList is empty\n        selltemp = sellFirst;\n        sellFirst = selltemp.next();\n        selltemp.deletenode(callmarket, owner);\n        //sellFirst.deletenode(callmarket);\n        //sellFirst = selltemp.next();\n        return (selltemp.price(), selltemp.sender(), selltemp.volume());\n    }"
+      ExpressionStatement
+         Source: "require(sellFirst != SellList(0), \"sellList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(sellFirst != SellList(0), \"sellList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "sellFirst != SellList(0)"
+            Identifier sellFirst
+               Type: contract SellList
+               Source: "sellFirst"
+            FunctionCall
+               Type: contract SellList
+               Source: "SellList(0)"
+              Identifier SellList
+                 Type: type(contract SellList)
+                 Source: "SellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          Literal, token: [no token] value: sellList is empty!
+             Type: literal_string "sellList is empty!"
+             Source: "\"sellList is empty!\""
+      ExpressionStatement
+         Source: "selltemp = sellFirst"
+        Assignment using operator =
+           Type: contract SellList
+           Source: "selltemp = sellFirst"
+          Identifier selltemp
+             Type: contract SellList
+             Source: "selltemp"
+          Identifier sellFirst
+             Type: contract SellList
+             Source: "sellFirst"
+      ExpressionStatement
+         Source: "sellFirst = selltemp.next()"
+        Assignment using operator =
+           Type: contract SellList
+           Source: "sellFirst = selltemp.next()"
+          Identifier sellFirst
+             Type: contract SellList
+             Source: "sellFirst"
+          FunctionCall
+             Type: contract SellList
+             Source: "selltemp.next()"
+            MemberAccess to member next
+               Type: function () view external returns (contract SellList)
+               Source: "selltemp.next"
+              Identifier selltemp
+                 Type: contract SellList
+                 Source: "selltemp"
+      ExpressionStatement
+         Source: "selltemp.deletenode(callmarket, owner)"
+        FunctionCall
+           Type: tuple()
+           Source: "selltemp.deletenode(callmarket, owner)"
+          MemberAccess to member deletenode
+             Type: function (address payable,address) external
+             Source: "selltemp.deletenode"
+            Identifier selltemp
+               Type: contract SellList
+               Source: "selltemp"
+          Identifier callmarket
+             Type: address payable
+             Source: "callmarket"
+          Identifier owner
+             Type: address
+             Source: "owner"
+      Return
+         Source: "return (selltemp.price(), selltemp.sender(), selltemp.volume())"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(selltemp.price(), selltemp.sender(), selltemp.volume())"
+          FunctionCall
+             Type: uint256
+             Source: "selltemp.price()"
+            MemberAccess to member price
+               Type: function () view external returns (uint256)
+               Source: "selltemp.price"
+              Identifier selltemp
+                 Type: contract SellList
+                 Source: "selltemp"
+          FunctionCall
+             Type: address
+             Source: "selltemp.sender()"
+            MemberAccess to member sender
+               Type: function () view external returns (address)
+               Source: "selltemp.sender"
+              Identifier selltemp
+                 Type: contract SellList
+                 Source: "selltemp"
+          FunctionCall
+             Type: uint256
+             Source: "selltemp.volume()"
+            MemberAccess to member volume
+               Type: function () view external returns (uint256)
+               Source: "selltemp.volume"
+              Identifier selltemp
+                 Type: contract SellList
+                 Source: "selltemp"
+  FunctionDefinition "sellListMax" - public - const
+     Source: "function sellListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellFirst != SellList(0), \"sellList is empty!\"); //throws exception if the sellList is empty\n        return (sellFirst.price(), sellFirst.sender(), sellFirst.volume());\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(sellFirst != SellList(0), \"sellList is empty!\"); //throws exception if the sellList is empty\n        return (sellFirst.price(), sellFirst.sender(), sellFirst.volume());\n    }"
+      ExpressionStatement
+         Source: "require(sellFirst != SellList(0), \"sellList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(sellFirst != SellList(0), \"sellList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "sellFirst != SellList(0)"
+            Identifier sellFirst
+               Type: contract SellList
+               Source: "sellFirst"
+            FunctionCall
+               Type: contract SellList
+               Source: "SellList(0)"
+              Identifier SellList
+                 Type: type(contract SellList)
+                 Source: "SellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          Literal, token: [no token] value: sellList is empty!
+             Type: literal_string "sellList is empty!"
+             Source: "\"sellList is empty!\""
+      Return
+         Source: "return (sellFirst.price(), sellFirst.sender(), sellFirst.volume())"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(sellFirst.price(), sellFirst.sender(), sellFirst.volume())"
+          FunctionCall
+             Type: uint256
+             Source: "sellFirst.price()"
+            MemberAccess to member price
+               Type: function () view external returns (uint256)
+               Source: "sellFirst.price"
+              Identifier sellFirst
+                 Type: contract SellList
+                 Source: "sellFirst"
+          FunctionCall
+             Type: address
+             Source: "sellFirst.sender()"
+            MemberAccess to member sender
+               Type: function () view external returns (address)
+               Source: "sellFirst.sender"
+              Identifier sellFirst
+                 Type: contract SellList
+                 Source: "sellFirst"
+          FunctionCall
+             Type: uint256
+             Source: "sellFirst.volume()"
+            MemberAccess to member volume
+               Type: function () view external returns (uint256)
+               Source: "sellFirst.volume"
+              Identifier sellFirst
+                 Type: contract SellList
+                 Source: "sellFirst"
+  FunctionDefinition "sellListisEmpty" - public - const
+     Source: "function sellListisEmpty() external view returns (bool) {\n        if (sellFirst == SellList(0)) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (sellFirst == SellList(0)) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+      IfStatement
+         Source: "if (sellFirst == SellList(0)) {\n            return true;\n        } else {\n            return false;\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "sellFirst == SellList(0)"
+          Identifier sellFirst
+             Type: contract SellList
+             Source: "sellFirst"
+          FunctionCall
+             Type: contract SellList
+             Source: "SellList(0)"
+            Identifier SellList
+               Type: type(contract SellList)
+               Source: "SellList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+        Block
+           Source: "{\n            return true;\n        }"
+          Return
+             Source: "return true"
+            Literal, token: true value: true
+               Type: bool
+               Source: "true"
+        Block
+           Source: "{\n            return false;\n        }"
+          Return
+             Source: "return false"
+            Literal, token: false value: false
+               Type: bool
+               Source: "false"
+ContractDefinition "SellList"
+   Source: "contract SellList {\n    /**\n*   @dev \n    each node of the sellList is a contract from type \"SellList\" that has the following attributes:\n    next: The address of the next node (contract) in the sellList\n    sender: The sender of the ask order\n    price: The price of the ask order\n    volume: The volume of the ask order\n    auxPrice: The contcantenation of the order's price and the counter which helps to sort the heap when there are ties\n*/\n    SellList public next;\n    address public sender;\n    uint256 public price;\n    uint256 public volume;\n    uint256 public auxPrice;\n\n    constructor(\n        address orderSender,\n        uint256 orderPrice,\n        uint256 orderVolume,\n        uint256 auxprice\n    ) public {\n        sender = sender;\n        price = price;\n        volume = volume;\n        auxPrice = auxprice;\n        next = SellList(0);\n    }\n\n    function addNew(SellList askorder) external {\n        next = askorder;\n    }\n\n    function deletenode(address payable callmarket, address ownerContract)\n        external\n    {\n        require(msg.sender == ownerContract, \"Should be the Owner\");\n        selfdestruct(callmarket);\n    }\n}"
+  VariableDeclaration "next"
+     Type: contract SellList
+     Source: "SellList public next"
+    UserDefinedTypeName "SellList"
+       Source: "SellList"
+  VariableDeclaration "sender"
+     Type: address
+     Source: "address public sender"
+    ElementaryTypeName address
+       Source: "address"
+  VariableDeclaration "price"
+     Type: uint256
+     Source: "uint256 public price"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "volume"
+     Type: uint256
+     Source: "uint256 public volume"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "auxPrice"
+     Type: uint256
+     Source: "uint256 public auxPrice"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  FunctionDefinition "" - public
+     Source: "constructor(\n        address orderSender,\n        uint256 orderPrice,\n        uint256 orderVolume,\n        uint256 auxprice\n    ) public {\n        sender = sender;\n        price = price;\n        volume = volume;\n        auxPrice = auxprice;\n        next = SellList(0);\n    }"
+    ParameterList
+       Source: "(\n        address orderSender,\n        uint256 orderPrice,\n        uint256 orderVolume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "orderSender"
+         Type: address
+         Source: "address orderSender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "orderPrice"
+         Type: uint256
+         Source: "uint256 orderPrice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "orderVolume"
+         Type: uint256
+         Source: "uint256 orderVolume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        sender = sender;\n        price = price;\n        volume = volume;\n        auxPrice = auxprice;\n        next = SellList(0);\n    }"
+      ExpressionStatement
+         Source: "sender = sender"
+        Assignment using operator =
+           Type: address
+           Source: "sender = sender"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier sender
+             Type: address
+             Source: "sender"
+      ExpressionStatement
+         Source: "price = price"
+        Assignment using operator =
+           Type: uint256
+           Source: "price = price"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier price
+             Type: uint256
+             Source: "price"
+      ExpressionStatement
+         Source: "volume = volume"
+        Assignment using operator =
+           Type: uint256
+           Source: "volume = volume"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+      ExpressionStatement
+         Source: "auxPrice = auxprice"
+        Assignment using operator =
+           Type: uint256
+           Source: "auxPrice = auxprice"
+          Identifier auxPrice
+             Type: uint256
+             Source: "auxPrice"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+      ExpressionStatement
+         Source: "next = SellList(0)"
+        Assignment using operator =
+           Type: contract SellList
+           Source: "next = SellList(0)"
+          Identifier next
+             Type: contract SellList
+             Source: "next"
+          FunctionCall
+             Type: contract SellList
+             Source: "SellList(0)"
+            Identifier SellList
+               Type: type(contract SellList)
+               Source: "SellList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+  FunctionDefinition "addNew" - public
+     Source: "function addNew(SellList askorder) external {\n        next = askorder;\n    }"
+    ParameterList
+       Source: "(SellList askorder)"
+      VariableDeclaration "askorder"
+         Type: contract SellList
+         Source: "SellList askorder"
+        UserDefinedTypeName "SellList"
+           Source: "SellList"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        next = askorder;\n    }"
+      ExpressionStatement
+         Source: "next = askorder"
+        Assignment using operator =
+           Type: contract SellList
+           Source: "next = askorder"
+          Identifier next
+             Type: contract SellList
+             Source: "next"
+          Identifier askorder
+             Type: contract SellList
+             Source: "askorder"
+  FunctionDefinition "deletenode" - public
+     Source: "function deletenode(address payable callmarket, address ownerContract)\n        external\n    {\n        require(msg.sender == ownerContract, \"Should be the Owner\");\n        selfdestruct(callmarket);\n    }"
+    ParameterList
+       Source: "(address payable callmarket, address ownerContract)"
+      VariableDeclaration "callmarket"
+         Type: address payable
+         Source: "address payable callmarket"
+        ElementaryTypeName address
+           Source: "address payable"
+      VariableDeclaration "ownerContract"
+         Type: address
+         Source: "address ownerContract"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        require(msg.sender == ownerContract, \"Should be the Owner\");\n        selfdestruct(callmarket);\n    }"
+      ExpressionStatement
+         Source: "require(msg.sender == ownerContract, \"Should be the Owner\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(msg.sender == ownerContract, \"Should be the Owner\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator ==
+             Type: bool
+             Source: "msg.sender == ownerContract"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+            Identifier ownerContract
+               Type: address
+               Source: "ownerContract"
+          Literal, token: [no token] value: Should be the Owner
+             Type: literal_string "Should be the Owner"
+             Source: "\"Should be the Owner\""
+      ExpressionStatement
+         Source: "selfdestruct(callmarket)"
+        FunctionCall
+           Type: tuple()
+           Source: "selfdestruct(callmarket)"
+          Identifier selfdestruct
+             Type: function (address payable)
+             Source: "selfdestruct"
+          Identifier callmarket
+             Type: address payable
+             Source: "callmarket"
+ContractDefinition "BuyList"
+   Source: "contract BuyList {\n    /**\n*   @dev \n    each node of the BuyList is a contract from type \"BuyList\" that has the following attributes:\n    next: The address of the next node (contract) in the buyList\n    sender: The sender of the bid order\n    price: The price of the bid order\n    volume: The volume of the bid order\n    auxPrice: The contcantenation of the order's price and the counter which helps to sort the heap when there are ties\n*/\n    BuyList public next;\n    address public sender;\n    uint256 public price;\n    uint256 public volume;\n\n    uint256 public auxPrice;\n\n    constructor(\n        address orderSender,\n        uint256 orderPrice,\n        uint256 orderVolume,\n        uint256 auxprice\n    ) public {\n        sender = orderSender;\n        price = orderPrice;\n        volume = orderVolume;\n        auxPrice = auxprice;\n        next = BuyList(0);\n    }\n\n    function addNew(BuyList bidorder) external {\n        next = bidorder;\n    }\n\n    function deletenode(address payable callmarket, address ownerContract)\n        external\n    {\n        require(msg.sender == ownerContract, \"Should be the Owner\");\n        selfdestruct(callmarket);\n    }\n}"
+  VariableDeclaration "next"
+     Type: contract BuyList
+     Source: "BuyList public next"
+    UserDefinedTypeName "BuyList"
+       Source: "BuyList"
+  VariableDeclaration "sender"
+     Type: address
+     Source: "address public sender"
+    ElementaryTypeName address
+       Source: "address"
+  VariableDeclaration "price"
+     Type: uint256
+     Source: "uint256 public price"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "volume"
+     Type: uint256
+     Source: "uint256 public volume"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "auxPrice"
+     Type: uint256
+     Source: "uint256 public auxPrice"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  FunctionDefinition "" - public
+     Source: "constructor(\n        address orderSender,\n        uint256 orderPrice,\n        uint256 orderVolume,\n        uint256 auxprice\n    ) public {\n        sender = orderSender;\n        price = orderPrice;\n        volume = orderVolume;\n        auxPrice = auxprice;\n        next = BuyList(0);\n    }"
+    ParameterList
+       Source: "(\n        address orderSender,\n        uint256 orderPrice,\n        uint256 orderVolume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "orderSender"
+         Type: address
+         Source: "address orderSender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "orderPrice"
+         Type: uint256
+         Source: "uint256 orderPrice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "orderVolume"
+         Type: uint256
+         Source: "uint256 orderVolume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        sender = orderSender;\n        price = orderPrice;\n        volume = orderVolume;\n        auxPrice = auxprice;\n        next = BuyList(0);\n    }"
+      ExpressionStatement
+         Source: "sender = orderSender"
+        Assignment using operator =
+           Type: address
+           Source: "sender = orderSender"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier orderSender
+             Type: address
+             Source: "orderSender"
+      ExpressionStatement
+         Source: "price = orderPrice"
+        Assignment using operator =
+           Type: uint256
+           Source: "price = orderPrice"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier orderPrice
+             Type: uint256
+             Source: "orderPrice"
+      ExpressionStatement
+         Source: "volume = orderVolume"
+        Assignment using operator =
+           Type: uint256
+           Source: "volume = orderVolume"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier orderVolume
+             Type: uint256
+             Source: "orderVolume"
+      ExpressionStatement
+         Source: "auxPrice = auxprice"
+        Assignment using operator =
+           Type: uint256
+           Source: "auxPrice = auxprice"
+          Identifier auxPrice
+             Type: uint256
+             Source: "auxPrice"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+      ExpressionStatement
+         Source: "next = BuyList(0)"
+        Assignment using operator =
+           Type: contract BuyList
+           Source: "next = BuyList(0)"
+          Identifier next
+             Type: contract BuyList
+             Source: "next"
+          FunctionCall
+             Type: contract BuyList
+             Source: "BuyList(0)"
+            Identifier BuyList
+               Type: type(contract BuyList)
+               Source: "BuyList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+  FunctionDefinition "addNew" - public
+     Source: "function addNew(BuyList bidorder) external {\n        next = bidorder;\n    }"
+    ParameterList
+       Source: "(BuyList bidorder)"
+      VariableDeclaration "bidorder"
+         Type: contract BuyList
+         Source: "BuyList bidorder"
+        UserDefinedTypeName "BuyList"
+           Source: "BuyList"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        next = bidorder;\n    }"
+      ExpressionStatement
+         Source: "next = bidorder"
+        Assignment using operator =
+           Type: contract BuyList
+           Source: "next = bidorder"
+          Identifier next
+             Type: contract BuyList
+             Source: "next"
+          Identifier bidorder
+             Type: contract BuyList
+             Source: "bidorder"
+  FunctionDefinition "deletenode" - public
+     Source: "function deletenode(address payable callmarket, address ownerContract)\n        external\n    {\n        require(msg.sender == ownerContract, \"Should be the Owner\");\n        selfdestruct(callmarket);\n    }"
+    ParameterList
+       Source: "(address payable callmarket, address ownerContract)"
+      VariableDeclaration "callmarket"
+         Type: address payable
+         Source: "address payable callmarket"
+        ElementaryTypeName address
+           Source: "address payable"
+      VariableDeclaration "ownerContract"
+         Type: address
+         Source: "address ownerContract"
+        ElementaryTypeName address
+           Source: "address"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        require(msg.sender == ownerContract, \"Should be the Owner\");\n        selfdestruct(callmarket);\n    }"
+      ExpressionStatement
+         Source: "require(msg.sender == ownerContract, \"Should be the Owner\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(msg.sender == ownerContract, \"Should be the Owner\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator ==
+             Type: bool
+             Source: "msg.sender == ownerContract"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+            Identifier ownerContract
+               Type: address
+               Source: "ownerContract"
+          Literal, token: [no token] value: Should be the Owner
+             Type: literal_string "Should be the Owner"
+             Source: "\"Should be the Owner\""
+      ExpressionStatement
+         Source: "selfdestruct(callmarket)"
+        FunctionCall
+           Type: tuple()
+           Source: "selfdestruct(callmarket)"
+          Identifier selfdestruct
+             Type: function (address payable)
+             Source: "selfdestruct"
+          Identifier callmarket
+             Type: address payable
+             Source: "callmarket"

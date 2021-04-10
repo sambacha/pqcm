@@ -1,0 +1,2633 @@
+PragmaDirective
+   Source: "pragma solidity >=0.5.7 <0.6.0;"
+ContractDefinition "LinkedListMapping"
+   Source: "contract LinkedListMapping {\n    constructor() public {\n        sellHead = 0;\n        sellTail = 0;\n        sellistCounter = 1;\n        buyHead = 0;\n        buyTail = 0;\n        buyListCounter = 1;\n    }\n\n    /**\n*   @dev \n    Orderstruct with its elements:\n        Sender: The address of the trader submitting the order\n        Price: The price of the order\n        Volume: The volume of the order\n        AuxPrice: The contcantenation of the order's price and the counter which helps to sort the heap when there are ties\n        id: The id of the order \n        next: The id of the nex order in the list\n        prev The id of the previous order in the list\n    \n    sellHead: The head (first) node of the sellList\n    sellTail: The tail (last) node of the sellList\n    sellistCounter: The counter of ask orders (later used to create order ids)\n\n    buyHead: The head (first) node of the buyList\n    buyTail: The tail (last) node of the buyList\n    buyListCounter: The counter of bid orders (later used to create order ids)\n\n    sellList: Mappping that maps order ids to OrderStruct for asks\n    buyList: Mappping that maps order ids to OrderStruct for bids\n*/\n\n    struct OrderStruct {\n        address Sender;\n        uint256 Price;\n        uint256 Volume;\n        uint256 AuxPrice;\n        uint256 id;\n        uint256 next;\n        uint256 prev;\n    }\n\n    uint256 public sellHead;\n    uint256 public sellTail;\n    uint256 public sellistCounter;\n\n    uint256 public buyHead;\n    uint256 public buyTail;\n    uint256 public buyListCounter;\n\n    mapping(uint256 => OrderStruct) public sellList;\n    mapping(uint256 => OrderStruct) public buyList;\n\n    /**\n     *   buyList Functions\n     *   @dev Adds the incoming bid orders to its right position in the list\n     */\n    function insertBid(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        OrderStruct memory current = buyList[buyHead];\n        while (\n            current.id != 0 && auxprice <= current.AuxPrice //The linkedlist is sorted in an desceding order (decreasing)\n        ) {\n            current = buyList[current.next];\n\n            /** we only exit this loop if we find the position to insert our data; */\n        }\n        if (\n            current.prev == 0\n        ) /** it means the current is equal to first and in that case we have to insert the node as a new head */\n        {\n            buyListAddHead(sender, price, volume, auxprice);\n        }\n        //the node next to the previous is no longer the current but it's our new node\n        else {\n            buyListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }\n    }\n\n    /**\n     *   @dev Adds the bid orders after the prevId node\n     */\n    function buyListInsertAfter(\n        uint256 prevId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (prevId == buyTail) {\n            buyListAddTail(sender, price, volume, auxprice);\n        } else {\n            OrderStruct memory prevOrder = buyList[prevId];\n            OrderStruct memory nextOrder = buyList[prevOrder.next];\n            uint256 newOrderId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(newOrderId, nextOrder.id);\n            buyListLink(prevOrder.id, newOrderId);\n        }\n        return true;\n    }\n\n    /**\n     *   @dev Adds the bid orders before the nextId node\n     */\n    function buyListInsertBefore(\n        uint256 nextId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (nextId == buyHead) {\n            buyListAddHead(sender, price, volume, auxprice);\n        } else {\n            buyListInsertAfter(\n                buyList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }\n        return true;\n    }\n\n    function buyListAddTail(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (buyHead == 0) {\n            buyListAddHead(sender, price, volume, auxprice);\n        } else {\n            uint256 ordertId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(buyTail, ordertId);\n            buyListSetTail(ordertId);\n        }\n\n        return true;\n    }\n\n    function buyListSetTail(uint256 id) internal returns (bool) {\n        buyTail = id;\n        return true;\n    }\n\n    function buyListAddHead(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (uint256) {\n        uint256 ordertId = buyListCreateObject(sender, price, volume, auxprice);\n        buyListLink(ordertId, buyHead);\n        buyListSetHead(ordertId);\n        if (buyTail == 0) buyListSetTail(ordertId);\n        return ordertId;\n    }\n\n    //***********************************************************************//\n\n    function buyListSetHead(uint256 id) internal returns (bool) {\n        buyHead = id;\n        return true;\n    }\n\n    //***********************************************************************//\n    function buyListCreateObject(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (uint256) {\n        uint256 newId = buyListCounter;\n        buyListCounter++;\n        OrderStruct memory order =\n            OrderStruct(sender, price, volume, auxprice, newId, 0, 0);\n        buyList[order.id] = order;\n        return order.id;\n    }\n\n    //***********************************************************************//\n\n    function buyListLink(uint256 prevId, uint256 nextId) internal {\n        buyList[prevId].next = nextId;\n        buyList[nextId].prev = prevId;\n    }\n\n    /**\n    *   @dev Removes and returns the highest priority element of the buyList\n            Only if the buyList is not empty\n    */\n    function buyListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        OrderStruct memory removeObject = buyList[buyHead];\n        uint256 _price = removeObject.Price;\n        address _sender = removeObject.Sender;\n        uint256 _volume = removeObject.Volume;\n\n        if (buyTail == buyHead) {\n            buyHead = 0;\n            buyTail = 0;\n        } else {\n            buyHead = removeObject.next;\n            buyList[removeObject.next].prev = 0;\n        }\n\n        delete buyList[removeObject.id];\n        return (_price, _sender, _volume);\n\n        /* OrderStruct memory removeObject = buyList[buyHead];\n        buyListSetHead(removeObject.next);\n        buyList[removeObject.next].prev = 0;\n        \n        if (buyTail == buyHead)\n        {\n            buyListSetHead(0);\n            buyListSetTail(0);\n        }\n        else\n        {\n            buyListSetHead(removeObject.next);\n            buyList[removeObject.next].prev = 0;\n            buyListLink(removeObject.prev, removeObject.next);\n        }\n        uint256 _price =  removeObject.Price;\n        address _sender = removeObject.Sender;\n        delete buyList[removeObject.id];\n        return (_price,_sender); */\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Returns the sender, price, and volume of the highest priority element (The highest bid)\n     */\n    function buyListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(buyHead != 0, \"buyList is empty!\"); //throws exception if the buylist is empty\n        return (\n            buyList[buyHead].Price,\n            buyList[buyHead].Sender,\n            buyList[buyHead].Volume\n        );\n    }\n\n    /**\n     *   @dev Checks if the buyList is empty or not\n     */\n    function buyListisEmpty() external view returns (bool) {\n        if (buyHead == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n\n    //**********************  SellList Functions  *********************//\n\n    /**\n     *   @dev Adds the incoming ask orders to its right position in the list\n     */\n    function insertAsk(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        OrderStruct memory current = sellList[sellHead];\n        while (\n            current.id != 0 && auxprice >= current.AuxPrice //The linkedlist is sorted in an ascending order (increasing)\n        ) {\n            current = sellList[current.next];\n            // we only exit this loop if we find the position to insert our data;\n        }\n        if (\n            current.prev == 0\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            sellListAddHead(sender, price, volume, auxprice);\n        }\n        //the node next to the previous is no longer the current but it's our new node\n        else {\n            sellListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }\n    }\n\n    /**\n     *   @dev Adds the ask orders after the prevId node\n     */\n    function sellListInsertAfter(\n        uint256 prevId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (prevId == sellTail) {\n            sellListAddTail(sender, price, volume, auxprice);\n        } else {\n            OrderStruct memory prevOrder = sellList[prevId];\n            OrderStruct memory nextOrder = sellList[prevOrder.next];\n            uint256 newOrderId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(newOrderId, nextOrder.id);\n            sellListLink(prevOrder.id, newOrderId);\n        }\n        return true;\n    }\n\n    /**\n     *   @dev Adds the ask orders before the nextId node\n     */\n    function sellListInsertBefore(\n        uint256 nextId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (nextId == sellHead) {\n            sellListAddHead(sender, price, volume, auxprice);\n        } else {\n            sellListInsertAfter(\n                sellList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }\n        return true;\n    }\n\n    function sellListAddTail(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (sellHead == 0) {\n            sellListAddHead(sender, price, volume, auxprice);\n        } else {\n            uint256 ordertId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(sellTail, ordertId);\n            sellListSetTail(ordertId);\n        }\n\n        return true;\n    }\n\n    function sellListSetTail(uint256 id) internal returns (bool) {\n        sellTail = id;\n        return true;\n    }\n\n    function sellListAddHead(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (uint256) {\n        uint256 ordertId =\n            sellListCreateObject(sender, price, volume, auxprice);\n        sellListLink(ordertId, sellHead);\n        sellListSetHead(ordertId);\n        if (sellTail == 0) sellListSetTail(ordertId);\n        return ordertId;\n    }\n\n    function sellListSetHead(uint256 id) internal returns (bool) {\n        sellHead = id;\n        return true;\n    }\n\n    function sellListCreateObject(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (uint256) {\n        uint256 newId = sellistCounter;\n        sellistCounter++;\n        OrderStruct memory order =\n            OrderStruct(sender, price, volume, auxprice, newId, 0, 0);\n        sellList[order.id] = order;\n        return order.id;\n    }\n\n    function sellListLink(uint256 prevId, uint256 nextId)\n        internal\n        returns (bool)\n    {\n        sellList[prevId].next = nextId;\n        sellList[nextId].prev = prevId;\n        return true;\n    }\n\n    /**\n     *\n     * @dev Removes and returns the highest priority element of the sellList (the lowest ask order)\n     *   Only if the sellList is not empty\n     */\n\n    function sellListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        OrderStruct memory removeObject = sellList[sellHead];\n        uint256 _price = removeObject.Price;\n        address _sender = removeObject.Sender;\n        uint256 _volume = removeObject.Volume;\n\n        if (sellTail == sellHead) {\n            sellHead = 0;\n            sellTail = 0;\n        } else {\n            sellHead = removeObject.next;\n            sellList[removeObject.next].prev = 0;\n        }\n\n        delete sellList[removeObject.id];\n        return (_price, _sender, _volume);\n\n        /* OrderStruct memory removeObject = sellList[sellHead];\n        if (sellTail == sellHead)\n        {\n            sellListSetHead(0);\n            sellListSetTail(0);\n        }\n        else\n        {\n            sellListSetHead(removeObject.next);\n            sellList[removeObject.next].prev = 0;\n        }\n        uint256 _price =  removeObject.Price;\n        address _sender =  removeObject.Sender;\n        delete sellList[removeObject.id];\n        return (_price,_sender); */\n    }\n\n    /**\n     *   @dev Returns the sender, price, and volume of the highest priority element (The lowest ask)\n     */\n    function sellListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellHead != 0, \"sellList is empty!\"); //throws exception if the sellList is empty\n        return (\n            sellList[sellHead].Price,\n            sellList[sellHead].Sender,\n            sellList[sellHead].Volume\n        );\n    }\n\n    /**\n     *   @dev Checks if the sellList is empty or not\n     */\n    function sellListisEmpty() external view returns (bool) {\n        if (sellHead == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n\n    /**\n     *   @dev deletes the entire priority queue and sends its funds (if any) back to the CallMarket\n     */\n\n    function deletePQ(address payable callmarket) external {\n        selfdestruct(callmarket);\n    }\n}"
+  FunctionDefinition "" - public
+     Source: "constructor() public {\n        sellHead = 0;\n        sellTail = 0;\n        sellistCounter = 1;\n        buyHead = 0;\n        buyTail = 0;\n        buyListCounter = 1;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        sellHead = 0;\n        sellTail = 0;\n        sellistCounter = 1;\n        buyHead = 0;\n        buyTail = 0;\n        buyListCounter = 1;\n    }"
+      ExpressionStatement
+         Source: "sellHead = 0"
+        Assignment using operator =
+           Type: uint256
+           Source: "sellHead = 0"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      ExpressionStatement
+         Source: "sellTail = 0"
+        Assignment using operator =
+           Type: uint256
+           Source: "sellTail = 0"
+          Identifier sellTail
+             Type: uint256
+             Source: "sellTail"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      ExpressionStatement
+         Source: "sellistCounter = 1"
+        Assignment using operator =
+           Type: uint256
+           Source: "sellistCounter = 1"
+          Identifier sellistCounter
+             Type: uint256
+             Source: "sellistCounter"
+          Literal, token: [no token] value: 1
+             Type: int_const 1
+             Source: "1"
+      ExpressionStatement
+         Source: "buyHead = 0"
+        Assignment using operator =
+           Type: uint256
+           Source: "buyHead = 0"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      ExpressionStatement
+         Source: "buyTail = 0"
+        Assignment using operator =
+           Type: uint256
+           Source: "buyTail = 0"
+          Identifier buyTail
+             Type: uint256
+             Source: "buyTail"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      ExpressionStatement
+         Source: "buyListCounter = 1"
+        Assignment using operator =
+           Type: uint256
+           Source: "buyListCounter = 1"
+          Identifier buyListCounter
+             Type: uint256
+             Source: "buyListCounter"
+          Literal, token: [no token] value: 1
+             Type: int_const 1
+             Source: "1"
+  StructDefinition "OrderStruct"
+     Source: "struct OrderStruct {\n        address Sender;\n        uint256 Price;\n        uint256 Volume;\n        uint256 AuxPrice;\n        uint256 id;\n        uint256 next;\n        uint256 prev;\n    }"
+    VariableDeclaration "Sender"
+       Type: address
+       Source: "address Sender"
+      ElementaryTypeName address
+         Source: "address"
+    VariableDeclaration "Price"
+       Type: uint256
+       Source: "uint256 Price"
+      ElementaryTypeName uint256
+         Source: "uint256"
+    VariableDeclaration "Volume"
+       Type: uint256
+       Source: "uint256 Volume"
+      ElementaryTypeName uint256
+         Source: "uint256"
+    VariableDeclaration "AuxPrice"
+       Type: uint256
+       Source: "uint256 AuxPrice"
+      ElementaryTypeName uint256
+         Source: "uint256"
+    VariableDeclaration "id"
+       Type: uint256
+       Source: "uint256 id"
+      ElementaryTypeName uint256
+         Source: "uint256"
+    VariableDeclaration "next"
+       Type: uint256
+       Source: "uint256 next"
+      ElementaryTypeName uint256
+         Source: "uint256"
+    VariableDeclaration "prev"
+       Type: uint256
+       Source: "uint256 prev"
+      ElementaryTypeName uint256
+         Source: "uint256"
+  VariableDeclaration "sellHead"
+     Type: uint256
+     Source: "uint256 public sellHead"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "sellTail"
+     Type: uint256
+     Source: "uint256 public sellTail"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "sellistCounter"
+     Type: uint256
+     Source: "uint256 public sellistCounter"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "buyHead"
+     Type: uint256
+     Source: "uint256 public buyHead"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "buyTail"
+     Type: uint256
+     Source: "uint256 public buyTail"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "buyListCounter"
+     Type: uint256
+     Source: "uint256 public buyListCounter"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "sellList"
+     Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+     Source: "mapping(uint256 => OrderStruct) public sellList"
+    Mapping
+       Source: "mapping(uint256 => OrderStruct)"
+      ElementaryTypeName uint256
+         Source: "uint256"
+      UserDefinedTypeName "OrderStruct"
+         Source: "OrderStruct"
+  VariableDeclaration "buyList"
+     Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+     Source: "mapping(uint256 => OrderStruct) public buyList"
+    Mapping
+       Source: "mapping(uint256 => OrderStruct)"
+      ElementaryTypeName uint256
+         Source: "uint256"
+      UserDefinedTypeName "OrderStruct"
+         Source: "OrderStruct"
+  FunctionDefinition "insertBid" - public
+     Source: "function insertBid(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        OrderStruct memory current = buyList[buyHead];\n        while (\n            current.id != 0 && auxprice <= current.AuxPrice //The linkedlist is sorted in an desceding order (decreasing)\n        ) {\n            current = buyList[current.next];\n\n            /** we only exit this loop if we find the position to insert our data; */\n        }\n        if (\n            current.prev == 0\n        ) /** it means the current is equal to first and in that case we have to insert the node as a new head */\n        {\n            buyListAddHead(sender, price, volume, auxprice);\n        }\n        //the node next to the previous is no longer the current but it's our new node\n        else {\n            buyListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        OrderStruct memory current = buyList[buyHead];\n        while (\n            current.id != 0 && auxprice <= current.AuxPrice //The linkedlist is sorted in an desceding order (decreasing)\n        ) {\n            current = buyList[current.next];\n\n            /** we only exit this loop if we find the position to insert our data; */\n        }\n        if (\n            current.prev == 0\n        ) /** it means the current is equal to first and in that case we have to insert the node as a new head */\n        {\n            buyListAddHead(sender, price, volume, auxprice);\n        }\n        //the node next to the previous is no longer the current but it's our new node\n        else {\n            buyListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }\n    }"
+      VariableDeclarationStatement
+         Source: "OrderStruct memory current = buyList[buyHead]"
+        VariableDeclaration "current"
+           Type: struct LinkedListMapping.OrderStruct memory
+           Source: "OrderStruct memory current"
+          UserDefinedTypeName "OrderStruct"
+             Source: "OrderStruct"
+        IndexAccess
+           Type: struct LinkedListMapping.OrderStruct storage ref
+           Source: "buyList[buyHead]"
+          Identifier buyList
+             Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+             Source: "buyList"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+      WhileStatement
+         Source: "while (\n            current.id != 0 && auxprice <= current.AuxPrice //The linkedlist is sorted in an desceding order (decreasing)\n        ) {\n            current = buyList[current.next];\n\n            /** we only exit this loop if we find the position to insert our data; */\n        }"
+        BinaryOperation using operator &&
+           Type: bool
+           Source: "current.id != 0 && auxprice <= current.AuxPrice"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "current.id != 0"
+            MemberAccess to member id
+               Type: uint256
+               Source: "current.id"
+              Identifier current
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "current"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+          BinaryOperation using operator <=
+             Type: bool
+             Source: "auxprice <= current.AuxPrice"
+            Identifier auxprice
+               Type: uint256
+               Source: "auxprice"
+            MemberAccess to member AuxPrice
+               Type: uint256
+               Source: "current.AuxPrice"
+              Identifier current
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "current"
+        Block
+           Source: "{\n            current = buyList[current.next];\n\n            /** we only exit this loop if we find the position to insert our data; */\n        }"
+          ExpressionStatement
+             Source: "current = buyList[current.next]"
+            Assignment using operator =
+               Type: struct LinkedListMapping.OrderStruct memory
+               Source: "current = buyList[current.next]"
+              Identifier current
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "current"
+              IndexAccess
+                 Type: struct LinkedListMapping.OrderStruct storage ref
+                 Source: "buyList[current.next]"
+                Identifier buyList
+                   Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                   Source: "buyList"
+                MemberAccess to member next
+                   Type: uint256
+                   Source: "current.next"
+                  Identifier current
+                     Type: struct LinkedListMapping.OrderStruct memory
+                     Source: "current"
+      IfStatement
+         Source: "if (\n            current.prev == 0\n        ) /** it means the current is equal to first and in that case we have to insert the node as a new head */\n        {\n            buyListAddHead(sender, price, volume, auxprice);\n        }\n        //the node next to the previous is no longer the current but it's our new node\n        else {\n            buyListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "current.prev == 0"
+          MemberAccess to member prev
+             Type: uint256
+             Source: "current.prev"
+            Identifier current
+               Type: struct LinkedListMapping.OrderStruct memory
+               Source: "current"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            buyListAddHead(sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "buyListAddHead(sender, price, volume, auxprice)"
+            FunctionCall
+               Type: uint256
+               Source: "buyListAddHead(sender, price, volume, auxprice)"
+              Identifier buyListAddHead
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "buyListAddHead"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+        Block
+           Source: "{\n            buyListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "buyListInsertAfter(current.prev, sender, price, volume, auxprice)"
+            FunctionCall
+               Type: bool
+               Source: "buyListInsertAfter(current.prev, sender, price, volume, auxprice)"
+              Identifier buyListInsertAfter
+                 Type: function (uint256,address,uint256,uint256,uint256) returns (bool)
+                 Source: "buyListInsertAfter"
+              MemberAccess to member prev
+                 Type: uint256
+                 Source: "current.prev"
+                Identifier current
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "current"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+  FunctionDefinition "buyListInsertAfter"
+     Source: "function buyListInsertAfter(\n        uint256 prevId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (prevId == buyTail) {\n            buyListAddTail(sender, price, volume, auxprice);\n        } else {\n            OrderStruct memory prevOrder = buyList[prevId];\n            OrderStruct memory nextOrder = buyList[prevOrder.next];\n            uint256 newOrderId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(newOrderId, nextOrder.id);\n            buyListLink(prevOrder.id, newOrderId);\n        }\n        return true;\n    }"
+    ParameterList
+       Source: "(\n        uint256 prevId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "prevId"
+         Type: uint256
+         Source: "uint256 prevId"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (prevId == buyTail) {\n            buyListAddTail(sender, price, volume, auxprice);\n        } else {\n            OrderStruct memory prevOrder = buyList[prevId];\n            OrderStruct memory nextOrder = buyList[prevOrder.next];\n            uint256 newOrderId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(newOrderId, nextOrder.id);\n            buyListLink(prevOrder.id, newOrderId);\n        }\n        return true;\n    }"
+      IfStatement
+         Source: "if (prevId == buyTail) {\n            buyListAddTail(sender, price, volume, auxprice);\n        } else {\n            OrderStruct memory prevOrder = buyList[prevId];\n            OrderStruct memory nextOrder = buyList[prevOrder.next];\n            uint256 newOrderId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(newOrderId, nextOrder.id);\n            buyListLink(prevOrder.id, newOrderId);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "prevId == buyTail"
+          Identifier prevId
+             Type: uint256
+             Source: "prevId"
+          Identifier buyTail
+             Type: uint256
+             Source: "buyTail"
+        Block
+           Source: "{\n            buyListAddTail(sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "buyListAddTail(sender, price, volume, auxprice)"
+            FunctionCall
+               Type: bool
+               Source: "buyListAddTail(sender, price, volume, auxprice)"
+              Identifier buyListAddTail
+                 Type: function (address,uint256,uint256,uint256) returns (bool)
+                 Source: "buyListAddTail"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+        Block
+           Source: "{\n            OrderStruct memory prevOrder = buyList[prevId];\n            OrderStruct memory nextOrder = buyList[prevOrder.next];\n            uint256 newOrderId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(newOrderId, nextOrder.id);\n            buyListLink(prevOrder.id, newOrderId);\n        }"
+          VariableDeclarationStatement
+             Source: "OrderStruct memory prevOrder = buyList[prevId]"
+            VariableDeclaration "prevOrder"
+               Type: struct LinkedListMapping.OrderStruct memory
+               Source: "OrderStruct memory prevOrder"
+              UserDefinedTypeName "OrderStruct"
+                 Source: "OrderStruct"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "buyList[prevId]"
+              Identifier buyList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "buyList"
+              Identifier prevId
+                 Type: uint256
+                 Source: "prevId"
+          VariableDeclarationStatement
+             Source: "OrderStruct memory nextOrder = buyList[prevOrder.next]"
+            VariableDeclaration "nextOrder"
+               Type: struct LinkedListMapping.OrderStruct memory
+               Source: "OrderStruct memory nextOrder"
+              UserDefinedTypeName "OrderStruct"
+                 Source: "OrderStruct"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "buyList[prevOrder.next]"
+              Identifier buyList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "buyList"
+              MemberAccess to member next
+                 Type: uint256
+                 Source: "prevOrder.next"
+                Identifier prevOrder
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "prevOrder"
+          VariableDeclarationStatement
+             Source: "uint256 newOrderId =\n                buyListCreateObject(sender, price, volume, auxprice)"
+            VariableDeclaration "newOrderId"
+               Type: uint256
+               Source: "uint256 newOrderId"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            FunctionCall
+               Type: uint256
+               Source: "buyListCreateObject(sender, price, volume, auxprice)"
+              Identifier buyListCreateObject
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "buyListCreateObject"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+          ExpressionStatement
+             Source: "buyListLink(newOrderId, nextOrder.id)"
+            FunctionCall
+               Type: tuple()
+               Source: "buyListLink(newOrderId, nextOrder.id)"
+              Identifier buyListLink
+                 Type: function (uint256,uint256)
+                 Source: "buyListLink"
+              Identifier newOrderId
+                 Type: uint256
+                 Source: "newOrderId"
+              MemberAccess to member id
+                 Type: uint256
+                 Source: "nextOrder.id"
+                Identifier nextOrder
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "nextOrder"
+          ExpressionStatement
+             Source: "buyListLink(prevOrder.id, newOrderId)"
+            FunctionCall
+               Type: tuple()
+               Source: "buyListLink(prevOrder.id, newOrderId)"
+              Identifier buyListLink
+                 Type: function (uint256,uint256)
+                 Source: "buyListLink"
+              MemberAccess to member id
+                 Type: uint256
+                 Source: "prevOrder.id"
+                Identifier prevOrder
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "prevOrder"
+              Identifier newOrderId
+                 Type: uint256
+                 Source: "newOrderId"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "buyListInsertBefore"
+     Source: "function buyListInsertBefore(\n        uint256 nextId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (nextId == buyHead) {\n            buyListAddHead(sender, price, volume, auxprice);\n        } else {\n            buyListInsertAfter(\n                buyList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }\n        return true;\n    }"
+    ParameterList
+       Source: "(\n        uint256 nextId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "nextId"
+         Type: uint256
+         Source: "uint256 nextId"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (nextId == buyHead) {\n            buyListAddHead(sender, price, volume, auxprice);\n        } else {\n            buyListInsertAfter(\n                buyList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }\n        return true;\n    }"
+      IfStatement
+         Source: "if (nextId == buyHead) {\n            buyListAddHead(sender, price, volume, auxprice);\n        } else {\n            buyListInsertAfter(\n                buyList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "nextId == buyHead"
+          Identifier nextId
+             Type: uint256
+             Source: "nextId"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+        Block
+           Source: "{\n            buyListAddHead(sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "buyListAddHead(sender, price, volume, auxprice)"
+            FunctionCall
+               Type: uint256
+               Source: "buyListAddHead(sender, price, volume, auxprice)"
+              Identifier buyListAddHead
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "buyListAddHead"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+        Block
+           Source: "{\n            buyListInsertAfter(\n                buyList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }"
+          ExpressionStatement
+             Source: "buyListInsertAfter(\n                buyList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            )"
+            FunctionCall
+               Type: bool
+               Source: "buyListInsertAfter(\n                buyList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            )"
+              Identifier buyListInsertAfter
+                 Type: function (uint256,address,uint256,uint256,uint256) returns (bool)
+                 Source: "buyListInsertAfter"
+              MemberAccess to member prev
+                 Type: uint256
+                 Source: "buyList[nextId].prev"
+                IndexAccess
+                   Type: struct LinkedListMapping.OrderStruct storage ref
+                   Source: "buyList[nextId]"
+                  Identifier buyList
+                     Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                     Source: "buyList"
+                  Identifier nextId
+                     Type: uint256
+                     Source: "nextId"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "buyListAddTail"
+     Source: "function buyListAddTail(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (buyHead == 0) {\n            buyListAddHead(sender, price, volume, auxprice);\n        } else {\n            uint256 ordertId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(buyTail, ordertId);\n            buyListSetTail(ordertId);\n        }\n\n        return true;\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (buyHead == 0) {\n            buyListAddHead(sender, price, volume, auxprice);\n        } else {\n            uint256 ordertId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(buyTail, ordertId);\n            buyListSetTail(ordertId);\n        }\n\n        return true;\n    }"
+      IfStatement
+         Source: "if (buyHead == 0) {\n            buyListAddHead(sender, price, volume, auxprice);\n        } else {\n            uint256 ordertId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(buyTail, ordertId);\n            buyListSetTail(ordertId);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "buyHead == 0"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            buyListAddHead(sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "buyListAddHead(sender, price, volume, auxprice)"
+            FunctionCall
+               Type: uint256
+               Source: "buyListAddHead(sender, price, volume, auxprice)"
+              Identifier buyListAddHead
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "buyListAddHead"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+        Block
+           Source: "{\n            uint256 ordertId =\n                buyListCreateObject(sender, price, volume, auxprice);\n            buyListLink(buyTail, ordertId);\n            buyListSetTail(ordertId);\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 ordertId =\n                buyListCreateObject(sender, price, volume, auxprice)"
+            VariableDeclaration "ordertId"
+               Type: uint256
+               Source: "uint256 ordertId"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            FunctionCall
+               Type: uint256
+               Source: "buyListCreateObject(sender, price, volume, auxprice)"
+              Identifier buyListCreateObject
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "buyListCreateObject"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+          ExpressionStatement
+             Source: "buyListLink(buyTail, ordertId)"
+            FunctionCall
+               Type: tuple()
+               Source: "buyListLink(buyTail, ordertId)"
+              Identifier buyListLink
+                 Type: function (uint256,uint256)
+                 Source: "buyListLink"
+              Identifier buyTail
+                 Type: uint256
+                 Source: "buyTail"
+              Identifier ordertId
+                 Type: uint256
+                 Source: "ordertId"
+          ExpressionStatement
+             Source: "buyListSetTail(ordertId)"
+            FunctionCall
+               Type: bool
+               Source: "buyListSetTail(ordertId)"
+              Identifier buyListSetTail
+                 Type: function (uint256) returns (bool)
+                 Source: "buyListSetTail"
+              Identifier ordertId
+                 Type: uint256
+                 Source: "ordertId"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "buyListSetTail"
+     Source: "function buyListSetTail(uint256 id) internal returns (bool) {\n        buyTail = id;\n        return true;\n    }"
+    ParameterList
+       Source: "(uint256 id)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint256 id"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        buyTail = id;\n        return true;\n    }"
+      ExpressionStatement
+         Source: "buyTail = id"
+        Assignment using operator =
+           Type: uint256
+           Source: "buyTail = id"
+          Identifier buyTail
+             Type: uint256
+             Source: "buyTail"
+          Identifier id
+             Type: uint256
+             Source: "id"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "buyListAddHead"
+     Source: "function buyListAddHead(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (uint256) {\n        uint256 ordertId = buyListCreateObject(sender, price, volume, auxprice);\n        buyListLink(ordertId, buyHead);\n        buyListSetHead(ordertId);\n        if (buyTail == 0) buyListSetTail(ordertId);\n        return ordertId;\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(uint256)"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        uint256 ordertId = buyListCreateObject(sender, price, volume, auxprice);\n        buyListLink(ordertId, buyHead);\n        buyListSetHead(ordertId);\n        if (buyTail == 0) buyListSetTail(ordertId);\n        return ordertId;\n    }"
+      VariableDeclarationStatement
+         Source: "uint256 ordertId = buyListCreateObject(sender, price, volume, auxprice)"
+        VariableDeclaration "ordertId"
+           Type: uint256
+           Source: "uint256 ordertId"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        FunctionCall
+           Type: uint256
+           Source: "buyListCreateObject(sender, price, volume, auxprice)"
+          Identifier buyListCreateObject
+             Type: function (address,uint256,uint256,uint256) returns (uint256)
+             Source: "buyListCreateObject"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+      ExpressionStatement
+         Source: "buyListLink(ordertId, buyHead)"
+        FunctionCall
+           Type: tuple()
+           Source: "buyListLink(ordertId, buyHead)"
+          Identifier buyListLink
+             Type: function (uint256,uint256)
+             Source: "buyListLink"
+          Identifier ordertId
+             Type: uint256
+             Source: "ordertId"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+      ExpressionStatement
+         Source: "buyListSetHead(ordertId)"
+        FunctionCall
+           Type: bool
+           Source: "buyListSetHead(ordertId)"
+          Identifier buyListSetHead
+             Type: function (uint256) returns (bool)
+             Source: "buyListSetHead"
+          Identifier ordertId
+             Type: uint256
+             Source: "ordertId"
+      IfStatement
+         Source: "if (buyTail == 0) buyListSetTail(ordertId)"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "buyTail == 0"
+          Identifier buyTail
+             Type: uint256
+             Source: "buyTail"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        ExpressionStatement
+           Source: "buyListSetTail(ordertId)"
+          FunctionCall
+             Type: bool
+             Source: "buyListSetTail(ordertId)"
+            Identifier buyListSetTail
+               Type: function (uint256) returns (bool)
+               Source: "buyListSetTail"
+            Identifier ordertId
+               Type: uint256
+               Source: "ordertId"
+      Return
+         Source: "return ordertId"
+        Identifier ordertId
+           Type: uint256
+           Source: "ordertId"
+  FunctionDefinition "buyListSetHead"
+     Source: "function buyListSetHead(uint256 id) internal returns (bool) {\n        buyHead = id;\n        return true;\n    }"
+    ParameterList
+       Source: "(uint256 id)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint256 id"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        buyHead = id;\n        return true;\n    }"
+      ExpressionStatement
+         Source: "buyHead = id"
+        Assignment using operator =
+           Type: uint256
+           Source: "buyHead = id"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+          Identifier id
+             Type: uint256
+             Source: "id"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "buyListCreateObject"
+     Source: "function buyListCreateObject(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (uint256) {\n        uint256 newId = buyListCounter;\n        buyListCounter++;\n        OrderStruct memory order =\n            OrderStruct(sender, price, volume, auxprice, newId, 0, 0);\n        buyList[order.id] = order;\n        return order.id;\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(uint256)"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        uint256 newId = buyListCounter;\n        buyListCounter++;\n        OrderStruct memory order =\n            OrderStruct(sender, price, volume, auxprice, newId, 0, 0);\n        buyList[order.id] = order;\n        return order.id;\n    }"
+      VariableDeclarationStatement
+         Source: "uint256 newId = buyListCounter"
+        VariableDeclaration "newId"
+           Type: uint256
+           Source: "uint256 newId"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Identifier buyListCounter
+           Type: uint256
+           Source: "buyListCounter"
+      ExpressionStatement
+         Source: "buyListCounter++"
+        UnaryOperation (postfix) ++
+           Type: uint256
+           Source: "buyListCounter++"
+          Identifier buyListCounter
+             Type: uint256
+             Source: "buyListCounter"
+      VariableDeclarationStatement
+         Source: "OrderStruct memory order =\n            OrderStruct(sender, price, volume, auxprice, newId, 0, 0)"
+        VariableDeclaration "order"
+           Type: struct LinkedListMapping.OrderStruct memory
+           Source: "OrderStruct memory order"
+          UserDefinedTypeName "OrderStruct"
+             Source: "OrderStruct"
+        FunctionCall
+           Type: struct LinkedListMapping.OrderStruct memory
+           Source: "OrderStruct(sender, price, volume, auxprice, newId, 0, 0)"
+          Identifier OrderStruct
+             Type: type(struct LinkedListMapping.OrderStruct storage pointer)
+             Source: "OrderStruct"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+          Identifier newId
+             Type: uint256
+             Source: "newId"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      ExpressionStatement
+         Source: "buyList[order.id] = order"
+        Assignment using operator =
+           Type: struct LinkedListMapping.OrderStruct storage ref
+           Source: "buyList[order.id] = order"
+          IndexAccess
+             Type: struct LinkedListMapping.OrderStruct storage ref
+             Source: "buyList[order.id]"
+            Identifier buyList
+               Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+               Source: "buyList"
+            MemberAccess to member id
+               Type: uint256
+               Source: "order.id"
+              Identifier order
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "order"
+          Identifier order
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "order"
+      Return
+         Source: "return order.id"
+        MemberAccess to member id
+           Type: uint256
+           Source: "order.id"
+          Identifier order
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "order"
+  FunctionDefinition "buyListLink"
+     Source: "function buyListLink(uint256 prevId, uint256 nextId) internal {\n        buyList[prevId].next = nextId;\n        buyList[nextId].prev = prevId;\n    }"
+    ParameterList
+       Source: "(uint256 prevId, uint256 nextId)"
+      VariableDeclaration "prevId"
+         Type: uint256
+         Source: "uint256 prevId"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "nextId"
+         Type: uint256
+         Source: "uint256 nextId"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        buyList[prevId].next = nextId;\n        buyList[nextId].prev = prevId;\n    }"
+      ExpressionStatement
+         Source: "buyList[prevId].next = nextId"
+        Assignment using operator =
+           Type: uint256
+           Source: "buyList[prevId].next = nextId"
+          MemberAccess to member next
+             Type: uint256
+             Source: "buyList[prevId].next"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "buyList[prevId]"
+              Identifier buyList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "buyList"
+              Identifier prevId
+                 Type: uint256
+                 Source: "prevId"
+          Identifier nextId
+             Type: uint256
+             Source: "nextId"
+      ExpressionStatement
+         Source: "buyList[nextId].prev = prevId"
+        Assignment using operator =
+           Type: uint256
+           Source: "buyList[nextId].prev = prevId"
+          MemberAccess to member prev
+             Type: uint256
+             Source: "buyList[nextId].prev"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "buyList[nextId]"
+              Identifier buyList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "buyList"
+              Identifier nextId
+                 Type: uint256
+                 Source: "nextId"
+          Identifier prevId
+             Type: uint256
+             Source: "prevId"
+  FunctionDefinition "buyListMaxDelete" - public
+     Source: "function buyListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        OrderStruct memory removeObject = buyList[buyHead];\n        uint256 _price = removeObject.Price;\n        address _sender = removeObject.Sender;\n        uint256 _volume = removeObject.Volume;\n\n        if (buyTail == buyHead) {\n            buyHead = 0;\n            buyTail = 0;\n        } else {\n            buyHead = removeObject.next;\n            buyList[removeObject.next].prev = 0;\n        }\n\n        delete buyList[removeObject.id];\n        return (_price, _sender, _volume);\n\n        /* OrderStruct memory removeObject = buyList[buyHead];\n        buyListSetHead(removeObject.next);\n        buyList[removeObject.next].prev = 0;\n        \n        if (buyTail == buyHead)\n        {\n            buyListSetHead(0);\n            buyListSetTail(0);\n        }\n        else\n        {\n            buyListSetHead(removeObject.next);\n            buyList[removeObject.next].prev = 0;\n            buyListLink(removeObject.prev, removeObject.next);\n        }\n        uint256 _price =  removeObject.Price;\n        address _sender = removeObject.Sender;\n        delete buyList[removeObject.id];\n        return (_price,_sender); */\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        OrderStruct memory removeObject = buyList[buyHead];\n        uint256 _price = removeObject.Price;\n        address _sender = removeObject.Sender;\n        uint256 _volume = removeObject.Volume;\n\n        if (buyTail == buyHead) {\n            buyHead = 0;\n            buyTail = 0;\n        } else {\n            buyHead = removeObject.next;\n            buyList[removeObject.next].prev = 0;\n        }\n\n        delete buyList[removeObject.id];\n        return (_price, _sender, _volume);\n\n        /* OrderStruct memory removeObject = buyList[buyHead];\n        buyListSetHead(removeObject.next);\n        buyList[removeObject.next].prev = 0;\n        \n        if (buyTail == buyHead)\n        {\n            buyListSetHead(0);\n            buyListSetTail(0);\n        }\n        else\n        {\n            buyListSetHead(removeObject.next);\n            buyList[removeObject.next].prev = 0;\n            buyListLink(removeObject.prev, removeObject.next);\n        }\n        uint256 _price =  removeObject.Price;\n        address _sender = removeObject.Sender;\n        delete buyList[removeObject.id];\n        return (_price,_sender); */\n    }"
+      VariableDeclarationStatement
+         Source: "OrderStruct memory removeObject = buyList[buyHead]"
+        VariableDeclaration "removeObject"
+           Type: struct LinkedListMapping.OrderStruct memory
+           Source: "OrderStruct memory removeObject"
+          UserDefinedTypeName "OrderStruct"
+             Source: "OrderStruct"
+        IndexAccess
+           Type: struct LinkedListMapping.OrderStruct storage ref
+           Source: "buyList[buyHead]"
+          Identifier buyList
+             Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+             Source: "buyList"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+      VariableDeclarationStatement
+         Source: "uint256 _price = removeObject.Price"
+        VariableDeclaration "_price"
+           Type: uint256
+           Source: "uint256 _price"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member Price
+           Type: uint256
+           Source: "removeObject.Price"
+          Identifier removeObject
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "removeObject"
+      VariableDeclarationStatement
+         Source: "address _sender = removeObject.Sender"
+        VariableDeclaration "_sender"
+           Type: address
+           Source: "address _sender"
+          ElementaryTypeName address
+             Source: "address"
+        MemberAccess to member Sender
+           Type: address
+           Source: "removeObject.Sender"
+          Identifier removeObject
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "removeObject"
+      VariableDeclarationStatement
+         Source: "uint256 _volume = removeObject.Volume"
+        VariableDeclaration "_volume"
+           Type: uint256
+           Source: "uint256 _volume"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member Volume
+           Type: uint256
+           Source: "removeObject.Volume"
+          Identifier removeObject
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "removeObject"
+      IfStatement
+         Source: "if (buyTail == buyHead) {\n            buyHead = 0;\n            buyTail = 0;\n        } else {\n            buyHead = removeObject.next;\n            buyList[removeObject.next].prev = 0;\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "buyTail == buyHead"
+          Identifier buyTail
+             Type: uint256
+             Source: "buyTail"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+        Block
+           Source: "{\n            buyHead = 0;\n            buyTail = 0;\n        }"
+          ExpressionStatement
+             Source: "buyHead = 0"
+            Assignment using operator =
+               Type: uint256
+               Source: "buyHead = 0"
+              Identifier buyHead
+                 Type: uint256
+                 Source: "buyHead"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          ExpressionStatement
+             Source: "buyTail = 0"
+            Assignment using operator =
+               Type: uint256
+               Source: "buyTail = 0"
+              Identifier buyTail
+                 Type: uint256
+                 Source: "buyTail"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+        Block
+           Source: "{\n            buyHead = removeObject.next;\n            buyList[removeObject.next].prev = 0;\n        }"
+          ExpressionStatement
+             Source: "buyHead = removeObject.next"
+            Assignment using operator =
+               Type: uint256
+               Source: "buyHead = removeObject.next"
+              Identifier buyHead
+                 Type: uint256
+                 Source: "buyHead"
+              MemberAccess to member next
+                 Type: uint256
+                 Source: "removeObject.next"
+                Identifier removeObject
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "removeObject"
+          ExpressionStatement
+             Source: "buyList[removeObject.next].prev = 0"
+            Assignment using operator =
+               Type: uint256
+               Source: "buyList[removeObject.next].prev = 0"
+              MemberAccess to member prev
+                 Type: uint256
+                 Source: "buyList[removeObject.next].prev"
+                IndexAccess
+                   Type: struct LinkedListMapping.OrderStruct storage ref
+                   Source: "buyList[removeObject.next]"
+                  Identifier buyList
+                     Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                     Source: "buyList"
+                  MemberAccess to member next
+                     Type: uint256
+                     Source: "removeObject.next"
+                    Identifier removeObject
+                       Type: struct LinkedListMapping.OrderStruct memory
+                       Source: "removeObject"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+      ExpressionStatement
+         Source: "delete buyList[removeObject.id]"
+        UnaryOperation (prefix) delete
+           Type: tuple()
+           Source: "delete buyList[removeObject.id]"
+          IndexAccess
+             Type: struct LinkedListMapping.OrderStruct storage ref
+             Source: "buyList[removeObject.id]"
+            Identifier buyList
+               Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+               Source: "buyList"
+            MemberAccess to member id
+               Type: uint256
+               Source: "removeObject.id"
+              Identifier removeObject
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "removeObject"
+      Return
+         Source: "return (_price, _sender, _volume)"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(_price, _sender, _volume)"
+          Identifier _price
+             Type: uint256
+             Source: "_price"
+          Identifier _sender
+             Type: address
+             Source: "_sender"
+          Identifier _volume
+             Type: uint256
+             Source: "_volume"
+  FunctionDefinition "buyListMax" - public - const
+     Source: "function buyListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(buyHead != 0, \"buyList is empty!\"); //throws exception if the buylist is empty\n        return (\n            buyList[buyHead].Price,\n            buyList[buyHead].Sender,\n            buyList[buyHead].Volume\n        );\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(buyHead != 0, \"buyList is empty!\"); //throws exception if the buylist is empty\n        return (\n            buyList[buyHead].Price,\n            buyList[buyHead].Sender,\n            buyList[buyHead].Volume\n        );\n    }"
+      ExpressionStatement
+         Source: "require(buyHead != 0, \"buyList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(buyHead != 0, \"buyList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "buyHead != 0"
+            Identifier buyHead
+               Type: uint256
+               Source: "buyHead"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+          Literal, token: [no token] value: buyList is empty!
+             Type: literal_string "buyList is empty!"
+             Source: "\"buyList is empty!\""
+      Return
+         Source: "return (\n            buyList[buyHead].Price,\n            buyList[buyHead].Sender,\n            buyList[buyHead].Volume\n        )"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(\n            buyList[buyHead].Price,\n            buyList[buyHead].Sender,\n            buyList[buyHead].Volume\n        )"
+          MemberAccess to member Price
+             Type: uint256
+             Source: "buyList[buyHead].Price"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "buyList[buyHead]"
+              Identifier buyList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "buyList"
+              Identifier buyHead
+                 Type: uint256
+                 Source: "buyHead"
+          MemberAccess to member Sender
+             Type: address
+             Source: "buyList[buyHead].Sender"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "buyList[buyHead]"
+              Identifier buyList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "buyList"
+              Identifier buyHead
+                 Type: uint256
+                 Source: "buyHead"
+          MemberAccess to member Volume
+             Type: uint256
+             Source: "buyList[buyHead].Volume"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "buyList[buyHead]"
+              Identifier buyList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "buyList"
+              Identifier buyHead
+                 Type: uint256
+                 Source: "buyHead"
+  FunctionDefinition "buyListisEmpty" - public - const
+     Source: "function buyListisEmpty() external view returns (bool) {\n        if (buyHead == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (buyHead == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+      IfStatement
+         Source: "if (buyHead == 0) {\n            return true;\n        } else {\n            return false;\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "buyHead == 0"
+          Identifier buyHead
+             Type: uint256
+             Source: "buyHead"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            return true;\n        }"
+          Return
+             Source: "return true"
+            Literal, token: true value: true
+               Type: bool
+               Source: "true"
+        Block
+           Source: "{\n            return false;\n        }"
+          Return
+             Source: "return false"
+            Literal, token: false value: false
+               Type: bool
+               Source: "false"
+  FunctionDefinition "insertAsk" - public
+     Source: "function insertAsk(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        OrderStruct memory current = sellList[sellHead];\n        while (\n            current.id != 0 && auxprice >= current.AuxPrice //The linkedlist is sorted in an ascending order (increasing)\n        ) {\n            current = sellList[current.next];\n            // we only exit this loop if we find the position to insert our data;\n        }\n        if (\n            current.prev == 0\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            sellListAddHead(sender, price, volume, auxprice);\n        }\n        //the node next to the previous is no longer the current but it's our new node\n        else {\n            sellListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        OrderStruct memory current = sellList[sellHead];\n        while (\n            current.id != 0 && auxprice >= current.AuxPrice //The linkedlist is sorted in an ascending order (increasing)\n        ) {\n            current = sellList[current.next];\n            // we only exit this loop if we find the position to insert our data;\n        }\n        if (\n            current.prev == 0\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            sellListAddHead(sender, price, volume, auxprice);\n        }\n        //the node next to the previous is no longer the current but it's our new node\n        else {\n            sellListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }\n    }"
+      VariableDeclarationStatement
+         Source: "OrderStruct memory current = sellList[sellHead]"
+        VariableDeclaration "current"
+           Type: struct LinkedListMapping.OrderStruct memory
+           Source: "OrderStruct memory current"
+          UserDefinedTypeName "OrderStruct"
+             Source: "OrderStruct"
+        IndexAccess
+           Type: struct LinkedListMapping.OrderStruct storage ref
+           Source: "sellList[sellHead]"
+          Identifier sellList
+             Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+             Source: "sellList"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+      WhileStatement
+         Source: "while (\n            current.id != 0 && auxprice >= current.AuxPrice //The linkedlist is sorted in an ascending order (increasing)\n        ) {\n            current = sellList[current.next];\n            // we only exit this loop if we find the position to insert our data;\n        }"
+        BinaryOperation using operator &&
+           Type: bool
+           Source: "current.id != 0 && auxprice >= current.AuxPrice"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "current.id != 0"
+            MemberAccess to member id
+               Type: uint256
+               Source: "current.id"
+              Identifier current
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "current"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+          BinaryOperation using operator >=
+             Type: bool
+             Source: "auxprice >= current.AuxPrice"
+            Identifier auxprice
+               Type: uint256
+               Source: "auxprice"
+            MemberAccess to member AuxPrice
+               Type: uint256
+               Source: "current.AuxPrice"
+              Identifier current
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "current"
+        Block
+           Source: "{\n            current = sellList[current.next];\n            // we only exit this loop if we find the position to insert our data;\n        }"
+          ExpressionStatement
+             Source: "current = sellList[current.next]"
+            Assignment using operator =
+               Type: struct LinkedListMapping.OrderStruct memory
+               Source: "current = sellList[current.next]"
+              Identifier current
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "current"
+              IndexAccess
+                 Type: struct LinkedListMapping.OrderStruct storage ref
+                 Source: "sellList[current.next]"
+                Identifier sellList
+                   Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                   Source: "sellList"
+                MemberAccess to member next
+                   Type: uint256
+                   Source: "current.next"
+                  Identifier current
+                     Type: struct LinkedListMapping.OrderStruct memory
+                     Source: "current"
+      IfStatement
+         Source: "if (\n            current.prev == 0\n        ) //it means the current is equal to first and in that case we have to insert the node as a new head\n        {\n            sellListAddHead(sender, price, volume, auxprice);\n        }\n        //the node next to the previous is no longer the current but it's our new node\n        else {\n            sellListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "current.prev == 0"
+          MemberAccess to member prev
+             Type: uint256
+             Source: "current.prev"
+            Identifier current
+               Type: struct LinkedListMapping.OrderStruct memory
+               Source: "current"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            sellListAddHead(sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "sellListAddHead(sender, price, volume, auxprice)"
+            FunctionCall
+               Type: uint256
+               Source: "sellListAddHead(sender, price, volume, auxprice)"
+              Identifier sellListAddHead
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "sellListAddHead"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+        Block
+           Source: "{\n            sellListInsertAfter(current.prev, sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "sellListInsertAfter(current.prev, sender, price, volume, auxprice)"
+            FunctionCall
+               Type: bool
+               Source: "sellListInsertAfter(current.prev, sender, price, volume, auxprice)"
+              Identifier sellListInsertAfter
+                 Type: function (uint256,address,uint256,uint256,uint256) returns (bool)
+                 Source: "sellListInsertAfter"
+              MemberAccess to member prev
+                 Type: uint256
+                 Source: "current.prev"
+                Identifier current
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "current"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+  FunctionDefinition "sellListInsertAfter"
+     Source: "function sellListInsertAfter(\n        uint256 prevId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (prevId == sellTail) {\n            sellListAddTail(sender, price, volume, auxprice);\n        } else {\n            OrderStruct memory prevOrder = sellList[prevId];\n            OrderStruct memory nextOrder = sellList[prevOrder.next];\n            uint256 newOrderId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(newOrderId, nextOrder.id);\n            sellListLink(prevOrder.id, newOrderId);\n        }\n        return true;\n    }"
+    ParameterList
+       Source: "(\n        uint256 prevId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "prevId"
+         Type: uint256
+         Source: "uint256 prevId"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (prevId == sellTail) {\n            sellListAddTail(sender, price, volume, auxprice);\n        } else {\n            OrderStruct memory prevOrder = sellList[prevId];\n            OrderStruct memory nextOrder = sellList[prevOrder.next];\n            uint256 newOrderId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(newOrderId, nextOrder.id);\n            sellListLink(prevOrder.id, newOrderId);\n        }\n        return true;\n    }"
+      IfStatement
+         Source: "if (prevId == sellTail) {\n            sellListAddTail(sender, price, volume, auxprice);\n        } else {\n            OrderStruct memory prevOrder = sellList[prevId];\n            OrderStruct memory nextOrder = sellList[prevOrder.next];\n            uint256 newOrderId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(newOrderId, nextOrder.id);\n            sellListLink(prevOrder.id, newOrderId);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "prevId == sellTail"
+          Identifier prevId
+             Type: uint256
+             Source: "prevId"
+          Identifier sellTail
+             Type: uint256
+             Source: "sellTail"
+        Block
+           Source: "{\n            sellListAddTail(sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "sellListAddTail(sender, price, volume, auxprice)"
+            FunctionCall
+               Type: bool
+               Source: "sellListAddTail(sender, price, volume, auxprice)"
+              Identifier sellListAddTail
+                 Type: function (address,uint256,uint256,uint256) returns (bool)
+                 Source: "sellListAddTail"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+        Block
+           Source: "{\n            OrderStruct memory prevOrder = sellList[prevId];\n            OrderStruct memory nextOrder = sellList[prevOrder.next];\n            uint256 newOrderId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(newOrderId, nextOrder.id);\n            sellListLink(prevOrder.id, newOrderId);\n        }"
+          VariableDeclarationStatement
+             Source: "OrderStruct memory prevOrder = sellList[prevId]"
+            VariableDeclaration "prevOrder"
+               Type: struct LinkedListMapping.OrderStruct memory
+               Source: "OrderStruct memory prevOrder"
+              UserDefinedTypeName "OrderStruct"
+                 Source: "OrderStruct"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "sellList[prevId]"
+              Identifier sellList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "sellList"
+              Identifier prevId
+                 Type: uint256
+                 Source: "prevId"
+          VariableDeclarationStatement
+             Source: "OrderStruct memory nextOrder = sellList[prevOrder.next]"
+            VariableDeclaration "nextOrder"
+               Type: struct LinkedListMapping.OrderStruct memory
+               Source: "OrderStruct memory nextOrder"
+              UserDefinedTypeName "OrderStruct"
+                 Source: "OrderStruct"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "sellList[prevOrder.next]"
+              Identifier sellList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "sellList"
+              MemberAccess to member next
+                 Type: uint256
+                 Source: "prevOrder.next"
+                Identifier prevOrder
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "prevOrder"
+          VariableDeclarationStatement
+             Source: "uint256 newOrderId =\n                sellListCreateObject(sender, price, volume, auxprice)"
+            VariableDeclaration "newOrderId"
+               Type: uint256
+               Source: "uint256 newOrderId"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            FunctionCall
+               Type: uint256
+               Source: "sellListCreateObject(sender, price, volume, auxprice)"
+              Identifier sellListCreateObject
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "sellListCreateObject"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+          ExpressionStatement
+             Source: "sellListLink(newOrderId, nextOrder.id)"
+            FunctionCall
+               Type: bool
+               Source: "sellListLink(newOrderId, nextOrder.id)"
+              Identifier sellListLink
+                 Type: function (uint256,uint256) returns (bool)
+                 Source: "sellListLink"
+              Identifier newOrderId
+                 Type: uint256
+                 Source: "newOrderId"
+              MemberAccess to member id
+                 Type: uint256
+                 Source: "nextOrder.id"
+                Identifier nextOrder
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "nextOrder"
+          ExpressionStatement
+             Source: "sellListLink(prevOrder.id, newOrderId)"
+            FunctionCall
+               Type: bool
+               Source: "sellListLink(prevOrder.id, newOrderId)"
+              Identifier sellListLink
+                 Type: function (uint256,uint256) returns (bool)
+                 Source: "sellListLink"
+              MemberAccess to member id
+                 Type: uint256
+                 Source: "prevOrder.id"
+                Identifier prevOrder
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "prevOrder"
+              Identifier newOrderId
+                 Type: uint256
+                 Source: "newOrderId"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "sellListInsertBefore"
+     Source: "function sellListInsertBefore(\n        uint256 nextId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (nextId == sellHead) {\n            sellListAddHead(sender, price, volume, auxprice);\n        } else {\n            sellListInsertAfter(\n                sellList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }\n        return true;\n    }"
+    ParameterList
+       Source: "(\n        uint256 nextId,\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "nextId"
+         Type: uint256
+         Source: "uint256 nextId"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (nextId == sellHead) {\n            sellListAddHead(sender, price, volume, auxprice);\n        } else {\n            sellListInsertAfter(\n                sellList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }\n        return true;\n    }"
+      IfStatement
+         Source: "if (nextId == sellHead) {\n            sellListAddHead(sender, price, volume, auxprice);\n        } else {\n            sellListInsertAfter(\n                sellList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "nextId == sellHead"
+          Identifier nextId
+             Type: uint256
+             Source: "nextId"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+        Block
+           Source: "{\n            sellListAddHead(sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "sellListAddHead(sender, price, volume, auxprice)"
+            FunctionCall
+               Type: uint256
+               Source: "sellListAddHead(sender, price, volume, auxprice)"
+              Identifier sellListAddHead
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "sellListAddHead"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+        Block
+           Source: "{\n            sellListInsertAfter(\n                sellList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            );\n        }"
+          ExpressionStatement
+             Source: "sellListInsertAfter(\n                sellList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            )"
+            FunctionCall
+               Type: bool
+               Source: "sellListInsertAfter(\n                sellList[nextId].prev,\n                sender,\n                price,\n                volume,\n                auxprice\n            )"
+              Identifier sellListInsertAfter
+                 Type: function (uint256,address,uint256,uint256,uint256) returns (bool)
+                 Source: "sellListInsertAfter"
+              MemberAccess to member prev
+                 Type: uint256
+                 Source: "sellList[nextId].prev"
+                IndexAccess
+                   Type: struct LinkedListMapping.OrderStruct storage ref
+                   Source: "sellList[nextId]"
+                  Identifier sellList
+                     Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                     Source: "sellList"
+                  Identifier nextId
+                     Type: uint256
+                     Source: "nextId"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "sellListAddTail"
+     Source: "function sellListAddTail(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (bool) {\n        if (sellHead == 0) {\n            sellListAddHead(sender, price, volume, auxprice);\n        } else {\n            uint256 ordertId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(sellTail, ordertId);\n            sellListSetTail(ordertId);\n        }\n\n        return true;\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (sellHead == 0) {\n            sellListAddHead(sender, price, volume, auxprice);\n        } else {\n            uint256 ordertId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(sellTail, ordertId);\n            sellListSetTail(ordertId);\n        }\n\n        return true;\n    }"
+      IfStatement
+         Source: "if (sellHead == 0) {\n            sellListAddHead(sender, price, volume, auxprice);\n        } else {\n            uint256 ordertId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(sellTail, ordertId);\n            sellListSetTail(ordertId);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "sellHead == 0"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            sellListAddHead(sender, price, volume, auxprice);\n        }"
+          ExpressionStatement
+             Source: "sellListAddHead(sender, price, volume, auxprice)"
+            FunctionCall
+               Type: uint256
+               Source: "sellListAddHead(sender, price, volume, auxprice)"
+              Identifier sellListAddHead
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "sellListAddHead"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+        Block
+           Source: "{\n            uint256 ordertId =\n                sellListCreateObject(sender, price, volume, auxprice);\n            sellListLink(sellTail, ordertId);\n            sellListSetTail(ordertId);\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 ordertId =\n                sellListCreateObject(sender, price, volume, auxprice)"
+            VariableDeclaration "ordertId"
+               Type: uint256
+               Source: "uint256 ordertId"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            FunctionCall
+               Type: uint256
+               Source: "sellListCreateObject(sender, price, volume, auxprice)"
+              Identifier sellListCreateObject
+                 Type: function (address,uint256,uint256,uint256) returns (uint256)
+                 Source: "sellListCreateObject"
+              Identifier sender
+                 Type: address
+                 Source: "sender"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier auxprice
+                 Type: uint256
+                 Source: "auxprice"
+          ExpressionStatement
+             Source: "sellListLink(sellTail, ordertId)"
+            FunctionCall
+               Type: bool
+               Source: "sellListLink(sellTail, ordertId)"
+              Identifier sellListLink
+                 Type: function (uint256,uint256) returns (bool)
+                 Source: "sellListLink"
+              Identifier sellTail
+                 Type: uint256
+                 Source: "sellTail"
+              Identifier ordertId
+                 Type: uint256
+                 Source: "ordertId"
+          ExpressionStatement
+             Source: "sellListSetTail(ordertId)"
+            FunctionCall
+               Type: bool
+               Source: "sellListSetTail(ordertId)"
+              Identifier sellListSetTail
+                 Type: function (uint256) returns (bool)
+                 Source: "sellListSetTail"
+              Identifier ordertId
+                 Type: uint256
+                 Source: "ordertId"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "sellListSetTail"
+     Source: "function sellListSetTail(uint256 id) internal returns (bool) {\n        sellTail = id;\n        return true;\n    }"
+    ParameterList
+       Source: "(uint256 id)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint256 id"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        sellTail = id;\n        return true;\n    }"
+      ExpressionStatement
+         Source: "sellTail = id"
+        Assignment using operator =
+           Type: uint256
+           Source: "sellTail = id"
+          Identifier sellTail
+             Type: uint256
+             Source: "sellTail"
+          Identifier id
+             Type: uint256
+             Source: "id"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "sellListAddHead"
+     Source: "function sellListAddHead(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (uint256) {\n        uint256 ordertId =\n            sellListCreateObject(sender, price, volume, auxprice);\n        sellListLink(ordertId, sellHead);\n        sellListSetHead(ordertId);\n        if (sellTail == 0) sellListSetTail(ordertId);\n        return ordertId;\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(uint256)"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        uint256 ordertId =\n            sellListCreateObject(sender, price, volume, auxprice);\n        sellListLink(ordertId, sellHead);\n        sellListSetHead(ordertId);\n        if (sellTail == 0) sellListSetTail(ordertId);\n        return ordertId;\n    }"
+      VariableDeclarationStatement
+         Source: "uint256 ordertId =\n            sellListCreateObject(sender, price, volume, auxprice)"
+        VariableDeclaration "ordertId"
+           Type: uint256
+           Source: "uint256 ordertId"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        FunctionCall
+           Type: uint256
+           Source: "sellListCreateObject(sender, price, volume, auxprice)"
+          Identifier sellListCreateObject
+             Type: function (address,uint256,uint256,uint256) returns (uint256)
+             Source: "sellListCreateObject"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+      ExpressionStatement
+         Source: "sellListLink(ordertId, sellHead)"
+        FunctionCall
+           Type: bool
+           Source: "sellListLink(ordertId, sellHead)"
+          Identifier sellListLink
+             Type: function (uint256,uint256) returns (bool)
+             Source: "sellListLink"
+          Identifier ordertId
+             Type: uint256
+             Source: "ordertId"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+      ExpressionStatement
+         Source: "sellListSetHead(ordertId)"
+        FunctionCall
+           Type: bool
+           Source: "sellListSetHead(ordertId)"
+          Identifier sellListSetHead
+             Type: function (uint256) returns (bool)
+             Source: "sellListSetHead"
+          Identifier ordertId
+             Type: uint256
+             Source: "ordertId"
+      IfStatement
+         Source: "if (sellTail == 0) sellListSetTail(ordertId)"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "sellTail == 0"
+          Identifier sellTail
+             Type: uint256
+             Source: "sellTail"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        ExpressionStatement
+           Source: "sellListSetTail(ordertId)"
+          FunctionCall
+             Type: bool
+             Source: "sellListSetTail(ordertId)"
+            Identifier sellListSetTail
+               Type: function (uint256) returns (bool)
+               Source: "sellListSetTail"
+            Identifier ordertId
+               Type: uint256
+               Source: "ordertId"
+      Return
+         Source: "return ordertId"
+        Identifier ordertId
+           Type: uint256
+           Source: "ordertId"
+  FunctionDefinition "sellListSetHead"
+     Source: "function sellListSetHead(uint256 id) internal returns (bool) {\n        sellHead = id;\n        return true;\n    }"
+    ParameterList
+       Source: "(uint256 id)"
+      VariableDeclaration "id"
+         Type: uint256
+         Source: "uint256 id"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        sellHead = id;\n        return true;\n    }"
+      ExpressionStatement
+         Source: "sellHead = id"
+        Assignment using operator =
+           Type: uint256
+           Source: "sellHead = id"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+          Identifier id
+             Type: uint256
+             Source: "id"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "sellListCreateObject"
+     Source: "function sellListCreateObject(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) internal returns (uint256) {\n        uint256 newId = sellistCounter;\n        sellistCounter++;\n        OrderStruct memory order =\n            OrderStruct(sender, price, volume, auxprice, newId, 0, 0);\n        sellList[order.id] = order;\n        return order.id;\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(uint256)"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        uint256 newId = sellistCounter;\n        sellistCounter++;\n        OrderStruct memory order =\n            OrderStruct(sender, price, volume, auxprice, newId, 0, 0);\n        sellList[order.id] = order;\n        return order.id;\n    }"
+      VariableDeclarationStatement
+         Source: "uint256 newId = sellistCounter"
+        VariableDeclaration "newId"
+           Type: uint256
+           Source: "uint256 newId"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Identifier sellistCounter
+           Type: uint256
+           Source: "sellistCounter"
+      ExpressionStatement
+         Source: "sellistCounter++"
+        UnaryOperation (postfix) ++
+           Type: uint256
+           Source: "sellistCounter++"
+          Identifier sellistCounter
+             Type: uint256
+             Source: "sellistCounter"
+      VariableDeclarationStatement
+         Source: "OrderStruct memory order =\n            OrderStruct(sender, price, volume, auxprice, newId, 0, 0)"
+        VariableDeclaration "order"
+           Type: struct LinkedListMapping.OrderStruct memory
+           Source: "OrderStruct memory order"
+          UserDefinedTypeName "OrderStruct"
+             Source: "OrderStruct"
+        FunctionCall
+           Type: struct LinkedListMapping.OrderStruct memory
+           Source: "OrderStruct(sender, price, volume, auxprice, newId, 0, 0)"
+          Identifier OrderStruct
+             Type: type(struct LinkedListMapping.OrderStruct storage pointer)
+             Source: "OrderStruct"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+          Identifier newId
+             Type: uint256
+             Source: "newId"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      ExpressionStatement
+         Source: "sellList[order.id] = order"
+        Assignment using operator =
+           Type: struct LinkedListMapping.OrderStruct storage ref
+           Source: "sellList[order.id] = order"
+          IndexAccess
+             Type: struct LinkedListMapping.OrderStruct storage ref
+             Source: "sellList[order.id]"
+            Identifier sellList
+               Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+               Source: "sellList"
+            MemberAccess to member id
+               Type: uint256
+               Source: "order.id"
+              Identifier order
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "order"
+          Identifier order
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "order"
+      Return
+         Source: "return order.id"
+        MemberAccess to member id
+           Type: uint256
+           Source: "order.id"
+          Identifier order
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "order"
+  FunctionDefinition "sellListLink"
+     Source: "function sellListLink(uint256 prevId, uint256 nextId)\n        internal\n        returns (bool)\n    {\n        sellList[prevId].next = nextId;\n        sellList[nextId].prev = prevId;\n        return true;\n    }"
+    ParameterList
+       Source: "(uint256 prevId, uint256 nextId)"
+      VariableDeclaration "prevId"
+         Type: uint256
+         Source: "uint256 prevId"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "nextId"
+         Type: uint256
+         Source: "uint256 nextId"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        sellList[prevId].next = nextId;\n        sellList[nextId].prev = prevId;\n        return true;\n    }"
+      ExpressionStatement
+         Source: "sellList[prevId].next = nextId"
+        Assignment using operator =
+           Type: uint256
+           Source: "sellList[prevId].next = nextId"
+          MemberAccess to member next
+             Type: uint256
+             Source: "sellList[prevId].next"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "sellList[prevId]"
+              Identifier sellList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "sellList"
+              Identifier prevId
+                 Type: uint256
+                 Source: "prevId"
+          Identifier nextId
+             Type: uint256
+             Source: "nextId"
+      ExpressionStatement
+         Source: "sellList[nextId].prev = prevId"
+        Assignment using operator =
+           Type: uint256
+           Source: "sellList[nextId].prev = prevId"
+          MemberAccess to member prev
+             Type: uint256
+             Source: "sellList[nextId].prev"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "sellList[nextId]"
+              Identifier sellList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "sellList"
+              Identifier nextId
+                 Type: uint256
+                 Source: "nextId"
+          Identifier prevId
+             Type: uint256
+             Source: "prevId"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "sellListMaxDelete" - public
+     Source: "function sellListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        OrderStruct memory removeObject = sellList[sellHead];\n        uint256 _price = removeObject.Price;\n        address _sender = removeObject.Sender;\n        uint256 _volume = removeObject.Volume;\n\n        if (sellTail == sellHead) {\n            sellHead = 0;\n            sellTail = 0;\n        } else {\n            sellHead = removeObject.next;\n            sellList[removeObject.next].prev = 0;\n        }\n\n        delete sellList[removeObject.id];\n        return (_price, _sender, _volume);\n\n        /* OrderStruct memory removeObject = sellList[sellHead];\n        if (sellTail == sellHead)\n        {\n            sellListSetHead(0);\n            sellListSetTail(0);\n        }\n        else\n        {\n            sellListSetHead(removeObject.next);\n            sellList[removeObject.next].prev = 0;\n        }\n        uint256 _price =  removeObject.Price;\n        address _sender =  removeObject.Sender;\n        delete sellList[removeObject.id];\n        return (_price,_sender); */\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        OrderStruct memory removeObject = sellList[sellHead];\n        uint256 _price = removeObject.Price;\n        address _sender = removeObject.Sender;\n        uint256 _volume = removeObject.Volume;\n\n        if (sellTail == sellHead) {\n            sellHead = 0;\n            sellTail = 0;\n        } else {\n            sellHead = removeObject.next;\n            sellList[removeObject.next].prev = 0;\n        }\n\n        delete sellList[removeObject.id];\n        return (_price, _sender, _volume);\n\n        /* OrderStruct memory removeObject = sellList[sellHead];\n        if (sellTail == sellHead)\n        {\n            sellListSetHead(0);\n            sellListSetTail(0);\n        }\n        else\n        {\n            sellListSetHead(removeObject.next);\n            sellList[removeObject.next].prev = 0;\n        }\n        uint256 _price =  removeObject.Price;\n        address _sender =  removeObject.Sender;\n        delete sellList[removeObject.id];\n        return (_price,_sender); */\n    }"
+      VariableDeclarationStatement
+         Source: "OrderStruct memory removeObject = sellList[sellHead]"
+        VariableDeclaration "removeObject"
+           Type: struct LinkedListMapping.OrderStruct memory
+           Source: "OrderStruct memory removeObject"
+          UserDefinedTypeName "OrderStruct"
+             Source: "OrderStruct"
+        IndexAccess
+           Type: struct LinkedListMapping.OrderStruct storage ref
+           Source: "sellList[sellHead]"
+          Identifier sellList
+             Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+             Source: "sellList"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+      VariableDeclarationStatement
+         Source: "uint256 _price = removeObject.Price"
+        VariableDeclaration "_price"
+           Type: uint256
+           Source: "uint256 _price"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member Price
+           Type: uint256
+           Source: "removeObject.Price"
+          Identifier removeObject
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "removeObject"
+      VariableDeclarationStatement
+         Source: "address _sender = removeObject.Sender"
+        VariableDeclaration "_sender"
+           Type: address
+           Source: "address _sender"
+          ElementaryTypeName address
+             Source: "address"
+        MemberAccess to member Sender
+           Type: address
+           Source: "removeObject.Sender"
+          Identifier removeObject
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "removeObject"
+      VariableDeclarationStatement
+         Source: "uint256 _volume = removeObject.Volume"
+        VariableDeclaration "_volume"
+           Type: uint256
+           Source: "uint256 _volume"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member Volume
+           Type: uint256
+           Source: "removeObject.Volume"
+          Identifier removeObject
+             Type: struct LinkedListMapping.OrderStruct memory
+             Source: "removeObject"
+      IfStatement
+         Source: "if (sellTail == sellHead) {\n            sellHead = 0;\n            sellTail = 0;\n        } else {\n            sellHead = removeObject.next;\n            sellList[removeObject.next].prev = 0;\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "sellTail == sellHead"
+          Identifier sellTail
+             Type: uint256
+             Source: "sellTail"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+        Block
+           Source: "{\n            sellHead = 0;\n            sellTail = 0;\n        }"
+          ExpressionStatement
+             Source: "sellHead = 0"
+            Assignment using operator =
+               Type: uint256
+               Source: "sellHead = 0"
+              Identifier sellHead
+                 Type: uint256
+                 Source: "sellHead"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          ExpressionStatement
+             Source: "sellTail = 0"
+            Assignment using operator =
+               Type: uint256
+               Source: "sellTail = 0"
+              Identifier sellTail
+                 Type: uint256
+                 Source: "sellTail"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+        Block
+           Source: "{\n            sellHead = removeObject.next;\n            sellList[removeObject.next].prev = 0;\n        }"
+          ExpressionStatement
+             Source: "sellHead = removeObject.next"
+            Assignment using operator =
+               Type: uint256
+               Source: "sellHead = removeObject.next"
+              Identifier sellHead
+                 Type: uint256
+                 Source: "sellHead"
+              MemberAccess to member next
+                 Type: uint256
+                 Source: "removeObject.next"
+                Identifier removeObject
+                   Type: struct LinkedListMapping.OrderStruct memory
+                   Source: "removeObject"
+          ExpressionStatement
+             Source: "sellList[removeObject.next].prev = 0"
+            Assignment using operator =
+               Type: uint256
+               Source: "sellList[removeObject.next].prev = 0"
+              MemberAccess to member prev
+                 Type: uint256
+                 Source: "sellList[removeObject.next].prev"
+                IndexAccess
+                   Type: struct LinkedListMapping.OrderStruct storage ref
+                   Source: "sellList[removeObject.next]"
+                  Identifier sellList
+                     Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                     Source: "sellList"
+                  MemberAccess to member next
+                     Type: uint256
+                     Source: "removeObject.next"
+                    Identifier removeObject
+                       Type: struct LinkedListMapping.OrderStruct memory
+                       Source: "removeObject"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+      ExpressionStatement
+         Source: "delete sellList[removeObject.id]"
+        UnaryOperation (prefix) delete
+           Type: tuple()
+           Source: "delete sellList[removeObject.id]"
+          IndexAccess
+             Type: struct LinkedListMapping.OrderStruct storage ref
+             Source: "sellList[removeObject.id]"
+            Identifier sellList
+               Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+               Source: "sellList"
+            MemberAccess to member id
+               Type: uint256
+               Source: "removeObject.id"
+              Identifier removeObject
+                 Type: struct LinkedListMapping.OrderStruct memory
+                 Source: "removeObject"
+      Return
+         Source: "return (_price, _sender, _volume)"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(_price, _sender, _volume)"
+          Identifier _price
+             Type: uint256
+             Source: "_price"
+          Identifier _sender
+             Type: address
+             Source: "_sender"
+          Identifier _volume
+             Type: uint256
+             Source: "_volume"
+  FunctionDefinition "sellListMax" - public - const
+     Source: "function sellListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellHead != 0, \"sellList is empty!\"); //throws exception if the sellList is empty\n        return (\n            sellList[sellHead].Price,\n            sellList[sellHead].Sender,\n            sellList[sellHead].Volume\n        );\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(sellHead != 0, \"sellList is empty!\"); //throws exception if the sellList is empty\n        return (\n            sellList[sellHead].Price,\n            sellList[sellHead].Sender,\n            sellList[sellHead].Volume\n        );\n    }"
+      ExpressionStatement
+         Source: "require(sellHead != 0, \"sellList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(sellHead != 0, \"sellList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator !=
+             Type: bool
+             Source: "sellHead != 0"
+            Identifier sellHead
+               Type: uint256
+               Source: "sellHead"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+          Literal, token: [no token] value: sellList is empty!
+             Type: literal_string "sellList is empty!"
+             Source: "\"sellList is empty!\""
+      Return
+         Source: "return (\n            sellList[sellHead].Price,\n            sellList[sellHead].Sender,\n            sellList[sellHead].Volume\n        )"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(\n            sellList[sellHead].Price,\n            sellList[sellHead].Sender,\n            sellList[sellHead].Volume\n        )"
+          MemberAccess to member Price
+             Type: uint256
+             Source: "sellList[sellHead].Price"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "sellList[sellHead]"
+              Identifier sellList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "sellList"
+              Identifier sellHead
+                 Type: uint256
+                 Source: "sellHead"
+          MemberAccess to member Sender
+             Type: address
+             Source: "sellList[sellHead].Sender"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "sellList[sellHead]"
+              Identifier sellList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "sellList"
+              Identifier sellHead
+                 Type: uint256
+                 Source: "sellHead"
+          MemberAccess to member Volume
+             Type: uint256
+             Source: "sellList[sellHead].Volume"
+            IndexAccess
+               Type: struct LinkedListMapping.OrderStruct storage ref
+               Source: "sellList[sellHead]"
+              Identifier sellList
+                 Type: mapping(uint256 => struct LinkedListMapping.OrderStruct storage ref)
+                 Source: "sellList"
+              Identifier sellHead
+                 Type: uint256
+                 Source: "sellHead"
+  FunctionDefinition "sellListisEmpty" - public - const
+     Source: "function sellListisEmpty() external view returns (bool) {\n        if (sellHead == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (sellHead == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+      IfStatement
+         Source: "if (sellHead == 0) {\n            return true;\n        } else {\n            return false;\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "sellHead == 0"
+          Identifier sellHead
+             Type: uint256
+             Source: "sellHead"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            return true;\n        }"
+          Return
+             Source: "return true"
+            Literal, token: true value: true
+               Type: bool
+               Source: "true"
+        Block
+           Source: "{\n            return false;\n        }"
+          Return
+             Source: "return false"
+            Literal, token: false value: false
+               Type: bool
+               Source: "false"
+  FunctionDefinition "deletePQ" - public
+     Source: "function deletePQ(address payable callmarket) external {\n        selfdestruct(callmarket);\n    }"
+    ParameterList
+       Source: "(address payable callmarket)"
+      VariableDeclaration "callmarket"
+         Type: address payable
+         Source: "address payable callmarket"
+        ElementaryTypeName address
+           Source: "address payable"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        selfdestruct(callmarket);\n    }"
+      ExpressionStatement
+         Source: "selfdestruct(callmarket)"
+        FunctionCall
+           Type: tuple()
+           Source: "selfdestruct(callmarket)"
+          Identifier selfdestruct
+             Type: function (address payable)
+             Source: "selfdestruct"
+          Identifier callmarket
+             Type: address payable
+             Source: "callmarket"

@@ -1,0 +1,2187 @@
+PragmaDirective
+   Source: "pragma solidity >=0.5.7 <0.6.0;"
+ImportDirective "./IERC20.sol"
+   Source: "import \"./IERC20.sol\";"
+ImportDirective "./HeapDynamicArray.sol"
+   Source: "import \"./HeapDynamicArray.sol\";"
+ImportDirective "./HeapStaticArray.sol"
+   Source: "import \"./HeapStaticArray.sol\";"
+ImportDirective "./HeapMapping.sol"
+   Source: "import \"./HeapMapping.sol\";"
+ImportDirective "./LinkedList.sol"
+   Source: "import \"./LinkedList.sol\";"
+ImportDirective "./LinkedListMapping.sol"
+   Source: "import \"./LinkedListMapping.sol\";"
+ContractDefinition "CallMarket"
+   Source: "contract CallMarket {\n    //HeapDynamicArray public priorityQueue = new HeapDynamicArray();\n    //HeapStaticArray public priorityQueue = new HeapStaticArray(84);\n    //HeapMapping public priorityQueue = new HeapMapping();\n    //we pass the address of the callmarket to the LinkedList so that the selfdestruct could send Ethers back to the callmarket\n    //LinkedList public priorityQueue = new LinkedList(address(this));\n    LinkedListMapping public priorityQueue = new LinkedListMapping();\n    //Mapping public MP = new Mapping(address(this));\n    address payable public callmarket = address(uint160(address(this)));\n\n    //***********************************************************************//\n\n    /**\n     *   @dev Converts string to uint and returns the uint\n     */\n\n    function strTouint(string memory s) internal pure returns (uint256) {\n        bytes memory b = bytes(s);\n        uint256 i;\n        uint256 result = 0;\n        uint256 j = b.length;\n        for (i = 0; i < j; i++) {\n            uint256 c = uint256(uint8(b[i]));\n            if (c >= 48 && c <= 57) {\n                result = result * 10 + (c - 48);\n            }\n        }\n\n        return result;\n    }\n\n    //***********************************************************************//\n\n    /**\n     *   @dev Converts uint to string and returns the string\n     */\n\n    function uintTostr(uint256 intVar)\n        internal\n        pure\n        returns (string memory _uintAsString)\n    {\n        if (intVar == 0) {\n            return \"0\";\n        }\n        uint256 j = intVar;\n        uint256 len;\n        while (j != 0) {\n            len++;\n            j /= 10;\n        }\n        bytes memory bstr = new bytes(len);\n        uint256 k = len - 1;\n        while (intVar != 0) {\n            bstr[k--] = bytes1(uint8(48 + (intVar % 10)));\n            intVar /= 10;\n        }\n        return string(bstr);\n    }\n\n    /**\n     *   @dev Contcatenates two string and returns the result\n     */\n\n    function contcat(string memory a, string memory b)\n        internal\n        pure\n        returns (string memory)\n    {\n        return string(abi.encodePacked(a, b));\n    }\n\n    /**\n    *   @dev\n        States.Open: The market is open\n        States.Closed: The market is closed but the orders have not yet been processed\n        States.Settled: The market is closed and settled (orders have been processed)\n        creationTime: The openning time of the market\n        biddingPeriod: The window of time during which the market is open\n        numOrders: Total orders in the market (both bids and asks)\n        buylistCounter: A bid orders counter that is decremented every time a bid is submitted (used for handling ties)\n        sellistCounter: An ask orders counter that is incremented every time an ask is submitted (used for handling ties)\n        refunds: Maintains the refund counters to be transferred to the block.coinbase (current block miner)\n\n        totalTokenBalance: Maintains the total token balance of each trader \n        unavailableTokenBalance: Maintains the number of tokens a trader has depositted\n        unavailableTokenArray: Maintains a list of unavailableTokenBalance addresses, this list will be used to delete the unavailableTokenBalance mapping\n\n        totalEtherBalance: Maintains the total ETH balance of each trader \n        unavailableEtherBalance: Maintains the number of ETH a trader has depositted\n        unavailableEtherArray: Maintains a list of unavailableEtherBalance addresses, this list will be used to delete the unavailableEtherBalance mapping\n    */\n\n    //uint256 public countervariable;\n    enum States { Open, Closed, Settled }\n    States internal state;\n    uint256 public creationTime;\n    uint256 public biddingPeriod;\n    uint256 public numOrders;\n    uint256 public buylistCounter;\n    uint256 public sellistCounter;\n    mapping(address => uint256) internal refunds;\n\n    mapping(address => uint256) public totalTokenBalance;\n    mapping(address => uint256) public unavailableTokenBalance;\n    address[] public unavailableTokenArray;\n\n    mapping(address => uint256) public totalEtherBalance;\n    mapping(address => uint256) public unavailableEtherBalance;\n    address[] public unavailableEtherArray;\n\n    //***************Function Modifiers*************//\n\n    /* modifier CheckAuctionStage () {\n        if (now >= creationTime + biddingPeriod || numOrders == 1000) \n        {\n            CloseMarket();\n        }\n        _;\n    } */\n\n    /**\n     *   @dev Checks whether the market is at state_1 or not\n     */\n\n    modifier auctionAtStage(States state_1) {\n        require(state == state_1);\n        _;\n    }\n\n    //***********************************************************************//\n    /**\n    *   @dev Allows the traders to deposit ERC20 tokens\n        Traders must firs call the approve() from the ERC20 token contract to allow the call market contract to spend those tokens\n    */\n\n    function depositToken(address token, uint256 numofTokens)\n        external\n        returns (bool)\n    {\n        totalTokenBalance[msg.sender] += numofTokens;\n        IERC20(token).transferFrom(msg.sender, address(this), numofTokens);\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Allows the traders to deposit ETH\n     */\n\n    function depositEther() external payable returns (bool) {\n        totalEtherBalance[msg.sender] += msg.value;\n\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Opens the market\n     */\n\n    function openMarket() external returns (bool) {\n        creationTime = block.timestamp;\n        biddingPeriod = 10 minutes;\n        state = States.Open;\n        numOrders = 0;\n        sellistCounter = 100;\n        buylistCounter = 999;\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n    *   @dev \n        Allows traders to submit bid orders if the market is at the open state\n        Traders must have enough ETH already depositted\n        To handle ties: Converts the bid price to string, contactenate it with the buylistCounter and converts the constactenated string to uint\n        Calls the PQ InsertBid function\n        Increment the market's total number of orders \n        Decrements the buylistCounter\n        Increase the unavailableEtherBalance of the trader by _volume * _price;\n    */\n\n    function submitBid(uint256 price, uint256 volume)\n        external\n        auctionAtStage(States.Open)\n        returns (bool)\n    {\n        require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= volume * price,\n            \"Ether balance is not enough!\"\n        );\n\n        uint256 _finalpriceUint;\n        string memory _finalpriceString;\n        _finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(buylistCounter)\n        );\n        _finalpriceUint = strTouint(_finalpriceString);\n\n        numOrders++;\n        buylistCounter--;\n        unavailableEtherBalance[msg.sender] += volume * price;\n        unavailableEtherArray.push(msg.sender);\n        priorityQueue.insertBid(msg.sender, price, volume, _finalpriceUint);\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n    *   @dev \n        Allows traders to submit ask orders if the market is at the open state\n        Traders must have enough tokens already depositted\n        To handle ties: Converts the ask price to string, contactenate it with the sellistCounter and converts the constactenated string to uint\n        Calls the PQ InsertAsk function\n        Increments the market's total number of orders \n        Increments the sellistCounter\n        Increase the unavailableTokenBalance of the trader by _volume\n    */\n\n    function submitAsk(uint256 price, uint256 volume)\n        external\n        auctionAtStage(States.Open)\n        returns (bool)\n    {\n        require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= volume,\n            \"Token balance is not enough!\"\n        );\n        uint256 _finalpriceUint;\n        string memory _finalpriceString;\n        _finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(sellistCounter)\n        );\n        _finalpriceUint = strTouint(_finalpriceString);\n\n        numOrders++;\n        sellistCounter++;\n        unavailableTokenBalance[msg.sender] += volume;\n        unavailableTokenArray.push(msg.sender);\n        priorityQueue.insertAsk(msg.sender, price, volume, _finalpriceUint);\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Closes the market\n     */\n\n    function closeMarket() external returns (bool) {\n        state = States.Closed;\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n    *   @dev \n        Processes the orders only if the market is at the closed state\n\n    */\n\n    //*********************************************************//\n    /**\n    *   @dev \n        matchorders() version 1: Volumes are all 1\n\n    */\n    /* function matchOrders() external auctionAtStage(States.Closed) returns (bool){\n\n        \n        state = States.Settled;\n\n        (uint256 BBPrice, address BBSender, uint256 BBVolume) = priorityQueue.buyListMaxDelete();\n        (uint256 BAPrice, address BASender, uint256 BAVolume) = priorityQueue.sellListMaxDelete();\n    \n        while (BBPrice >= BAPrice)\n        \n        {  \n    \n            //Alice bids 110$, Bob asks for 90$ -> Alice pays 110$ but Bob only gets what he's asked for (90$). 20$ price improvements go to the miner\n            totalTokenBalance[BBSender] += 1;\n            totalEtherBalance[BBSender] -= BBPrice;\n\n            totalEtherBalance[BASender] += BAPrice;\n            totalTokenBalance[BASender] -= 1;\n            //refunds[block.coinbase] += BBPrice - BAPrice;\n         \n            if (priorityQueue.buyListisEmpty() || priorityQueue.sellListisEmpty()) \n            {\n                break;\n            }\n\n            (BBPrice,BBSender,BBVolume) = priorityQueue.buyListMaxDelete();\n            (BAPrice,BASender,BAVolume) = priorityQueue.sellListMaxDelete();\n        }\n        \n        //uint refund = refunds[block.coinbase]; \n        //refunds[block.coinbase] = 0; \n        //block.coinbase.transfer(refund);\n        \n        // for (uint i = 0 ; i< unavailableTokenArray.length; i++) \n        // {   \n        //     delete unavailableTokenBalance[unavailableTokenArray[i]];\n        // }\n        \n        // for (uint j= 0 ; j< unavailableEtherArray.length; j++) \n        // {   \n        //     delete unavailableEtherBalance[unavailableEtherArray[j]];\n        // }\n\n        return true;\n    } */\n    //*********************************************************//\n    /**\n    *   @dev \n        matchorders() version 2: Partial fillings\n\n    */\n\n    function matchOrders()\n        external\n        auctionAtStage(States.Closed)\n        returns (bool)\n    {\n        state = States.Settled;\n\n        (uint256 BBPrice, address BBSender, uint256 BBVolume) =\n            priorityQueue.buyListMax();\n        (uint256 BAPrice, address BASender, uint256 BAVolume) =\n            priorityQueue.sellListMax();\n\n        while (BBPrice >= BAPrice) {\n            if (BBVolume > BAVolume) {\n                totalTokenBalance[BBSender] += BAVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BAVolume;\n\n                BBVolume = BBVolume - BAVolume;\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            if (BBVolume < BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                BAVolume = BAVolume - BBVolume;\n                priorityQueue.buyListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n            }\n\n            if (BBVolume == BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                priorityQueue.buyListMaxDelete();\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            ////uint refund = refunds[block.coinbase];\n            ////refunds[block.coinbase] = 0;\n            ////block.coinbase.transfer(refund);\n\n            //for (uint i = 0 ; i< unavailableTokenArray.length; i++)\n            //{\n            // delete unavailableTokenBalance[unavailableTokenArray[i]];\n            //}\n\n            //for (uint j= 0 ; j< unavailableEtherArray.length; j++)\n            //{\n            // delete unavailableEtherBalance[unavailableEtherArray[j]];\n            //}\n        }\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Allows the tarders to claim their available tokens back\n     */\n    function claimTokens(address token, uint256 numofTokens)\n        external\n        returns (bool)\n    {\n        require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= numofTokens,\n            \"Not enough Tokens\"\n        );\n        uint256 tokensToBeClaimed = numofTokens;\n        totalTokenBalance[msg.sender] -= tokensToBeClaimed;\n        IERC20(token).transfer(msg.sender, tokensToBeClaimed);\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Allows the tarders to claim their available ETH back\n     */\n    function claimEther(uint256 numofEthers) external returns (bool) {\n        require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= numofEthers,\n            \"Not enough Ethers\"\n        );\n        uint256 EthersToBeClaimed = numofEthers;\n        totalEtherBalance[msg.sender] -= EthersToBeClaimed;\n        msg.sender.transfer(EthersToBeClaimed);\n        return true;\n    }\n    //***********************************************************************//\n    /**\n     *   @dev Getter function to get the Ether balanace of the contract\n     */\n    /* function getBalance() public view returns (uint256) {\n        return address(this).balance;\n    } */\n}"
+  VariableDeclaration "priorityQueue"
+     Type: contract LinkedListMapping
+     Source: "LinkedListMapping public priorityQueue = new LinkedListMapping()"
+    UserDefinedTypeName "LinkedListMapping"
+       Source: "LinkedListMapping"
+    FunctionCall
+       Type: contract LinkedListMapping
+       Source: "new LinkedListMapping()"
+      NewExpression
+         Type: function () returns (contract LinkedListMapping)
+         Source: "new LinkedListMapping"
+        UserDefinedTypeName "LinkedListMapping"
+           Source: "LinkedListMapping"
+  VariableDeclaration "callmarket"
+     Type: address payable
+     Source: "address payable public callmarket = address(uint160(address(this)))"
+    ElementaryTypeName address
+       Source: "address payable"
+    FunctionCall
+       Type: address payable
+       Source: "address(uint160(address(this)))"
+      ElementaryTypeNameExpression address
+         Type: type(address)
+         Source: "address"
+      FunctionCall
+         Type: uint160
+         Source: "uint160(address(this))"
+        ElementaryTypeNameExpression uint160
+           Type: type(uint160)
+           Source: "uint160"
+        FunctionCall
+           Type: address
+           Source: "address(this)"
+          ElementaryTypeNameExpression address
+             Type: type(address)
+             Source: "address"
+          Identifier this
+             Type: contract CallMarket
+             Source: "this"
+  FunctionDefinition "strTouint"
+     Source: "function strTouint(string memory s) internal pure returns (uint256) {\n        bytes memory b = bytes(s);\n        uint256 i;\n        uint256 result = 0;\n        uint256 j = b.length;\n        for (i = 0; i < j; i++) {\n            uint256 c = uint256(uint8(b[i]));\n            if (c >= 48 && c <= 57) {\n                result = result * 10 + (c - 48);\n            }\n        }\n\n        return result;\n    }"
+    ParameterList
+       Source: "(string memory s)"
+      VariableDeclaration "s"
+         Type: string memory
+         Source: "string memory s"
+        ElementaryTypeName string
+           Source: "string"
+    ParameterList
+       Source: "(uint256)"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        bytes memory b = bytes(s);\n        uint256 i;\n        uint256 result = 0;\n        uint256 j = b.length;\n        for (i = 0; i < j; i++) {\n            uint256 c = uint256(uint8(b[i]));\n            if (c >= 48 && c <= 57) {\n                result = result * 10 + (c - 48);\n            }\n        }\n\n        return result;\n    }"
+      VariableDeclarationStatement
+         Source: "bytes memory b = bytes(s)"
+        VariableDeclaration "b"
+           Type: bytes memory
+           Source: "bytes memory b"
+          ElementaryTypeName bytes
+             Source: "bytes"
+        FunctionCall
+           Type: bytes memory
+           Source: "bytes(s)"
+          ElementaryTypeNameExpression bytes
+             Type: type(bytes storage pointer)
+             Source: "bytes"
+          Identifier s
+             Type: string memory
+             Source: "s"
+      VariableDeclarationStatement
+         Source: "uint256 i"
+        VariableDeclaration "i"
+           Type: uint256
+           Source: "uint256 i"
+          ElementaryTypeName uint256
+             Source: "uint256"
+      VariableDeclarationStatement
+         Source: "uint256 result = 0"
+        VariableDeclaration "result"
+           Type: uint256
+           Source: "uint256 result"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Literal, token: [no token] value: 0
+           Type: int_const 0
+           Source: "0"
+      VariableDeclarationStatement
+         Source: "uint256 j = b.length"
+        VariableDeclaration "j"
+           Type: uint256
+           Source: "uint256 j"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member length
+           Type: uint256
+           Source: "b.length"
+          Identifier b
+             Type: bytes memory
+             Source: "b"
+      ForStatement
+         Source: "for (i = 0; i < j; i++) {\n            uint256 c = uint256(uint8(b[i]));\n            if (c >= 48 && c <= 57) {\n                result = result * 10 + (c - 48);\n            }\n        }"
+        ExpressionStatement
+           Source: "i = 0"
+          Assignment using operator =
+             Type: uint256
+             Source: "i = 0"
+            Identifier i
+               Type: uint256
+               Source: "i"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+        BinaryOperation using operator <
+           Type: bool
+           Source: "i < j"
+          Identifier i
+             Type: uint256
+             Source: "i"
+          Identifier j
+             Type: uint256
+             Source: "j"
+        ExpressionStatement
+           Source: "i++"
+          UnaryOperation (postfix) ++
+             Type: uint256
+             Source: "i++"
+            Identifier i
+               Type: uint256
+               Source: "i"
+        Block
+           Source: "{\n            uint256 c = uint256(uint8(b[i]));\n            if (c >= 48 && c <= 57) {\n                result = result * 10 + (c - 48);\n            }\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 c = uint256(uint8(b[i]))"
+            VariableDeclaration "c"
+               Type: uint256
+               Source: "uint256 c"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            FunctionCall
+               Type: uint256
+               Source: "uint256(uint8(b[i]))"
+              ElementaryTypeNameExpression uint256
+                 Type: type(uint256)
+                 Source: "uint256"
+              FunctionCall
+                 Type: uint8
+                 Source: "uint8(b[i])"
+                ElementaryTypeNameExpression uint8
+                   Type: type(uint8)
+                   Source: "uint8"
+                IndexAccess
+                   Type: bytes1
+                   Source: "b[i]"
+                  Identifier b
+                     Type: bytes memory
+                     Source: "b"
+                  Identifier i
+                     Type: uint256
+                     Source: "i"
+          IfStatement
+             Source: "if (c >= 48 && c <= 57) {\n                result = result * 10 + (c - 48);\n            }"
+            BinaryOperation using operator &&
+               Type: bool
+               Source: "c >= 48 && c <= 57"
+              BinaryOperation using operator >=
+                 Type: bool
+                 Source: "c >= 48"
+                Identifier c
+                   Type: uint256
+                   Source: "c"
+                Literal, token: [no token] value: 48
+                   Type: int_const 48
+                   Source: "48"
+              BinaryOperation using operator <=
+                 Type: bool
+                 Source: "c <= 57"
+                Identifier c
+                   Type: uint256
+                   Source: "c"
+                Literal, token: [no token] value: 57
+                   Type: int_const 57
+                   Source: "57"
+            Block
+               Source: "{\n                result = result * 10 + (c - 48);\n            }"
+              ExpressionStatement
+                 Source: "result = result * 10 + (c - 48)"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "result = result * 10 + (c - 48)"
+                  Identifier result
+                     Type: uint256
+                     Source: "result"
+                  BinaryOperation using operator +
+                     Type: uint256
+                     Source: "result * 10 + (c - 48)"
+                    BinaryOperation using operator *
+                       Type: uint256
+                       Source: "result * 10"
+                      Identifier result
+                         Type: uint256
+                         Source: "result"
+                      Literal, token: [no token] value: 10
+                         Type: int_const 10
+                         Source: "10"
+                    TupleExpression
+                       Type: uint256
+                       Source: "(c - 48)"
+                      BinaryOperation using operator -
+                         Type: uint256
+                         Source: "c - 48"
+                        Identifier c
+                           Type: uint256
+                           Source: "c"
+                        Literal, token: [no token] value: 48
+                           Type: int_const 48
+                           Source: "48"
+      Return
+         Source: "return result"
+        Identifier result
+           Type: uint256
+           Source: "result"
+  FunctionDefinition "uintTostr"
+     Source: "function uintTostr(uint256 intVar)\n        internal\n        pure\n        returns (string memory _uintAsString)\n    {\n        if (intVar == 0) {\n            return \"0\";\n        }\n        uint256 j = intVar;\n        uint256 len;\n        while (j != 0) {\n            len++;\n            j /= 10;\n        }\n        bytes memory bstr = new bytes(len);\n        uint256 k = len - 1;\n        while (intVar != 0) {\n            bstr[k--] = bytes1(uint8(48 + (intVar % 10)));\n            intVar /= 10;\n        }\n        return string(bstr);\n    }"
+    ParameterList
+       Source: "(uint256 intVar)"
+      VariableDeclaration "intVar"
+         Type: uint256
+         Source: "uint256 intVar"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(string memory _uintAsString)"
+      VariableDeclaration "_uintAsString"
+         Type: string memory
+         Source: "string memory _uintAsString"
+        ElementaryTypeName string
+           Source: "string"
+    Block
+       Source: "{\n        if (intVar == 0) {\n            return \"0\";\n        }\n        uint256 j = intVar;\n        uint256 len;\n        while (j != 0) {\n            len++;\n            j /= 10;\n        }\n        bytes memory bstr = new bytes(len);\n        uint256 k = len - 1;\n        while (intVar != 0) {\n            bstr[k--] = bytes1(uint8(48 + (intVar % 10)));\n            intVar /= 10;\n        }\n        return string(bstr);\n    }"
+      IfStatement
+         Source: "if (intVar == 0) {\n            return \"0\";\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "intVar == 0"
+          Identifier intVar
+             Type: uint256
+             Source: "intVar"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            return \"0\";\n        }"
+          Return
+             Source: "return \"0\""
+            Literal, token: [no token] value: 0
+               Type: literal_string "0"
+               Source: "\"0\""
+      VariableDeclarationStatement
+         Source: "uint256 j = intVar"
+        VariableDeclaration "j"
+           Type: uint256
+           Source: "uint256 j"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Identifier intVar
+           Type: uint256
+           Source: "intVar"
+      VariableDeclarationStatement
+         Source: "uint256 len"
+        VariableDeclaration "len"
+           Type: uint256
+           Source: "uint256 len"
+          ElementaryTypeName uint256
+             Source: "uint256"
+      WhileStatement
+         Source: "while (j != 0) {\n            len++;\n            j /= 10;\n        }"
+        BinaryOperation using operator !=
+           Type: bool
+           Source: "j != 0"
+          Identifier j
+             Type: uint256
+             Source: "j"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            len++;\n            j /= 10;\n        }"
+          ExpressionStatement
+             Source: "len++"
+            UnaryOperation (postfix) ++
+               Type: uint256
+               Source: "len++"
+              Identifier len
+                 Type: uint256
+                 Source: "len"
+          ExpressionStatement
+             Source: "j /= 10"
+            Assignment using operator /=
+               Type: uint256
+               Source: "j /= 10"
+              Identifier j
+                 Type: uint256
+                 Source: "j"
+              Literal, token: [no token] value: 10
+                 Type: int_const 10
+                 Source: "10"
+      VariableDeclarationStatement
+         Source: "bytes memory bstr = new bytes(len)"
+        VariableDeclaration "bstr"
+           Type: bytes memory
+           Source: "bytes memory bstr"
+          ElementaryTypeName bytes
+             Source: "bytes"
+        FunctionCall
+           Type: bytes memory
+           Source: "new bytes(len)"
+          NewExpression
+             Type: function (uint256) pure returns (bytes memory)
+             Source: "new bytes"
+            ElementaryTypeName bytes
+               Source: "bytes"
+          Identifier len
+             Type: uint256
+             Source: "len"
+      VariableDeclarationStatement
+         Source: "uint256 k = len - 1"
+        VariableDeclaration "k"
+           Type: uint256
+           Source: "uint256 k"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        BinaryOperation using operator -
+           Type: uint256
+           Source: "len - 1"
+          Identifier len
+             Type: uint256
+             Source: "len"
+          Literal, token: [no token] value: 1
+             Type: int_const 1
+             Source: "1"
+      WhileStatement
+         Source: "while (intVar != 0) {\n            bstr[k--] = bytes1(uint8(48 + (intVar % 10)));\n            intVar /= 10;\n        }"
+        BinaryOperation using operator !=
+           Type: bool
+           Source: "intVar != 0"
+          Identifier intVar
+             Type: uint256
+             Source: "intVar"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            bstr[k--] = bytes1(uint8(48 + (intVar % 10)));\n            intVar /= 10;\n        }"
+          ExpressionStatement
+             Source: "bstr[k--] = bytes1(uint8(48 + (intVar % 10)))"
+            Assignment using operator =
+               Type: bytes1
+               Source: "bstr[k--] = bytes1(uint8(48 + (intVar % 10)))"
+              IndexAccess
+                 Type: bytes1
+                 Source: "bstr[k--]"
+                Identifier bstr
+                   Type: bytes memory
+                   Source: "bstr"
+                UnaryOperation (postfix) --
+                   Type: uint256
+                   Source: "k--"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+              FunctionCall
+                 Type: bytes1
+                 Source: "bytes1(uint8(48 + (intVar % 10)))"
+                ElementaryTypeNameExpression bytes1
+                   Type: type(bytes1)
+                   Source: "bytes1"
+                FunctionCall
+                   Type: uint8
+                   Source: "uint8(48 + (intVar % 10))"
+                  ElementaryTypeNameExpression uint8
+                     Type: type(uint8)
+                     Source: "uint8"
+                  BinaryOperation using operator +
+                     Type: uint256
+                     Source: "48 + (intVar % 10)"
+                    Literal, token: [no token] value: 48
+                       Type: int_const 48
+                       Source: "48"
+                    TupleExpression
+                       Type: uint256
+                       Source: "(intVar % 10)"
+                      BinaryOperation using operator %
+                         Type: uint256
+                         Source: "intVar % 10"
+                        Identifier intVar
+                           Type: uint256
+                           Source: "intVar"
+                        Literal, token: [no token] value: 10
+                           Type: int_const 10
+                           Source: "10"
+          ExpressionStatement
+             Source: "intVar /= 10"
+            Assignment using operator /=
+               Type: uint256
+               Source: "intVar /= 10"
+              Identifier intVar
+                 Type: uint256
+                 Source: "intVar"
+              Literal, token: [no token] value: 10
+                 Type: int_const 10
+                 Source: "10"
+      Return
+         Source: "return string(bstr)"
+        FunctionCall
+           Type: string memory
+           Source: "string(bstr)"
+          ElementaryTypeNameExpression string
+             Type: type(string storage pointer)
+             Source: "string"
+          Identifier bstr
+             Type: bytes memory
+             Source: "bstr"
+  FunctionDefinition "contcat"
+     Source: "function contcat(string memory a, string memory b)\n        internal\n        pure\n        returns (string memory)\n    {\n        return string(abi.encodePacked(a, b));\n    }"
+    ParameterList
+       Source: "(string memory a, string memory b)"
+      VariableDeclaration "a"
+         Type: string memory
+         Source: "string memory a"
+        ElementaryTypeName string
+           Source: "string"
+      VariableDeclaration "b"
+         Type: string memory
+         Source: "string memory b"
+        ElementaryTypeName string
+           Source: "string"
+    ParameterList
+       Source: "(string memory)"
+      VariableDeclaration ""
+         Type: string memory
+         Source: "string memory"
+        ElementaryTypeName string
+           Source: "string"
+    Block
+       Source: "{\n        return string(abi.encodePacked(a, b));\n    }"
+      Return
+         Source: "return string(abi.encodePacked(a, b))"
+        FunctionCall
+           Type: string memory
+           Source: "string(abi.encodePacked(a, b))"
+          ElementaryTypeNameExpression string
+             Type: type(string storage pointer)
+             Source: "string"
+          FunctionCall
+             Type: bytes memory
+             Source: "abi.encodePacked(a, b)"
+            MemberAccess to member encodePacked
+               Type: function () pure returns (bytes memory)
+               Source: "abi.encodePacked"
+              Identifier abi
+                 Type: abi
+                 Source: "abi"
+            Identifier a
+               Type: string memory
+               Source: "a"
+            Identifier b
+               Type: string memory
+               Source: "b"
+  EnumDefinition "States"
+    EnumValue "Open"
+    EnumValue "Closed"
+    EnumValue "Settled"
+  VariableDeclaration "state"
+     Type: enum CallMarket.States
+     Source: "States internal state"
+    UserDefinedTypeName "States"
+       Source: "States"
+  VariableDeclaration "creationTime"
+     Type: uint256
+     Source: "uint256 public creationTime"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "biddingPeriod"
+     Type: uint256
+     Source: "uint256 public biddingPeriod"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "numOrders"
+     Type: uint256
+     Source: "uint256 public numOrders"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "buylistCounter"
+     Type: uint256
+     Source: "uint256 public buylistCounter"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "sellistCounter"
+     Type: uint256
+     Source: "uint256 public sellistCounter"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "refunds"
+     Type: mapping(address => uint256)
+     Source: "mapping(address => uint256) internal refunds"
+    Mapping
+       Source: "mapping(address => uint256)"
+      ElementaryTypeName address
+         Source: "address"
+      ElementaryTypeName uint256
+         Source: "uint256"
+  VariableDeclaration "totalTokenBalance"
+     Type: mapping(address => uint256)
+     Source: "mapping(address => uint256) public totalTokenBalance"
+    Mapping
+       Source: "mapping(address => uint256)"
+      ElementaryTypeName address
+         Source: "address"
+      ElementaryTypeName uint256
+         Source: "uint256"
+  VariableDeclaration "unavailableTokenBalance"
+     Type: mapping(address => uint256)
+     Source: "mapping(address => uint256) public unavailableTokenBalance"
+    Mapping
+       Source: "mapping(address => uint256)"
+      ElementaryTypeName address
+         Source: "address"
+      ElementaryTypeName uint256
+         Source: "uint256"
+  VariableDeclaration "unavailableTokenArray"
+     Type: address[] storage ref
+     Source: "address[] public unavailableTokenArray"
+    ArrayTypeName
+       Source: "address[]"
+      ElementaryTypeName address
+         Source: "address"
+  VariableDeclaration "totalEtherBalance"
+     Type: mapping(address => uint256)
+     Source: "mapping(address => uint256) public totalEtherBalance"
+    Mapping
+       Source: "mapping(address => uint256)"
+      ElementaryTypeName address
+         Source: "address"
+      ElementaryTypeName uint256
+         Source: "uint256"
+  VariableDeclaration "unavailableEtherBalance"
+     Type: mapping(address => uint256)
+     Source: "mapping(address => uint256) public unavailableEtherBalance"
+    Mapping
+       Source: "mapping(address => uint256)"
+      ElementaryTypeName address
+         Source: "address"
+      ElementaryTypeName uint256
+         Source: "uint256"
+  VariableDeclaration "unavailableEtherArray"
+     Type: address[] storage ref
+     Source: "address[] public unavailableEtherArray"
+    ArrayTypeName
+       Source: "address[]"
+      ElementaryTypeName address
+         Source: "address"
+  ModifierDefinition "auctionAtStage"
+     Source: "modifier auctionAtStage(States state_1) {\n        require(state == state_1);\n        _;\n    }"
+    ParameterList
+       Source: "(States state_1)"
+      VariableDeclaration "state_1"
+         Type: enum CallMarket.States
+         Source: "States state_1"
+        UserDefinedTypeName "States"
+           Source: "States"
+    Block
+       Source: "{\n        require(state == state_1);\n        _;\n    }"
+      ExpressionStatement
+         Source: "require(state == state_1)"
+        FunctionCall
+           Type: tuple()
+           Source: "require(state == state_1)"
+          Identifier require
+             Type: function (bool) pure
+             Source: "require"
+          BinaryOperation using operator ==
+             Type: bool
+             Source: "state == state_1"
+            Identifier state
+               Type: enum CallMarket.States
+               Source: "state"
+            Identifier state_1
+               Type: enum CallMarket.States
+               Source: "state_1"
+      PlaceholderStatement
+         Source: "_"
+  FunctionDefinition "depositToken" - public
+     Source: "function depositToken(address token, uint256 numofTokens)\n        external\n        returns (bool)\n    {\n        totalTokenBalance[msg.sender] += numofTokens;\n        IERC20(token).transferFrom(msg.sender, address(this), numofTokens);\n        return true;\n    }"
+    ParameterList
+       Source: "(address token, uint256 numofTokens)"
+      VariableDeclaration "token"
+         Type: address
+         Source: "address token"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "numofTokens"
+         Type: uint256
+         Source: "uint256 numofTokens"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        totalTokenBalance[msg.sender] += numofTokens;\n        IERC20(token).transferFrom(msg.sender, address(this), numofTokens);\n        return true;\n    }"
+      ExpressionStatement
+         Source: "totalTokenBalance[msg.sender] += numofTokens"
+        Assignment using operator +=
+           Type: uint256
+           Source: "totalTokenBalance[msg.sender] += numofTokens"
+          IndexAccess
+             Type: uint256
+             Source: "totalTokenBalance[msg.sender]"
+            Identifier totalTokenBalance
+               Type: mapping(address => uint256)
+               Source: "totalTokenBalance"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+          Identifier numofTokens
+             Type: uint256
+             Source: "numofTokens"
+      ExpressionStatement
+         Source: "IERC20(token).transferFrom(msg.sender, address(this), numofTokens)"
+        FunctionCall
+           Type: bool
+           Source: "IERC20(token).transferFrom(msg.sender, address(this), numofTokens)"
+          MemberAccess to member transferFrom
+             Type: function (address,address,uint256) external returns (bool)
+             Source: "IERC20(token).transferFrom"
+            FunctionCall
+               Type: contract IERC20
+               Source: "IERC20(token)"
+              Identifier IERC20
+                 Type: type(contract IERC20)
+                 Source: "IERC20"
+              Identifier token
+                 Type: address
+                 Source: "token"
+          MemberAccess to member sender
+             Type: address payable
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+          FunctionCall
+             Type: address
+             Source: "address(this)"
+            ElementaryTypeNameExpression address
+               Type: type(address)
+               Source: "address"
+            Identifier this
+               Type: contract CallMarket
+               Source: "this"
+          Identifier numofTokens
+             Type: uint256
+             Source: "numofTokens"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "depositEther" - public
+     Source: "function depositEther() external payable returns (bool) {\n        totalEtherBalance[msg.sender] += msg.value;\n\n        return true;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        totalEtherBalance[msg.sender] += msg.value;\n\n        return true;\n    }"
+      ExpressionStatement
+         Source: "totalEtherBalance[msg.sender] += msg.value"
+        Assignment using operator +=
+           Type: uint256
+           Source: "totalEtherBalance[msg.sender] += msg.value"
+          IndexAccess
+             Type: uint256
+             Source: "totalEtherBalance[msg.sender]"
+            Identifier totalEtherBalance
+               Type: mapping(address => uint256)
+               Source: "totalEtherBalance"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+          MemberAccess to member value
+             Type: uint256
+             Source: "msg.value"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "openMarket" - public
+     Source: "function openMarket() external returns (bool) {\n        creationTime = block.timestamp;\n        biddingPeriod = 10 minutes;\n        state = States.Open;\n        numOrders = 0;\n        sellistCounter = 100;\n        buylistCounter = 999;\n        return true;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        creationTime = block.timestamp;\n        biddingPeriod = 10 minutes;\n        state = States.Open;\n        numOrders = 0;\n        sellistCounter = 100;\n        buylistCounter = 999;\n        return true;\n    }"
+      ExpressionStatement
+         Source: "creationTime = block.timestamp"
+        Assignment using operator =
+           Type: uint256
+           Source: "creationTime = block.timestamp"
+          Identifier creationTime
+             Type: uint256
+             Source: "creationTime"
+          MemberAccess to member timestamp
+             Type: uint256
+             Source: "block.timestamp"
+            Identifier block
+               Type: block
+               Source: "block"
+      ExpressionStatement
+         Source: "biddingPeriod = 10 minutes"
+        Assignment using operator =
+           Type: uint256
+           Source: "biddingPeriod = 10 minutes"
+          Identifier biddingPeriod
+             Type: uint256
+             Source: "biddingPeriod"
+          Literal, token: [no token] value: 10
+             Type: int_const 600
+             Source: "10 minutes"
+      ExpressionStatement
+         Source: "state = States.Open"
+        Assignment using operator =
+           Type: enum CallMarket.States
+           Source: "state = States.Open"
+          Identifier state
+             Type: enum CallMarket.States
+             Source: "state"
+          MemberAccess to member Open
+             Type: enum CallMarket.States
+             Source: "States.Open"
+            Identifier States
+               Type: type(enum CallMarket.States)
+               Source: "States"
+      ExpressionStatement
+         Source: "numOrders = 0"
+        Assignment using operator =
+           Type: uint256
+           Source: "numOrders = 0"
+          Identifier numOrders
+             Type: uint256
+             Source: "numOrders"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+      ExpressionStatement
+         Source: "sellistCounter = 100"
+        Assignment using operator =
+           Type: uint256
+           Source: "sellistCounter = 100"
+          Identifier sellistCounter
+             Type: uint256
+             Source: "sellistCounter"
+          Literal, token: [no token] value: 100
+             Type: int_const 100
+             Source: "100"
+      ExpressionStatement
+         Source: "buylistCounter = 999"
+        Assignment using operator =
+           Type: uint256
+           Source: "buylistCounter = 999"
+          Identifier buylistCounter
+             Type: uint256
+             Source: "buylistCounter"
+          Literal, token: [no token] value: 999
+             Type: int_const 999
+             Source: "999"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "submitBid" - public
+     Source: "function submitBid(uint256 price, uint256 volume)\n        external\n        auctionAtStage(States.Open)\n        returns (bool)\n    {\n        require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= volume * price,\n            \"Ether balance is not enough!\"\n        );\n\n        uint256 _finalpriceUint;\n        string memory _finalpriceString;\n        _finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(buylistCounter)\n        );\n        _finalpriceUint = strTouint(_finalpriceString);\n\n        numOrders++;\n        buylistCounter--;\n        unavailableEtherBalance[msg.sender] += volume * price;\n        unavailableEtherArray.push(msg.sender);\n        priorityQueue.insertBid(msg.sender, price, volume, _finalpriceUint);\n        return true;\n    }"
+    ParameterList
+       Source: "(uint256 price, uint256 volume)"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    ModifierInvocation "auctionAtStage"
+       Source: "auctionAtStage(States.Open)"
+      Identifier auctionAtStage
+         Type: modifier (enum CallMarket.States)
+         Source: "auctionAtStage"
+      MemberAccess to member Open
+         Type: enum CallMarket.States
+         Source: "States.Open"
+        Identifier States
+           Type: type(enum CallMarket.States)
+           Source: "States"
+    Block
+       Source: "{\n        require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= volume * price,\n            \"Ether balance is not enough!\"\n        );\n\n        uint256 _finalpriceUint;\n        string memory _finalpriceString;\n        _finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(buylistCounter)\n        );\n        _finalpriceUint = strTouint(_finalpriceString);\n\n        numOrders++;\n        buylistCounter--;\n        unavailableEtherBalance[msg.sender] += volume * price;\n        unavailableEtherArray.push(msg.sender);\n        priorityQueue.insertBid(msg.sender, price, volume, _finalpriceUint);\n        return true;\n    }"
+      ExpressionStatement
+         Source: "require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= volume * price,\n            \"Ether balance is not enough!\"\n        )"
+        FunctionCall
+           Type: tuple()
+           Source: "require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= volume * price,\n            \"Ether balance is not enough!\"\n        )"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator >=
+             Type: bool
+             Source: "(totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= volume * price"
+            TupleExpression
+               Type: uint256
+               Source: "(totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender])"
+              BinaryOperation using operator -
+                 Type: uint256
+                 Source: "totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]"
+                IndexAccess
+                   Type: uint256
+                   Source: "totalEtherBalance[msg.sender]"
+                  Identifier totalEtherBalance
+                     Type: mapping(address => uint256)
+                     Source: "totalEtherBalance"
+                  MemberAccess to member sender
+                     Type: address payable
+                     Source: "msg.sender"
+                    Identifier msg
+                       Type: msg
+                       Source: "msg"
+                IndexAccess
+                   Type: uint256
+                   Source: "unavailableEtherBalance[msg.sender]"
+                  Identifier unavailableEtherBalance
+                     Type: mapping(address => uint256)
+                     Source: "unavailableEtherBalance"
+                  MemberAccess to member sender
+                     Type: address payable
+                     Source: "msg.sender"
+                    Identifier msg
+                       Type: msg
+                       Source: "msg"
+            BinaryOperation using operator *
+               Type: uint256
+               Source: "volume * price"
+              Identifier volume
+                 Type: uint256
+                 Source: "volume"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+          Literal, token: [no token] value: Ether balance is not enough!
+             Type: literal_string "Ether balance is not enough!"
+             Source: "\"Ether balance is not enough!\""
+      VariableDeclarationStatement
+         Source: "uint256 _finalpriceUint"
+        VariableDeclaration "_finalpriceUint"
+           Type: uint256
+           Source: "uint256 _finalpriceUint"
+          ElementaryTypeName uint256
+             Source: "uint256"
+      VariableDeclarationStatement
+         Source: "string memory _finalpriceString"
+        VariableDeclaration "_finalpriceString"
+           Type: string memory
+           Source: "string memory _finalpriceString"
+          ElementaryTypeName string
+             Source: "string"
+      ExpressionStatement
+         Source: "_finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(buylistCounter)\n        )"
+        Assignment using operator =
+           Type: string memory
+           Source: "_finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(buylistCounter)\n        )"
+          Identifier _finalpriceString
+             Type: string memory
+             Source: "_finalpriceString"
+          FunctionCall
+             Type: string memory
+             Source: "contcat(\n            uintTostr(price),\n            uintTostr(buylistCounter)\n        )"
+            Identifier contcat
+               Type: function (string memory,string memory) pure returns (string memory)
+               Source: "contcat"
+            FunctionCall
+               Type: string memory
+               Source: "uintTostr(price)"
+              Identifier uintTostr
+                 Type: function (uint256) pure returns (string memory)
+                 Source: "uintTostr"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+            FunctionCall
+               Type: string memory
+               Source: "uintTostr(buylistCounter)"
+              Identifier uintTostr
+                 Type: function (uint256) pure returns (string memory)
+                 Source: "uintTostr"
+              Identifier buylistCounter
+                 Type: uint256
+                 Source: "buylistCounter"
+      ExpressionStatement
+         Source: "_finalpriceUint = strTouint(_finalpriceString)"
+        Assignment using operator =
+           Type: uint256
+           Source: "_finalpriceUint = strTouint(_finalpriceString)"
+          Identifier _finalpriceUint
+             Type: uint256
+             Source: "_finalpriceUint"
+          FunctionCall
+             Type: uint256
+             Source: "strTouint(_finalpriceString)"
+            Identifier strTouint
+               Type: function (string memory) pure returns (uint256)
+               Source: "strTouint"
+            Identifier _finalpriceString
+               Type: string memory
+               Source: "_finalpriceString"
+      ExpressionStatement
+         Source: "numOrders++"
+        UnaryOperation (postfix) ++
+           Type: uint256
+           Source: "numOrders++"
+          Identifier numOrders
+             Type: uint256
+             Source: "numOrders"
+      ExpressionStatement
+         Source: "buylistCounter--"
+        UnaryOperation (postfix) --
+           Type: uint256
+           Source: "buylistCounter--"
+          Identifier buylistCounter
+             Type: uint256
+             Source: "buylistCounter"
+      ExpressionStatement
+         Source: "unavailableEtherBalance[msg.sender] += volume * price"
+        Assignment using operator +=
+           Type: uint256
+           Source: "unavailableEtherBalance[msg.sender] += volume * price"
+          IndexAccess
+             Type: uint256
+             Source: "unavailableEtherBalance[msg.sender]"
+            Identifier unavailableEtherBalance
+               Type: mapping(address => uint256)
+               Source: "unavailableEtherBalance"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+          BinaryOperation using operator *
+             Type: uint256
+             Source: "volume * price"
+            Identifier volume
+               Type: uint256
+               Source: "volume"
+            Identifier price
+               Type: uint256
+               Source: "price"
+      ExpressionStatement
+         Source: "unavailableEtherArray.push(msg.sender)"
+        FunctionCall
+           Type: uint256
+           Source: "unavailableEtherArray.push(msg.sender)"
+          MemberAccess to member push
+             Type: function (address) returns (uint256)
+             Source: "unavailableEtherArray.push"
+            Identifier unavailableEtherArray
+               Type: address[] storage ref
+               Source: "unavailableEtherArray"
+          MemberAccess to member sender
+             Type: address payable
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+      ExpressionStatement
+         Source: "priorityQueue.insertBid(msg.sender, price, volume, _finalpriceUint)"
+        FunctionCall
+           Type: tuple()
+           Source: "priorityQueue.insertBid(msg.sender, price, volume, _finalpriceUint)"
+          MemberAccess to member insertBid
+             Type: function (address,uint256,uint256,uint256) external
+             Source: "priorityQueue.insertBid"
+            Identifier priorityQueue
+               Type: contract LinkedListMapping
+               Source: "priorityQueue"
+          MemberAccess to member sender
+             Type: address payable
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier _finalpriceUint
+             Type: uint256
+             Source: "_finalpriceUint"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "submitAsk" - public
+     Source: "function submitAsk(uint256 price, uint256 volume)\n        external\n        auctionAtStage(States.Open)\n        returns (bool)\n    {\n        require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= volume,\n            \"Token balance is not enough!\"\n        );\n        uint256 _finalpriceUint;\n        string memory _finalpriceString;\n        _finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(sellistCounter)\n        );\n        _finalpriceUint = strTouint(_finalpriceString);\n\n        numOrders++;\n        sellistCounter++;\n        unavailableTokenBalance[msg.sender] += volume;\n        unavailableTokenArray.push(msg.sender);\n        priorityQueue.insertAsk(msg.sender, price, volume, _finalpriceUint);\n        return true;\n    }"
+    ParameterList
+       Source: "(uint256 price, uint256 volume)"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    ModifierInvocation "auctionAtStage"
+       Source: "auctionAtStage(States.Open)"
+      Identifier auctionAtStage
+         Type: modifier (enum CallMarket.States)
+         Source: "auctionAtStage"
+      MemberAccess to member Open
+         Type: enum CallMarket.States
+         Source: "States.Open"
+        Identifier States
+           Type: type(enum CallMarket.States)
+           Source: "States"
+    Block
+       Source: "{\n        require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= volume,\n            \"Token balance is not enough!\"\n        );\n        uint256 _finalpriceUint;\n        string memory _finalpriceString;\n        _finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(sellistCounter)\n        );\n        _finalpriceUint = strTouint(_finalpriceString);\n\n        numOrders++;\n        sellistCounter++;\n        unavailableTokenBalance[msg.sender] += volume;\n        unavailableTokenArray.push(msg.sender);\n        priorityQueue.insertAsk(msg.sender, price, volume, _finalpriceUint);\n        return true;\n    }"
+      ExpressionStatement
+         Source: "require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= volume,\n            \"Token balance is not enough!\"\n        )"
+        FunctionCall
+           Type: tuple()
+           Source: "require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= volume,\n            \"Token balance is not enough!\"\n        )"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator >=
+             Type: bool
+             Source: "(totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= volume"
+            TupleExpression
+               Type: uint256
+               Source: "(totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender])"
+              BinaryOperation using operator -
+                 Type: uint256
+                 Source: "totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]"
+                IndexAccess
+                   Type: uint256
+                   Source: "totalTokenBalance[msg.sender]"
+                  Identifier totalTokenBalance
+                     Type: mapping(address => uint256)
+                     Source: "totalTokenBalance"
+                  MemberAccess to member sender
+                     Type: address payable
+                     Source: "msg.sender"
+                    Identifier msg
+                       Type: msg
+                       Source: "msg"
+                IndexAccess
+                   Type: uint256
+                   Source: "unavailableTokenBalance[msg.sender]"
+                  Identifier unavailableTokenBalance
+                     Type: mapping(address => uint256)
+                     Source: "unavailableTokenBalance"
+                  MemberAccess to member sender
+                     Type: address payable
+                     Source: "msg.sender"
+                    Identifier msg
+                       Type: msg
+                       Source: "msg"
+            Identifier volume
+               Type: uint256
+               Source: "volume"
+          Literal, token: [no token] value: Token balance is not enough!
+             Type: literal_string "Token balance is not enough!"
+             Source: "\"Token balance is not enough!\""
+      VariableDeclarationStatement
+         Source: "uint256 _finalpriceUint"
+        VariableDeclaration "_finalpriceUint"
+           Type: uint256
+           Source: "uint256 _finalpriceUint"
+          ElementaryTypeName uint256
+             Source: "uint256"
+      VariableDeclarationStatement
+         Source: "string memory _finalpriceString"
+        VariableDeclaration "_finalpriceString"
+           Type: string memory
+           Source: "string memory _finalpriceString"
+          ElementaryTypeName string
+             Source: "string"
+      ExpressionStatement
+         Source: "_finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(sellistCounter)\n        )"
+        Assignment using operator =
+           Type: string memory
+           Source: "_finalpriceString = contcat(\n            uintTostr(price),\n            uintTostr(sellistCounter)\n        )"
+          Identifier _finalpriceString
+             Type: string memory
+             Source: "_finalpriceString"
+          FunctionCall
+             Type: string memory
+             Source: "contcat(\n            uintTostr(price),\n            uintTostr(sellistCounter)\n        )"
+            Identifier contcat
+               Type: function (string memory,string memory) pure returns (string memory)
+               Source: "contcat"
+            FunctionCall
+               Type: string memory
+               Source: "uintTostr(price)"
+              Identifier uintTostr
+                 Type: function (uint256) pure returns (string memory)
+                 Source: "uintTostr"
+              Identifier price
+                 Type: uint256
+                 Source: "price"
+            FunctionCall
+               Type: string memory
+               Source: "uintTostr(sellistCounter)"
+              Identifier uintTostr
+                 Type: function (uint256) pure returns (string memory)
+                 Source: "uintTostr"
+              Identifier sellistCounter
+                 Type: uint256
+                 Source: "sellistCounter"
+      ExpressionStatement
+         Source: "_finalpriceUint = strTouint(_finalpriceString)"
+        Assignment using operator =
+           Type: uint256
+           Source: "_finalpriceUint = strTouint(_finalpriceString)"
+          Identifier _finalpriceUint
+             Type: uint256
+             Source: "_finalpriceUint"
+          FunctionCall
+             Type: uint256
+             Source: "strTouint(_finalpriceString)"
+            Identifier strTouint
+               Type: function (string memory) pure returns (uint256)
+               Source: "strTouint"
+            Identifier _finalpriceString
+               Type: string memory
+               Source: "_finalpriceString"
+      ExpressionStatement
+         Source: "numOrders++"
+        UnaryOperation (postfix) ++
+           Type: uint256
+           Source: "numOrders++"
+          Identifier numOrders
+             Type: uint256
+             Source: "numOrders"
+      ExpressionStatement
+         Source: "sellistCounter++"
+        UnaryOperation (postfix) ++
+           Type: uint256
+           Source: "sellistCounter++"
+          Identifier sellistCounter
+             Type: uint256
+             Source: "sellistCounter"
+      ExpressionStatement
+         Source: "unavailableTokenBalance[msg.sender] += volume"
+        Assignment using operator +=
+           Type: uint256
+           Source: "unavailableTokenBalance[msg.sender] += volume"
+          IndexAccess
+             Type: uint256
+             Source: "unavailableTokenBalance[msg.sender]"
+            Identifier unavailableTokenBalance
+               Type: mapping(address => uint256)
+               Source: "unavailableTokenBalance"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+      ExpressionStatement
+         Source: "unavailableTokenArray.push(msg.sender)"
+        FunctionCall
+           Type: uint256
+           Source: "unavailableTokenArray.push(msg.sender)"
+          MemberAccess to member push
+             Type: function (address) returns (uint256)
+             Source: "unavailableTokenArray.push"
+            Identifier unavailableTokenArray
+               Type: address[] storage ref
+               Source: "unavailableTokenArray"
+          MemberAccess to member sender
+             Type: address payable
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+      ExpressionStatement
+         Source: "priorityQueue.insertAsk(msg.sender, price, volume, _finalpriceUint)"
+        FunctionCall
+           Type: tuple()
+           Source: "priorityQueue.insertAsk(msg.sender, price, volume, _finalpriceUint)"
+          MemberAccess to member insertAsk
+             Type: function (address,uint256,uint256,uint256) external
+             Source: "priorityQueue.insertAsk"
+            Identifier priorityQueue
+               Type: contract LinkedListMapping
+               Source: "priorityQueue"
+          MemberAccess to member sender
+             Type: address payable
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Identifier _finalpriceUint
+             Type: uint256
+             Source: "_finalpriceUint"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "closeMarket" - public
+     Source: "function closeMarket() external returns (bool) {\n        state = States.Closed;\n        return true;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        state = States.Closed;\n        return true;\n    }"
+      ExpressionStatement
+         Source: "state = States.Closed"
+        Assignment using operator =
+           Type: enum CallMarket.States
+           Source: "state = States.Closed"
+          Identifier state
+             Type: enum CallMarket.States
+             Source: "state"
+          MemberAccess to member Closed
+             Type: enum CallMarket.States
+             Source: "States.Closed"
+            Identifier States
+               Type: type(enum CallMarket.States)
+               Source: "States"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "matchOrders" - public
+     Source: "function matchOrders()\n        external\n        auctionAtStage(States.Closed)\n        returns (bool)\n    {\n        state = States.Settled;\n\n        (uint256 BBPrice, address BBSender, uint256 BBVolume) =\n            priorityQueue.buyListMax();\n        (uint256 BAPrice, address BASender, uint256 BAVolume) =\n            priorityQueue.sellListMax();\n\n        while (BBPrice >= BAPrice) {\n            if (BBVolume > BAVolume) {\n                totalTokenBalance[BBSender] += BAVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BAVolume;\n\n                BBVolume = BBVolume - BAVolume;\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            if (BBVolume < BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                BAVolume = BAVolume - BBVolume;\n                priorityQueue.buyListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n            }\n\n            if (BBVolume == BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                priorityQueue.buyListMaxDelete();\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            ////uint refund = refunds[block.coinbase];\n            ////refunds[block.coinbase] = 0;\n            ////block.coinbase.transfer(refund);\n\n            //for (uint i = 0 ; i< unavailableTokenArray.length; i++)\n            //{\n            // delete unavailableTokenBalance[unavailableTokenArray[i]];\n            //}\n\n            //for (uint j= 0 ; j< unavailableEtherArray.length; j++)\n            //{\n            // delete unavailableEtherBalance[unavailableEtherArray[j]];\n            //}\n        }\n        return true;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    ModifierInvocation "auctionAtStage"
+       Source: "auctionAtStage(States.Closed)"
+      Identifier auctionAtStage
+         Type: modifier (enum CallMarket.States)
+         Source: "auctionAtStage"
+      MemberAccess to member Closed
+         Type: enum CallMarket.States
+         Source: "States.Closed"
+        Identifier States
+           Type: type(enum CallMarket.States)
+           Source: "States"
+    Block
+       Source: "{\n        state = States.Settled;\n\n        (uint256 BBPrice, address BBSender, uint256 BBVolume) =\n            priorityQueue.buyListMax();\n        (uint256 BAPrice, address BASender, uint256 BAVolume) =\n            priorityQueue.sellListMax();\n\n        while (BBPrice >= BAPrice) {\n            if (BBVolume > BAVolume) {\n                totalTokenBalance[BBSender] += BAVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BAVolume;\n\n                BBVolume = BBVolume - BAVolume;\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            if (BBVolume < BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                BAVolume = BAVolume - BBVolume;\n                priorityQueue.buyListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n            }\n\n            if (BBVolume == BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                priorityQueue.buyListMaxDelete();\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            ////uint refund = refunds[block.coinbase];\n            ////refunds[block.coinbase] = 0;\n            ////block.coinbase.transfer(refund);\n\n            //for (uint i = 0 ; i< unavailableTokenArray.length; i++)\n            //{\n            // delete unavailableTokenBalance[unavailableTokenArray[i]];\n            //}\n\n            //for (uint j= 0 ; j< unavailableEtherArray.length; j++)\n            //{\n            // delete unavailableEtherBalance[unavailableEtherArray[j]];\n            //}\n        }\n        return true;\n    }"
+      ExpressionStatement
+         Source: "state = States.Settled"
+        Assignment using operator =
+           Type: enum CallMarket.States
+           Source: "state = States.Settled"
+          Identifier state
+             Type: enum CallMarket.States
+             Source: "state"
+          MemberAccess to member Settled
+             Type: enum CallMarket.States
+             Source: "States.Settled"
+            Identifier States
+               Type: type(enum CallMarket.States)
+               Source: "States"
+      VariableDeclarationStatement
+         Source: "(uint256 BBPrice, address BBSender, uint256 BBVolume) =\n            priorityQueue.buyListMax()"
+        VariableDeclaration "BBPrice"
+           Type: uint256
+           Source: "uint256 BBPrice"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        VariableDeclaration "BBSender"
+           Type: address
+           Source: "address BBSender"
+          ElementaryTypeName address
+             Source: "address"
+        VariableDeclaration "BBVolume"
+           Type: uint256
+           Source: "uint256 BBVolume"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        FunctionCall
+           Type: tuple(uint256,address,uint256)
+           Source: "priorityQueue.buyListMax()"
+          MemberAccess to member buyListMax
+             Type: function () view external returns (uint256,address,uint256)
+             Source: "priorityQueue.buyListMax"
+            Identifier priorityQueue
+               Type: contract LinkedListMapping
+               Source: "priorityQueue"
+      VariableDeclarationStatement
+         Source: "(uint256 BAPrice, address BASender, uint256 BAVolume) =\n            priorityQueue.sellListMax()"
+        VariableDeclaration "BAPrice"
+           Type: uint256
+           Source: "uint256 BAPrice"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        VariableDeclaration "BASender"
+           Type: address
+           Source: "address BASender"
+          ElementaryTypeName address
+             Source: "address"
+        VariableDeclaration "BAVolume"
+           Type: uint256
+           Source: "uint256 BAVolume"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        FunctionCall
+           Type: tuple(uint256,address,uint256)
+           Source: "priorityQueue.sellListMax()"
+          MemberAccess to member sellListMax
+             Type: function () view external returns (uint256,address,uint256)
+             Source: "priorityQueue.sellListMax"
+            Identifier priorityQueue
+               Type: contract LinkedListMapping
+               Source: "priorityQueue"
+      WhileStatement
+         Source: "while (BBPrice >= BAPrice) {\n            if (BBVolume > BAVolume) {\n                totalTokenBalance[BBSender] += BAVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BAVolume;\n\n                BBVolume = BBVolume - BAVolume;\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            if (BBVolume < BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                BAVolume = BAVolume - BBVolume;\n                priorityQueue.buyListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n            }\n\n            if (BBVolume == BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                priorityQueue.buyListMaxDelete();\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            ////uint refund = refunds[block.coinbase];\n            ////refunds[block.coinbase] = 0;\n            ////block.coinbase.transfer(refund);\n\n            //for (uint i = 0 ; i< unavailableTokenArray.length; i++)\n            //{\n            // delete unavailableTokenBalance[unavailableTokenArray[i]];\n            //}\n\n            //for (uint j= 0 ; j< unavailableEtherArray.length; j++)\n            //{\n            // delete unavailableEtherBalance[unavailableEtherArray[j]];\n            //}\n        }"
+        BinaryOperation using operator >=
+           Type: bool
+           Source: "BBPrice >= BAPrice"
+          Identifier BBPrice
+             Type: uint256
+             Source: "BBPrice"
+          Identifier BAPrice
+             Type: uint256
+             Source: "BAPrice"
+        Block
+           Source: "{\n            if (BBVolume > BAVolume) {\n                totalTokenBalance[BBSender] += BAVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BAVolume;\n\n                BBVolume = BBVolume - BAVolume;\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            if (BBVolume < BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                BAVolume = BAVolume - BBVolume;\n                priorityQueue.buyListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n            }\n\n            if (BBVolume == BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                priorityQueue.buyListMaxDelete();\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }\n\n            ////uint refund = refunds[block.coinbase];\n            ////refunds[block.coinbase] = 0;\n            ////block.coinbase.transfer(refund);\n\n            //for (uint i = 0 ; i< unavailableTokenArray.length; i++)\n            //{\n            // delete unavailableTokenBalance[unavailableTokenArray[i]];\n            //}\n\n            //for (uint j= 0 ; j< unavailableEtherArray.length; j++)\n            //{\n            // delete unavailableEtherBalance[unavailableEtherArray[j]];\n            //}\n        }"
+          IfStatement
+             Source: "if (BBVolume > BAVolume) {\n                totalTokenBalance[BBSender] += BAVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BAVolume;\n\n                BBVolume = BBVolume - BAVolume;\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }"
+            BinaryOperation using operator >
+               Type: bool
+               Source: "BBVolume > BAVolume"
+              Identifier BBVolume
+                 Type: uint256
+                 Source: "BBVolume"
+              Identifier BAVolume
+                 Type: uint256
+                 Source: "BAVolume"
+            Block
+               Source: "{\n                totalTokenBalance[BBSender] += BAVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BAVolume;\n\n                BBVolume = BBVolume - BAVolume;\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }"
+              ExpressionStatement
+                 Source: "totalTokenBalance[BBSender] += BAVolume"
+                Assignment using operator +=
+                   Type: uint256
+                   Source: "totalTokenBalance[BBSender] += BAVolume"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalTokenBalance[BBSender]"
+                    Identifier totalTokenBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalTokenBalance"
+                    Identifier BBSender
+                       Type: address
+                       Source: "BBSender"
+                  Identifier BAVolume
+                     Type: uint256
+                     Source: "BAVolume"
+              ExpressionStatement
+                 Source: "totalEtherBalance[BBSender] -= BBPrice"
+                Assignment using operator -=
+                   Type: uint256
+                   Source: "totalEtherBalance[BBSender] -= BBPrice"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalEtherBalance[BBSender]"
+                    Identifier totalEtherBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalEtherBalance"
+                    Identifier BBSender
+                       Type: address
+                       Source: "BBSender"
+                  Identifier BBPrice
+                     Type: uint256
+                     Source: "BBPrice"
+              ExpressionStatement
+                 Source: "totalEtherBalance[BASender] += BAPrice"
+                Assignment using operator +=
+                   Type: uint256
+                   Source: "totalEtherBalance[BASender] += BAPrice"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalEtherBalance[BASender]"
+                    Identifier totalEtherBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalEtherBalance"
+                    Identifier BASender
+                       Type: address
+                       Source: "BASender"
+                  Identifier BAPrice
+                     Type: uint256
+                     Source: "BAPrice"
+              ExpressionStatement
+                 Source: "totalTokenBalance[BASender] -= BAVolume"
+                Assignment using operator -=
+                   Type: uint256
+                   Source: "totalTokenBalance[BASender] -= BAVolume"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalTokenBalance[BASender]"
+                    Identifier totalTokenBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalTokenBalance"
+                    Identifier BASender
+                       Type: address
+                       Source: "BASender"
+                  Identifier BAVolume
+                     Type: uint256
+                     Source: "BAVolume"
+              ExpressionStatement
+                 Source: "BBVolume = BBVolume - BAVolume"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "BBVolume = BBVolume - BAVolume"
+                  Identifier BBVolume
+                     Type: uint256
+                     Source: "BBVolume"
+                  BinaryOperation using operator -
+                     Type: uint256
+                     Source: "BBVolume - BAVolume"
+                    Identifier BBVolume
+                       Type: uint256
+                       Source: "BBVolume"
+                    Identifier BAVolume
+                       Type: uint256
+                       Source: "BAVolume"
+              ExpressionStatement
+                 Source: "priorityQueue.sellListMaxDelete()"
+                FunctionCall
+                   Type: tuple(uint256,address,uint256)
+                   Source: "priorityQueue.sellListMaxDelete()"
+                  MemberAccess to member sellListMaxDelete
+                     Type: function () external returns (uint256,address,uint256)
+                     Source: "priorityQueue.sellListMaxDelete"
+                    Identifier priorityQueue
+                       Type: contract LinkedListMapping
+                       Source: "priorityQueue"
+              IfStatement
+                 Source: "if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }"
+                BinaryOperation using operator ||
+                   Type: bool
+                   Source: "priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()"
+                  FunctionCall
+                     Type: bool
+                     Source: "priorityQueue.buyListisEmpty()"
+                    MemberAccess to member buyListisEmpty
+                       Type: function () view external returns (bool)
+                       Source: "priorityQueue.buyListisEmpty"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+                  FunctionCall
+                     Type: bool
+                     Source: "priorityQueue.sellListisEmpty()"
+                    MemberAccess to member sellListisEmpty
+                       Type: function () view external returns (bool)
+                       Source: "priorityQueue.sellListisEmpty"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+                Block
+                   Source: "{\n                    break;\n                }"
+                  Break
+                     Source: "break"
+              ExpressionStatement
+                 Source: "(BAPrice, BASender, BAVolume) = priorityQueue.sellListMax()"
+                Assignment using operator =
+                   Type: tuple()
+                   Source: "(BAPrice, BASender, BAVolume) = priorityQueue.sellListMax()"
+                  TupleExpression
+                     Type: tuple(uint256,address,uint256)
+                     Source: "(BAPrice, BASender, BAVolume)"
+                    Identifier BAPrice
+                       Type: uint256
+                       Source: "BAPrice"
+                    Identifier BASender
+                       Type: address
+                       Source: "BASender"
+                    Identifier BAVolume
+                       Type: uint256
+                       Source: "BAVolume"
+                  FunctionCall
+                     Type: tuple(uint256,address,uint256)
+                     Source: "priorityQueue.sellListMax()"
+                    MemberAccess to member sellListMax
+                       Type: function () view external returns (uint256,address,uint256)
+                       Source: "priorityQueue.sellListMax"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+          IfStatement
+             Source: "if (BBVolume < BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                BAVolume = BAVolume - BBVolume;\n                priorityQueue.buyListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n            }"
+            BinaryOperation using operator <
+               Type: bool
+               Source: "BBVolume < BAVolume"
+              Identifier BBVolume
+                 Type: uint256
+                 Source: "BBVolume"
+              Identifier BAVolume
+                 Type: uint256
+                 Source: "BAVolume"
+            Block
+               Source: "{\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                BAVolume = BAVolume - BBVolume;\n                priorityQueue.buyListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n            }"
+              ExpressionStatement
+                 Source: "totalTokenBalance[BBSender] += BBVolume"
+                Assignment using operator +=
+                   Type: uint256
+                   Source: "totalTokenBalance[BBSender] += BBVolume"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalTokenBalance[BBSender]"
+                    Identifier totalTokenBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalTokenBalance"
+                    Identifier BBSender
+                       Type: address
+                       Source: "BBSender"
+                  Identifier BBVolume
+                     Type: uint256
+                     Source: "BBVolume"
+              ExpressionStatement
+                 Source: "totalEtherBalance[BBSender] -= BBPrice"
+                Assignment using operator -=
+                   Type: uint256
+                   Source: "totalEtherBalance[BBSender] -= BBPrice"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalEtherBalance[BBSender]"
+                    Identifier totalEtherBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalEtherBalance"
+                    Identifier BBSender
+                       Type: address
+                       Source: "BBSender"
+                  Identifier BBPrice
+                     Type: uint256
+                     Source: "BBPrice"
+              ExpressionStatement
+                 Source: "totalEtherBalance[BASender] += BAPrice"
+                Assignment using operator +=
+                   Type: uint256
+                   Source: "totalEtherBalance[BASender] += BAPrice"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalEtherBalance[BASender]"
+                    Identifier totalEtherBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalEtherBalance"
+                    Identifier BASender
+                       Type: address
+                       Source: "BASender"
+                  Identifier BAPrice
+                     Type: uint256
+                     Source: "BAPrice"
+              ExpressionStatement
+                 Source: "totalTokenBalance[BASender] -= BBVolume"
+                Assignment using operator -=
+                   Type: uint256
+                   Source: "totalTokenBalance[BASender] -= BBVolume"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalTokenBalance[BASender]"
+                    Identifier totalTokenBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalTokenBalance"
+                    Identifier BASender
+                       Type: address
+                       Source: "BASender"
+                  Identifier BBVolume
+                     Type: uint256
+                     Source: "BBVolume"
+              ExpressionStatement
+                 Source: "BAVolume = BAVolume - BBVolume"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "BAVolume = BAVolume - BBVolume"
+                  Identifier BAVolume
+                     Type: uint256
+                     Source: "BAVolume"
+                  BinaryOperation using operator -
+                     Type: uint256
+                     Source: "BAVolume - BBVolume"
+                    Identifier BAVolume
+                       Type: uint256
+                       Source: "BAVolume"
+                    Identifier BBVolume
+                       Type: uint256
+                       Source: "BBVolume"
+              ExpressionStatement
+                 Source: "priorityQueue.buyListMaxDelete()"
+                FunctionCall
+                   Type: tuple(uint256,address,uint256)
+                   Source: "priorityQueue.buyListMaxDelete()"
+                  MemberAccess to member buyListMaxDelete
+                     Type: function () external returns (uint256,address,uint256)
+                     Source: "priorityQueue.buyListMaxDelete"
+                    Identifier priorityQueue
+                       Type: contract LinkedListMapping
+                       Source: "priorityQueue"
+              IfStatement
+                 Source: "if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }"
+                BinaryOperation using operator ||
+                   Type: bool
+                   Source: "priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()"
+                  FunctionCall
+                     Type: bool
+                     Source: "priorityQueue.buyListisEmpty()"
+                    MemberAccess to member buyListisEmpty
+                       Type: function () view external returns (bool)
+                       Source: "priorityQueue.buyListisEmpty"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+                  FunctionCall
+                     Type: bool
+                     Source: "priorityQueue.sellListisEmpty()"
+                    MemberAccess to member sellListisEmpty
+                       Type: function () view external returns (bool)
+                       Source: "priorityQueue.sellListisEmpty"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+                Block
+                   Source: "{\n                    break;\n                }"
+                  Break
+                     Source: "break"
+              ExpressionStatement
+                 Source: "(BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax()"
+                Assignment using operator =
+                   Type: tuple()
+                   Source: "(BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax()"
+                  TupleExpression
+                     Type: tuple(uint256,address,uint256)
+                     Source: "(BBPrice, BBSender, BBVolume)"
+                    Identifier BBPrice
+                       Type: uint256
+                       Source: "BBPrice"
+                    Identifier BBSender
+                       Type: address
+                       Source: "BBSender"
+                    Identifier BBVolume
+                       Type: uint256
+                       Source: "BBVolume"
+                  FunctionCall
+                     Type: tuple(uint256,address,uint256)
+                     Source: "priorityQueue.buyListMax()"
+                    MemberAccess to member buyListMax
+                       Type: function () view external returns (uint256,address,uint256)
+                       Source: "priorityQueue.buyListMax"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+          IfStatement
+             Source: "if (BBVolume == BAVolume) {\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                priorityQueue.buyListMaxDelete();\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }"
+            BinaryOperation using operator ==
+               Type: bool
+               Source: "BBVolume == BAVolume"
+              Identifier BBVolume
+                 Type: uint256
+                 Source: "BBVolume"
+              Identifier BAVolume
+                 Type: uint256
+                 Source: "BAVolume"
+            Block
+               Source: "{\n                totalTokenBalance[BBSender] += BBVolume;\n                totalEtherBalance[BBSender] -= BBPrice;\n\n                totalEtherBalance[BASender] += BAPrice;\n                totalTokenBalance[BASender] -= BBVolume;\n\n                priorityQueue.buyListMaxDelete();\n                priorityQueue.sellListMaxDelete();\n\n                if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }\n                (BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax();\n                (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();\n            }"
+              ExpressionStatement
+                 Source: "totalTokenBalance[BBSender] += BBVolume"
+                Assignment using operator +=
+                   Type: uint256
+                   Source: "totalTokenBalance[BBSender] += BBVolume"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalTokenBalance[BBSender]"
+                    Identifier totalTokenBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalTokenBalance"
+                    Identifier BBSender
+                       Type: address
+                       Source: "BBSender"
+                  Identifier BBVolume
+                     Type: uint256
+                     Source: "BBVolume"
+              ExpressionStatement
+                 Source: "totalEtherBalance[BBSender] -= BBPrice"
+                Assignment using operator -=
+                   Type: uint256
+                   Source: "totalEtherBalance[BBSender] -= BBPrice"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalEtherBalance[BBSender]"
+                    Identifier totalEtherBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalEtherBalance"
+                    Identifier BBSender
+                       Type: address
+                       Source: "BBSender"
+                  Identifier BBPrice
+                     Type: uint256
+                     Source: "BBPrice"
+              ExpressionStatement
+                 Source: "totalEtherBalance[BASender] += BAPrice"
+                Assignment using operator +=
+                   Type: uint256
+                   Source: "totalEtherBalance[BASender] += BAPrice"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalEtherBalance[BASender]"
+                    Identifier totalEtherBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalEtherBalance"
+                    Identifier BASender
+                       Type: address
+                       Source: "BASender"
+                  Identifier BAPrice
+                     Type: uint256
+                     Source: "BAPrice"
+              ExpressionStatement
+                 Source: "totalTokenBalance[BASender] -= BBVolume"
+                Assignment using operator -=
+                   Type: uint256
+                   Source: "totalTokenBalance[BASender] -= BBVolume"
+                  IndexAccess
+                     Type: uint256
+                     Source: "totalTokenBalance[BASender]"
+                    Identifier totalTokenBalance
+                       Type: mapping(address => uint256)
+                       Source: "totalTokenBalance"
+                    Identifier BASender
+                       Type: address
+                       Source: "BASender"
+                  Identifier BBVolume
+                     Type: uint256
+                     Source: "BBVolume"
+              ExpressionStatement
+                 Source: "priorityQueue.buyListMaxDelete()"
+                FunctionCall
+                   Type: tuple(uint256,address,uint256)
+                   Source: "priorityQueue.buyListMaxDelete()"
+                  MemberAccess to member buyListMaxDelete
+                     Type: function () external returns (uint256,address,uint256)
+                     Source: "priorityQueue.buyListMaxDelete"
+                    Identifier priorityQueue
+                       Type: contract LinkedListMapping
+                       Source: "priorityQueue"
+              ExpressionStatement
+                 Source: "priorityQueue.sellListMaxDelete()"
+                FunctionCall
+                   Type: tuple(uint256,address,uint256)
+                   Source: "priorityQueue.sellListMaxDelete()"
+                  MemberAccess to member sellListMaxDelete
+                     Type: function () external returns (uint256,address,uint256)
+                     Source: "priorityQueue.sellListMaxDelete"
+                    Identifier priorityQueue
+                       Type: contract LinkedListMapping
+                       Source: "priorityQueue"
+              IfStatement
+                 Source: "if (\n                    priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()\n                ) {\n                    break;\n                }"
+                BinaryOperation using operator ||
+                   Type: bool
+                   Source: "priorityQueue.buyListisEmpty() ||\n                    priorityQueue.sellListisEmpty()"
+                  FunctionCall
+                     Type: bool
+                     Source: "priorityQueue.buyListisEmpty()"
+                    MemberAccess to member buyListisEmpty
+                       Type: function () view external returns (bool)
+                       Source: "priorityQueue.buyListisEmpty"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+                  FunctionCall
+                     Type: bool
+                     Source: "priorityQueue.sellListisEmpty()"
+                    MemberAccess to member sellListisEmpty
+                       Type: function () view external returns (bool)
+                       Source: "priorityQueue.sellListisEmpty"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+                Block
+                   Source: "{\n                    break;\n                }"
+                  Break
+                     Source: "break"
+              ExpressionStatement
+                 Source: "(BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax()"
+                Assignment using operator =
+                   Type: tuple()
+                   Source: "(BBPrice, BBSender, BBVolume) = priorityQueue.buyListMax()"
+                  TupleExpression
+                     Type: tuple(uint256,address,uint256)
+                     Source: "(BBPrice, BBSender, BBVolume)"
+                    Identifier BBPrice
+                       Type: uint256
+                       Source: "BBPrice"
+                    Identifier BBSender
+                       Type: address
+                       Source: "BBSender"
+                    Identifier BBVolume
+                       Type: uint256
+                       Source: "BBVolume"
+                  FunctionCall
+                     Type: tuple(uint256,address,uint256)
+                     Source: "priorityQueue.buyListMax()"
+                    MemberAccess to member buyListMax
+                       Type: function () view external returns (uint256,address,uint256)
+                       Source: "priorityQueue.buyListMax"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+              ExpressionStatement
+                 Source: "(BAPrice, BASender, BAVolume) = priorityQueue.sellListMax()"
+                Assignment using operator =
+                   Type: tuple()
+                   Source: "(BAPrice, BASender, BAVolume) = priorityQueue.sellListMax()"
+                  TupleExpression
+                     Type: tuple(uint256,address,uint256)
+                     Source: "(BAPrice, BASender, BAVolume)"
+                    Identifier BAPrice
+                       Type: uint256
+                       Source: "BAPrice"
+                    Identifier BASender
+                       Type: address
+                       Source: "BASender"
+                    Identifier BAVolume
+                       Type: uint256
+                       Source: "BAVolume"
+                  FunctionCall
+                     Type: tuple(uint256,address,uint256)
+                     Source: "priorityQueue.sellListMax()"
+                    MemberAccess to member sellListMax
+                       Type: function () view external returns (uint256,address,uint256)
+                       Source: "priorityQueue.sellListMax"
+                      Identifier priorityQueue
+                         Type: contract LinkedListMapping
+                         Source: "priorityQueue"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "claimTokens" - public
+     Source: "function claimTokens(address token, uint256 numofTokens)\n        external\n        returns (bool)\n    {\n        require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= numofTokens,\n            \"Not enough Tokens\"\n        );\n        uint256 tokensToBeClaimed = numofTokens;\n        totalTokenBalance[msg.sender] -= tokensToBeClaimed;\n        IERC20(token).transfer(msg.sender, tokensToBeClaimed);\n        return true;\n    }"
+    ParameterList
+       Source: "(address token, uint256 numofTokens)"
+      VariableDeclaration "token"
+         Type: address
+         Source: "address token"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "numofTokens"
+         Type: uint256
+         Source: "uint256 numofTokens"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= numofTokens,\n            \"Not enough Tokens\"\n        );\n        uint256 tokensToBeClaimed = numofTokens;\n        totalTokenBalance[msg.sender] -= tokensToBeClaimed;\n        IERC20(token).transfer(msg.sender, tokensToBeClaimed);\n        return true;\n    }"
+      ExpressionStatement
+         Source: "require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= numofTokens,\n            \"Not enough Tokens\"\n        )"
+        FunctionCall
+           Type: tuple()
+           Source: "require(\n            (totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= numofTokens,\n            \"Not enough Tokens\"\n        )"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator >=
+             Type: bool
+             Source: "(totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]) >= numofTokens"
+            TupleExpression
+               Type: uint256
+               Source: "(totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender])"
+              BinaryOperation using operator -
+                 Type: uint256
+                 Source: "totalTokenBalance[msg.sender] -\n                unavailableTokenBalance[msg.sender]"
+                IndexAccess
+                   Type: uint256
+                   Source: "totalTokenBalance[msg.sender]"
+                  Identifier totalTokenBalance
+                     Type: mapping(address => uint256)
+                     Source: "totalTokenBalance"
+                  MemberAccess to member sender
+                     Type: address payable
+                     Source: "msg.sender"
+                    Identifier msg
+                       Type: msg
+                       Source: "msg"
+                IndexAccess
+                   Type: uint256
+                   Source: "unavailableTokenBalance[msg.sender]"
+                  Identifier unavailableTokenBalance
+                     Type: mapping(address => uint256)
+                     Source: "unavailableTokenBalance"
+                  MemberAccess to member sender
+                     Type: address payable
+                     Source: "msg.sender"
+                    Identifier msg
+                       Type: msg
+                       Source: "msg"
+            Identifier numofTokens
+               Type: uint256
+               Source: "numofTokens"
+          Literal, token: [no token] value: Not enough Tokens
+             Type: literal_string "Not enough Tokens"
+             Source: "\"Not enough Tokens\""
+      VariableDeclarationStatement
+         Source: "uint256 tokensToBeClaimed = numofTokens"
+        VariableDeclaration "tokensToBeClaimed"
+           Type: uint256
+           Source: "uint256 tokensToBeClaimed"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Identifier numofTokens
+           Type: uint256
+           Source: "numofTokens"
+      ExpressionStatement
+         Source: "totalTokenBalance[msg.sender] -= tokensToBeClaimed"
+        Assignment using operator -=
+           Type: uint256
+           Source: "totalTokenBalance[msg.sender] -= tokensToBeClaimed"
+          IndexAccess
+             Type: uint256
+             Source: "totalTokenBalance[msg.sender]"
+            Identifier totalTokenBalance
+               Type: mapping(address => uint256)
+               Source: "totalTokenBalance"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+          Identifier tokensToBeClaimed
+             Type: uint256
+             Source: "tokensToBeClaimed"
+      ExpressionStatement
+         Source: "IERC20(token).transfer(msg.sender, tokensToBeClaimed)"
+        FunctionCall
+           Type: bool
+           Source: "IERC20(token).transfer(msg.sender, tokensToBeClaimed)"
+          MemberAccess to member transfer
+             Type: function (address,uint256) external returns (bool)
+             Source: "IERC20(token).transfer"
+            FunctionCall
+               Type: contract IERC20
+               Source: "IERC20(token)"
+              Identifier IERC20
+                 Type: type(contract IERC20)
+                 Source: "IERC20"
+              Identifier token
+                 Type: address
+                 Source: "token"
+          MemberAccess to member sender
+             Type: address payable
+             Source: "msg.sender"
+            Identifier msg
+               Type: msg
+               Source: "msg"
+          Identifier tokensToBeClaimed
+             Type: uint256
+             Source: "tokensToBeClaimed"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "claimEther" - public
+     Source: "function claimEther(uint256 numofEthers) external returns (bool) {\n        require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= numofEthers,\n            \"Not enough Ethers\"\n        );\n        uint256 EthersToBeClaimed = numofEthers;\n        totalEtherBalance[msg.sender] -= EthersToBeClaimed;\n        msg.sender.transfer(EthersToBeClaimed);\n        return true;\n    }"
+    ParameterList
+       Source: "(uint256 numofEthers)"
+      VariableDeclaration "numofEthers"
+         Type: uint256
+         Source: "uint256 numofEthers"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= numofEthers,\n            \"Not enough Ethers\"\n        );\n        uint256 EthersToBeClaimed = numofEthers;\n        totalEtherBalance[msg.sender] -= EthersToBeClaimed;\n        msg.sender.transfer(EthersToBeClaimed);\n        return true;\n    }"
+      ExpressionStatement
+         Source: "require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= numofEthers,\n            \"Not enough Ethers\"\n        )"
+        FunctionCall
+           Type: tuple()
+           Source: "require(\n            (totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= numofEthers,\n            \"Not enough Ethers\"\n        )"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          BinaryOperation using operator >=
+             Type: bool
+             Source: "(totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]) >= numofEthers"
+            TupleExpression
+               Type: uint256
+               Source: "(totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender])"
+              BinaryOperation using operator -
+                 Type: uint256
+                 Source: "totalEtherBalance[msg.sender] -\n                unavailableEtherBalance[msg.sender]"
+                IndexAccess
+                   Type: uint256
+                   Source: "totalEtherBalance[msg.sender]"
+                  Identifier totalEtherBalance
+                     Type: mapping(address => uint256)
+                     Source: "totalEtherBalance"
+                  MemberAccess to member sender
+                     Type: address payable
+                     Source: "msg.sender"
+                    Identifier msg
+                       Type: msg
+                       Source: "msg"
+                IndexAccess
+                   Type: uint256
+                   Source: "unavailableEtherBalance[msg.sender]"
+                  Identifier unavailableEtherBalance
+                     Type: mapping(address => uint256)
+                     Source: "unavailableEtherBalance"
+                  MemberAccess to member sender
+                     Type: address payable
+                     Source: "msg.sender"
+                    Identifier msg
+                       Type: msg
+                       Source: "msg"
+            Identifier numofEthers
+               Type: uint256
+               Source: "numofEthers"
+          Literal, token: [no token] value: Not enough Ethers
+             Type: literal_string "Not enough Ethers"
+             Source: "\"Not enough Ethers\""
+      VariableDeclarationStatement
+         Source: "uint256 EthersToBeClaimed = numofEthers"
+        VariableDeclaration "EthersToBeClaimed"
+           Type: uint256
+           Source: "uint256 EthersToBeClaimed"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Identifier numofEthers
+           Type: uint256
+           Source: "numofEthers"
+      ExpressionStatement
+         Source: "totalEtherBalance[msg.sender] -= EthersToBeClaimed"
+        Assignment using operator -=
+           Type: uint256
+           Source: "totalEtherBalance[msg.sender] -= EthersToBeClaimed"
+          IndexAccess
+             Type: uint256
+             Source: "totalEtherBalance[msg.sender]"
+            Identifier totalEtherBalance
+               Type: mapping(address => uint256)
+               Source: "totalEtherBalance"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+          Identifier EthersToBeClaimed
+             Type: uint256
+             Source: "EthersToBeClaimed"
+      ExpressionStatement
+         Source: "msg.sender.transfer(EthersToBeClaimed)"
+        FunctionCall
+           Type: tuple()
+           Source: "msg.sender.transfer(EthersToBeClaimed)"
+          MemberAccess to member transfer
+             Type: function (uint256)
+             Source: "msg.sender.transfer"
+            MemberAccess to member sender
+               Type: address payable
+               Source: "msg.sender"
+              Identifier msg
+                 Type: msg
+                 Source: "msg"
+          Identifier EthersToBeClaimed
+             Type: uint256
+             Source: "EthersToBeClaimed"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"

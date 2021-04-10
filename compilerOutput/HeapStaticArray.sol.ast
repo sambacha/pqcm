@@ -1,0 +1,2274 @@
+PragmaDirective
+   Source: "pragma solidity >=0.5.7 <0.6.0;"
+ContractDefinition "HeapStaticArray"
+   Source: "contract HeapStaticArray {\n    constructor(uint256 _MAXORDERS) public {\n        maxOrders = _MAXORDERS;\n    }\n\n    /**\n*   @dev \n    Order structs with its element:\n        Sender: The address of the trader submitting the order\n        Price: The price of the order\n        Volume: The volume of the order, it is considered 1 by now\n        AuxPrice: The contcantenation of the order's price and the counter which helps to sort the heap when there are ties\n    buyList: The array that contains bid OrderStructs, it is a maxheap (decrementally ordered)\n    sellList: The array that contains ask OrderStructs, it is a minheap (incrementally ordered)\n*/\n\n    /**\n*   @dev \n    Orderstruct with its elements:\n        Sender: The address of the trader submitting the order\n        Price: The price of the order\n        Volume: The volume of the order\n        Exists: Is set to true when the incoming order is stored in the mapping\n        AuxPrice: The contcantenation of the order's price and the counter which helps to sort the heap when there are ties\n    \n    maxOrders: sets the maximum number of orders that could be submitted to the market (buyList and sellList arrays' sizes are set to this number)\n    buyList: The array that contains bid OrderStructs, it is a maxheap (decrementally sorted)\n    sellList: sellList: The array that contains ask OrderStructs, it is a minheap (incrementally sorted)\n    sellIndex: The index used to access asks in the sellList static array\n    buyIndex: The index used to access bids in the buyList static array\n*/\n\n    struct OrderStruct {\n        address Sender;\n        uint256 Price;\n        uint256 Volume;\n        bool Exists;\n        uint256 AuxPrice;\n    }\n    uint256 public maxOrders;\n    OrderStruct[42] internal buyList;\n    OrderStruct[42] internal sellList;\n    uint256 public sellIndex;\n    uint256 public buyIndex;\n\n    //**********************  buyList Functions  **********************//\n\n    /**\n     *   @dev Adds the incoming bid orders to the buyList array which will be then heapified\n     */\n    function insertBid(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        OrderStruct memory neworder =\n            OrderStruct(sender, price, volume, true, auxprice);\n\n        if (!buyList[0].Exists) {\n            buyList[0] = neworder;\n        } else {\n            buyIndex++;\n            buyList[buyIndex] = neworder;\n            maxheapHeapifyUp();\n        }\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Sorts the heap\n     */\n    function maxheapHeapifyUp() internal returns (bool) {\n        uint256 k = buyIndex; //k is set to be the last entry of the array (also heap) which is the element that's just added and has to be moved up\n        while (k > 0) {\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                buyList[k].AuxPrice > buyList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[p];\n                buyList[p] = temp;\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }\n\n        return true;\n    }\n\n    //***********************************************************************//\n\n    /**\n    *   @dev Removes and returns the highest priority element of the buyList\n        Only if the buyList is not empty\n        then the heap is reordered using the heapifyDown method\n    */\n    function buyListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(!buyList[0].Exists, \"buyList is empty!\"); //the delete function throws exception if the list is empty\n\n        if (buyIndex == 0) {\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            delete buyList[0];\n            return (_price, _sender, _volume);\n        }\n        if (buyIndex == 1) //if the heap has two items\n        {\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            buyList[0] = buyList[1]; //the first element of the heap is removed\n            delete buyList[1];\n            buyIndex--;\n            return (_price, _sender, _volume);\n        }\n        //if neither of these conditions are true, then there are at least 2 items in the heap and deletion proceeds\n        uint256 _price = buyList[0].Price;\n        address _sender = buyList[0].Sender;\n        uint256 _volume = buyList[0].Volume;\n        buyList[0] = buyList[buyIndex]; //the last elementof the heap is removed and written into the first position\n        delete buyList[buyIndex];\n        buyIndex--;\n        maxheapHeapifyDown(); //now the heapifydown is called\n        return (_price, _sender, _volume);\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Returns the sender, price, and volume of the highest priority element (The highest bid)\n     */\n    function buyListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(!buyList[0].Exists, \"buyList is empty!\"); //the delete function throws exception if the list is empty\n        return (buyList[0].Price, buyList[0].Sender, buyList[0].Volume);\n    }\n\n    //***********************************************************************//\n\n    /**\n    *   @dev Heapifydown the buyList when a bid order is removed \n        (1)the heap root is removed and is replaced by the last element in the list,(2) the heap gets resorted\n    */\n\n    function maxheapHeapifyDown() internal returns (bool) {\n        uint256 k = 0;\n        uint256 leftchild = 2 * k + 1;\n        while (leftchild <= buyIndex) {\n            //as long as the left child is within the array that heap is stored in\n            uint256 max = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (rightchild < buyIndex) //if there is a rightchild\n            {\n                if (\n                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice\n                ) //then the right child and left child are compared\n                {\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }\n            }\n\n            if (\n                buyList[k].AuxPrice < buyList[max].AuxPrice\n            ) //compares the k item with the max item and if k is smaller than its greatest children they are swapped\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[max];\n                buyList[max] = temp;\n                k = max; //k is set to max\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if the k item is not smaller than the max item, heapifyDown should stop\n                break;\n            }\n        }\n        return true;\n    }\n\n    /**\n     *   @dev Checks if the buyList is empty or not\n     */\n    function buyListisEmpty() external view returns (bool) {\n        if (!buyList[0].Exists) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n\n    //**********************  sellList Functions  *********************//\n\n    /**\n     *   @dev Adds the incoming bid orders to the buyList array which will be then heapified\n     */\n\n    function insertAsk(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        OrderStruct memory neworder =\n            OrderStruct(sender, price, volume, true, auxprice);\n\n        if (!sellList[0].Exists) {\n            sellList[0] = neworder;\n        } else {\n            sellIndex++;\n            sellList[sellIndex] = neworder;\n            minheapHeapifyUp();\n        }\n    }\n\n    /**\n     *   @dev Sorts the heap\n     */\n    function minheapHeapifyUp() internal returns (bool) {\n        uint256 k = sellIndex; //k is set to be the last entry of the array(also heap) which is the element that's just added and has to be moved up\n        while (k > 0) {\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                sellList[k].AuxPrice < sellList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[p];\n                sellList[p] = temp;\n\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }\n\n        return true;\n    }\n\n    //***********************************************************************//\n    /**\n    *   @dev Removes and returns the highest priority element of the sellList\n        Only if the sellList is not empty\n        then the heap is reordered using the heapifyDown method\n    */\n\n    function sellListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellList[0].Exists, \"sellList is empty!\"); //the delete function throws exception if the list is empty\n\n        if (sellIndex == 0) {\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            delete sellList[0];\n            return (_price, _sender, _volume);\n        }\n\n        if (sellIndex == 1) {\n            // if the heap has only one item\n\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            sellList[0] = sellList[1];\n            delete sellList[1]; //the only element of the heap is removed and returned\n            sellIndex--;\n            return (_price, _sender, _volume);\n        }\n\n        //if neither of these conditions are true, then there are at least 2 items in the heap and deletion proceeds\n\n        uint256 _price = sellList[0].Price;\n        address _sender = sellList[0].Sender;\n        uint256 _volume = sellList[0].Volume;\n        sellList[0] = sellList[sellIndex]; //the last elementof the heap is removed and written into the first position\n        delete sellList[sellIndex];\n        sellIndex--;\n        minheapHeapifyDown(); //now the heapifyDown is called to restore the ordering of the heap\n        return (_price, _sender, _volume);\n    }\n\n    //***********************************************************************//\n    /**\n     *   @dev Returns the sender, price, and volume of the highest priority element (The lowest ask)\n     */\n    function sellListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellList[0].Exists, \"sellList is empty!\"); //throws exception if the sellist is empty\n        return (sellList[0].Price, sellList[0].Sender, sellList[0].Volume);\n    }\n\n    //***********************************************************************//\n\n    /**\n    *   @dev Heapifydown the sellList when an ask order is removed \n        (1)the heap root is removed and is replaced by the last element in the list,(2) the heap gets resorted\n    */\n\n    function minheapHeapifyDown() internal returns (bool) {\n        uint256 k = 0;\n        uint256 leftchild = 2 * k + 1;\n        while (leftchild <= sellIndex) {\n            //as long as the left child is within the array that heap is stored in\n            uint256 min = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (\n                rightchild < sellIndex\n            ) //if there is a rightchild, then the right child and left child are compared\n            {\n                if (\n                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice\n                ) {\n                    min++;\n                } //now min is set to rightchild, otherwise min remains to be the leftchild\n            }\n\n            if (\n                sellList[min].AuxPrice < sellList[k].AuxPrice\n            ) //compares the k item with the max item and if its less they are swapped\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[min];\n                sellList[min] = temp;\n\n                k = min; //k is set to min\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if k item's smaller childer is not smaller than k item itself, heapifyDown should stop\n                break;\n            }\n        }\n        return true;\n    }\n\n    /**\n     *   @dev Checks if the sellList is empty or not\n     */\n\n    function sellListisEmpty() external view returns (bool) {\n        if (!sellList[0].Exists) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n}"
+  FunctionDefinition "" - public
+     Source: "constructor(uint256 _MAXORDERS) public {\n        maxOrders = _MAXORDERS;\n    }"
+    ParameterList
+       Source: "(uint256 _MAXORDERS)"
+      VariableDeclaration "_MAXORDERS"
+         Type: uint256
+         Source: "uint256 _MAXORDERS"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        maxOrders = _MAXORDERS;\n    }"
+      ExpressionStatement
+         Source: "maxOrders = _MAXORDERS"
+        Assignment using operator =
+           Type: uint256
+           Source: "maxOrders = _MAXORDERS"
+          Identifier maxOrders
+             Type: uint256
+             Source: "maxOrders"
+          Identifier _MAXORDERS
+             Type: uint256
+             Source: "_MAXORDERS"
+  StructDefinition "OrderStruct"
+     Source: "struct OrderStruct {\n        address Sender;\n        uint256 Price;\n        uint256 Volume;\n        bool Exists;\n        uint256 AuxPrice;\n    }"
+    VariableDeclaration "Sender"
+       Type: address
+       Source: "address Sender"
+      ElementaryTypeName address
+         Source: "address"
+    VariableDeclaration "Price"
+       Type: uint256
+       Source: "uint256 Price"
+      ElementaryTypeName uint256
+         Source: "uint256"
+    VariableDeclaration "Volume"
+       Type: uint256
+       Source: "uint256 Volume"
+      ElementaryTypeName uint256
+         Source: "uint256"
+    VariableDeclaration "Exists"
+       Type: bool
+       Source: "bool Exists"
+      ElementaryTypeName bool
+         Source: "bool"
+    VariableDeclaration "AuxPrice"
+       Type: uint256
+       Source: "uint256 AuxPrice"
+      ElementaryTypeName uint256
+         Source: "uint256"
+  VariableDeclaration "maxOrders"
+     Type: uint256
+     Source: "uint256 public maxOrders"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "buyList"
+     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+     Source: "OrderStruct[42] internal buyList"
+    ArrayTypeName
+       Source: "OrderStruct[42]"
+      UserDefinedTypeName "OrderStruct"
+         Source: "OrderStruct"
+      Literal, token: [no token] value: 42
+         Type: int_const 42
+         Source: "42"
+  VariableDeclaration "sellList"
+     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+     Source: "OrderStruct[42] internal sellList"
+    ArrayTypeName
+       Source: "OrderStruct[42]"
+      UserDefinedTypeName "OrderStruct"
+         Source: "OrderStruct"
+      Literal, token: [no token] value: 42
+         Type: int_const 42
+         Source: "42"
+  VariableDeclaration "sellIndex"
+     Type: uint256
+     Source: "uint256 public sellIndex"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  VariableDeclaration "buyIndex"
+     Type: uint256
+     Source: "uint256 public buyIndex"
+    ElementaryTypeName uint256
+       Source: "uint256"
+  FunctionDefinition "insertBid" - public
+     Source: "function insertBid(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        OrderStruct memory neworder =\n            OrderStruct(sender, price, volume, true, auxprice);\n\n        if (!buyList[0].Exists) {\n            buyList[0] = neworder;\n        } else {\n            buyIndex++;\n            buyList[buyIndex] = neworder;\n            maxheapHeapifyUp();\n        }\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        OrderStruct memory neworder =\n            OrderStruct(sender, price, volume, true, auxprice);\n\n        if (!buyList[0].Exists) {\n            buyList[0] = neworder;\n        } else {\n            buyIndex++;\n            buyList[buyIndex] = neworder;\n            maxheapHeapifyUp();\n        }\n    }"
+      VariableDeclarationStatement
+         Source: "OrderStruct memory neworder =\n            OrderStruct(sender, price, volume, true, auxprice)"
+        VariableDeclaration "neworder"
+           Type: struct HeapStaticArray.OrderStruct memory
+           Source: "OrderStruct memory neworder"
+          UserDefinedTypeName "OrderStruct"
+             Source: "OrderStruct"
+        FunctionCall
+           Type: struct HeapStaticArray.OrderStruct memory
+           Source: "OrderStruct(sender, price, volume, true, auxprice)"
+          Identifier OrderStruct
+             Type: type(struct HeapStaticArray.OrderStruct storage pointer)
+             Source: "OrderStruct"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Literal, token: true value: true
+             Type: bool
+             Source: "true"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+      IfStatement
+         Source: "if (!buyList[0].Exists) {\n            buyList[0] = neworder;\n        } else {\n            buyIndex++;\n            buyList[buyIndex] = neworder;\n            maxheapHeapifyUp();\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!buyList[0].Exists"
+          MemberAccess to member Exists
+             Type: bool
+             Source: "buyList[0].Exists"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "buyList[0]"
+              Identifier buyList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "buyList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+        Block
+           Source: "{\n            buyList[0] = neworder;\n        }"
+          ExpressionStatement
+             Source: "buyList[0] = neworder"
+            Assignment using operator =
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "buyList[0] = neworder"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+              Identifier neworder
+                 Type: struct HeapStaticArray.OrderStruct memory
+                 Source: "neworder"
+        Block
+           Source: "{\n            buyIndex++;\n            buyList[buyIndex] = neworder;\n            maxheapHeapifyUp();\n        }"
+          ExpressionStatement
+             Source: "buyIndex++"
+            UnaryOperation (postfix) ++
+               Type: uint256
+               Source: "buyIndex++"
+              Identifier buyIndex
+                 Type: uint256
+                 Source: "buyIndex"
+          ExpressionStatement
+             Source: "buyList[buyIndex] = neworder"
+            Assignment using operator =
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "buyList[buyIndex] = neworder"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[buyIndex]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Identifier buyIndex
+                   Type: uint256
+                   Source: "buyIndex"
+              Identifier neworder
+                 Type: struct HeapStaticArray.OrderStruct memory
+                 Source: "neworder"
+          ExpressionStatement
+             Source: "maxheapHeapifyUp()"
+            FunctionCall
+               Type: bool
+               Source: "maxheapHeapifyUp()"
+              Identifier maxheapHeapifyUp
+                 Type: function () returns (bool)
+                 Source: "maxheapHeapifyUp"
+  FunctionDefinition "maxheapHeapifyUp"
+     Source: "function maxheapHeapifyUp() internal returns (bool) {\n        uint256 k = buyIndex; //k is set to be the last entry of the array (also heap) which is the element that's just added and has to be moved up\n        while (k > 0) {\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                buyList[k].AuxPrice > buyList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[p];\n                buyList[p] = temp;\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }\n\n        return true;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        uint256 k = buyIndex; //k is set to be the last entry of the array (also heap) which is the element that's just added and has to be moved up\n        while (k > 0) {\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                buyList[k].AuxPrice > buyList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[p];\n                buyList[p] = temp;\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }\n\n        return true;\n    }"
+      VariableDeclarationStatement
+         Source: "uint256 k = buyIndex"
+        VariableDeclaration "k"
+           Type: uint256
+           Source: "uint256 k"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Identifier buyIndex
+           Type: uint256
+           Source: "buyIndex"
+      WhileStatement
+         Source: "while (k > 0) {\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                buyList[k].AuxPrice > buyList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[p];\n                buyList[p] = temp;\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }"
+        BinaryOperation using operator >
+           Type: bool
+           Source: "k > 0"
+          Identifier k
+             Type: uint256
+             Source: "k"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                buyList[k].AuxPrice > buyList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[p];\n                buyList[p] = temp;\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 p = (k - 1) / 2"
+            VariableDeclaration "p"
+               Type: uint256
+               Source: "uint256 p"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            BinaryOperation using operator /
+               Type: uint256
+               Source: "(k - 1) / 2"
+              TupleExpression
+                 Type: uint256
+                 Source: "(k - 1)"
+                BinaryOperation using operator -
+                   Type: uint256
+                   Source: "k - 1"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+                  Literal, token: [no token] value: 1
+                     Type: int_const 1
+                     Source: "1"
+              Literal, token: [no token] value: 2
+                 Type: int_const 2
+                 Source: "2"
+          IfStatement
+             Source: "if (\n                buyList[k].AuxPrice > buyList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[p];\n                buyList[p] = temp;\n                k = p; //k moves up one level\n            } else {\n                break;\n            }"
+            BinaryOperation using operator >
+               Type: bool
+               Source: "buyList[k].AuxPrice > buyList[p].AuxPrice"
+              MemberAccess to member AuxPrice
+                 Type: uint256
+                 Source: "buyList[k].AuxPrice"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[k]"
+                  Identifier buyList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "buyList"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+              MemberAccess to member AuxPrice
+                 Type: uint256
+                 Source: "buyList[p].AuxPrice"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[p]"
+                  Identifier buyList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "buyList"
+                  Identifier p
+                     Type: uint256
+                     Source: "p"
+            Block
+               Source: "{\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[p];\n                buyList[p] = temp;\n                k = p; //k moves up one level\n            }"
+              VariableDeclarationStatement
+                 Source: "OrderStruct memory temp = buyList[k]"
+                VariableDeclaration "temp"
+                   Type: struct HeapStaticArray.OrderStruct memory
+                   Source: "OrderStruct memory temp"
+                  UserDefinedTypeName "OrderStruct"
+                     Source: "OrderStruct"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[k]"
+                  Identifier buyList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "buyList"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+              ExpressionStatement
+                 Source: "buyList[k] = buyList[p]"
+                Assignment using operator =
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[k] = buyList[p]"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "buyList[k]"
+                    Identifier buyList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "buyList"
+                    Identifier k
+                       Type: uint256
+                       Source: "k"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "buyList[p]"
+                    Identifier buyList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "buyList"
+                    Identifier p
+                       Type: uint256
+                       Source: "p"
+              ExpressionStatement
+                 Source: "buyList[p] = temp"
+                Assignment using operator =
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[p] = temp"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "buyList[p]"
+                    Identifier buyList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "buyList"
+                    Identifier p
+                       Type: uint256
+                       Source: "p"
+                  Identifier temp
+                     Type: struct HeapStaticArray.OrderStruct memory
+                     Source: "temp"
+              ExpressionStatement
+                 Source: "k = p"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "k = p"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+                  Identifier p
+                     Type: uint256
+                     Source: "p"
+            Block
+               Source: "{\n                break;\n            }"
+              Break
+                 Source: "break"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "buyListMaxDelete" - public
+     Source: "function buyListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(!buyList[0].Exists, \"buyList is empty!\"); //the delete function throws exception if the list is empty\n\n        if (buyIndex == 0) {\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            delete buyList[0];\n            return (_price, _sender, _volume);\n        }\n        if (buyIndex == 1) //if the heap has two items\n        {\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            buyList[0] = buyList[1]; //the first element of the heap is removed\n            delete buyList[1];\n            buyIndex--;\n            return (_price, _sender, _volume);\n        }\n        //if neither of these conditions are true, then there are at least 2 items in the heap and deletion proceeds\n        uint256 _price = buyList[0].Price;\n        address _sender = buyList[0].Sender;\n        uint256 _volume = buyList[0].Volume;\n        buyList[0] = buyList[buyIndex]; //the last elementof the heap is removed and written into the first position\n        delete buyList[buyIndex];\n        buyIndex--;\n        maxheapHeapifyDown(); //now the heapifydown is called\n        return (_price, _sender, _volume);\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(!buyList[0].Exists, \"buyList is empty!\"); //the delete function throws exception if the list is empty\n\n        if (buyIndex == 0) {\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            delete buyList[0];\n            return (_price, _sender, _volume);\n        }\n        if (buyIndex == 1) //if the heap has two items\n        {\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            buyList[0] = buyList[1]; //the first element of the heap is removed\n            delete buyList[1];\n            buyIndex--;\n            return (_price, _sender, _volume);\n        }\n        //if neither of these conditions are true, then there are at least 2 items in the heap and deletion proceeds\n        uint256 _price = buyList[0].Price;\n        address _sender = buyList[0].Sender;\n        uint256 _volume = buyList[0].Volume;\n        buyList[0] = buyList[buyIndex]; //the last elementof the heap is removed and written into the first position\n        delete buyList[buyIndex];\n        buyIndex--;\n        maxheapHeapifyDown(); //now the heapifydown is called\n        return (_price, _sender, _volume);\n    }"
+      ExpressionStatement
+         Source: "require(!buyList[0].Exists, \"buyList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(!buyList[0].Exists, \"buyList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          UnaryOperation (prefix) !
+             Type: bool
+             Source: "!buyList[0].Exists"
+            MemberAccess to member Exists
+               Type: bool
+               Source: "buyList[0].Exists"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          Literal, token: [no token] value: buyList is empty!
+             Type: literal_string "buyList is empty!"
+             Source: "\"buyList is empty!\""
+      IfStatement
+         Source: "if (buyIndex == 0) {\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            delete buyList[0];\n            return (_price, _sender, _volume);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "buyIndex == 0"
+          Identifier buyIndex
+             Type: uint256
+             Source: "buyIndex"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            delete buyList[0];\n            return (_price, _sender, _volume);\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 _price = buyList[0].Price"
+            VariableDeclaration "_price"
+               Type: uint256
+               Source: "uint256 _price"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            MemberAccess to member Price
+               Type: uint256
+               Source: "buyList[0].Price"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          VariableDeclarationStatement
+             Source: "address _sender = buyList[0].Sender"
+            VariableDeclaration "_sender"
+               Type: address
+               Source: "address _sender"
+              ElementaryTypeName address
+                 Source: "address"
+            MemberAccess to member Sender
+               Type: address
+               Source: "buyList[0].Sender"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          VariableDeclarationStatement
+             Source: "uint256 _volume = buyList[0].Volume"
+            VariableDeclaration "_volume"
+               Type: uint256
+               Source: "uint256 _volume"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            MemberAccess to member Volume
+               Type: uint256
+               Source: "buyList[0].Volume"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          ExpressionStatement
+             Source: "delete buyList[0]"
+            UnaryOperation (prefix) delete
+               Type: tuple()
+               Source: "delete buyList[0]"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          Return
+             Source: "return (_price, _sender, _volume)"
+            TupleExpression
+               Type: tuple(uint256,address,uint256)
+               Source: "(_price, _sender, _volume)"
+              Identifier _price
+                 Type: uint256
+                 Source: "_price"
+              Identifier _sender
+                 Type: address
+                 Source: "_sender"
+              Identifier _volume
+                 Type: uint256
+                 Source: "_volume"
+      IfStatement
+         Source: "if (buyIndex == 1) //if the heap has two items\n        {\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            buyList[0] = buyList[1]; //the first element of the heap is removed\n            delete buyList[1];\n            buyIndex--;\n            return (_price, _sender, _volume);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "buyIndex == 1"
+          Identifier buyIndex
+             Type: uint256
+             Source: "buyIndex"
+          Literal, token: [no token] value: 1
+             Type: int_const 1
+             Source: "1"
+        Block
+           Source: "{\n            uint256 _price = buyList[0].Price;\n            address _sender = buyList[0].Sender;\n            uint256 _volume = buyList[0].Volume;\n            buyList[0] = buyList[1]; //the first element of the heap is removed\n            delete buyList[1];\n            buyIndex--;\n            return (_price, _sender, _volume);\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 _price = buyList[0].Price"
+            VariableDeclaration "_price"
+               Type: uint256
+               Source: "uint256 _price"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            MemberAccess to member Price
+               Type: uint256
+               Source: "buyList[0].Price"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          VariableDeclarationStatement
+             Source: "address _sender = buyList[0].Sender"
+            VariableDeclaration "_sender"
+               Type: address
+               Source: "address _sender"
+              ElementaryTypeName address
+                 Source: "address"
+            MemberAccess to member Sender
+               Type: address
+               Source: "buyList[0].Sender"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          VariableDeclarationStatement
+             Source: "uint256 _volume = buyList[0].Volume"
+            VariableDeclaration "_volume"
+               Type: uint256
+               Source: "uint256 _volume"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            MemberAccess to member Volume
+               Type: uint256
+               Source: "buyList[0].Volume"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          ExpressionStatement
+             Source: "buyList[0] = buyList[1]"
+            Assignment using operator =
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "buyList[0] = buyList[1]"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[1]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 1
+                   Type: int_const 1
+                   Source: "1"
+          ExpressionStatement
+             Source: "delete buyList[1]"
+            UnaryOperation (prefix) delete
+               Type: tuple()
+               Source: "delete buyList[1]"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[1]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 1
+                   Type: int_const 1
+                   Source: "1"
+          ExpressionStatement
+             Source: "buyIndex--"
+            UnaryOperation (postfix) --
+               Type: uint256
+               Source: "buyIndex--"
+              Identifier buyIndex
+                 Type: uint256
+                 Source: "buyIndex"
+          Return
+             Source: "return (_price, _sender, _volume)"
+            TupleExpression
+               Type: tuple(uint256,address,uint256)
+               Source: "(_price, _sender, _volume)"
+              Identifier _price
+                 Type: uint256
+                 Source: "_price"
+              Identifier _sender
+                 Type: address
+                 Source: "_sender"
+              Identifier _volume
+                 Type: uint256
+                 Source: "_volume"
+      VariableDeclarationStatement
+         Source: "uint256 _price = buyList[0].Price"
+        VariableDeclaration "_price"
+           Type: uint256
+           Source: "uint256 _price"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member Price
+           Type: uint256
+           Source: "buyList[0].Price"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "buyList[0]"
+            Identifier buyList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "buyList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+      VariableDeclarationStatement
+         Source: "address _sender = buyList[0].Sender"
+        VariableDeclaration "_sender"
+           Type: address
+           Source: "address _sender"
+          ElementaryTypeName address
+             Source: "address"
+        MemberAccess to member Sender
+           Type: address
+           Source: "buyList[0].Sender"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "buyList[0]"
+            Identifier buyList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "buyList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+      VariableDeclarationStatement
+         Source: "uint256 _volume = buyList[0].Volume"
+        VariableDeclaration "_volume"
+           Type: uint256
+           Source: "uint256 _volume"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member Volume
+           Type: uint256
+           Source: "buyList[0].Volume"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "buyList[0]"
+            Identifier buyList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "buyList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+      ExpressionStatement
+         Source: "buyList[0] = buyList[buyIndex]"
+        Assignment using operator =
+           Type: struct HeapStaticArray.OrderStruct storage ref
+           Source: "buyList[0] = buyList[buyIndex]"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "buyList[0]"
+            Identifier buyList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "buyList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "buyList[buyIndex]"
+            Identifier buyList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "buyList"
+            Identifier buyIndex
+               Type: uint256
+               Source: "buyIndex"
+      ExpressionStatement
+         Source: "delete buyList[buyIndex]"
+        UnaryOperation (prefix) delete
+           Type: tuple()
+           Source: "delete buyList[buyIndex]"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "buyList[buyIndex]"
+            Identifier buyList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "buyList"
+            Identifier buyIndex
+               Type: uint256
+               Source: "buyIndex"
+      ExpressionStatement
+         Source: "buyIndex--"
+        UnaryOperation (postfix) --
+           Type: uint256
+           Source: "buyIndex--"
+          Identifier buyIndex
+             Type: uint256
+             Source: "buyIndex"
+      ExpressionStatement
+         Source: "maxheapHeapifyDown()"
+        FunctionCall
+           Type: bool
+           Source: "maxheapHeapifyDown()"
+          Identifier maxheapHeapifyDown
+             Type: function () returns (bool)
+             Source: "maxheapHeapifyDown"
+      Return
+         Source: "return (_price, _sender, _volume)"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(_price, _sender, _volume)"
+          Identifier _price
+             Type: uint256
+             Source: "_price"
+          Identifier _sender
+             Type: address
+             Source: "_sender"
+          Identifier _volume
+             Type: uint256
+             Source: "_volume"
+  FunctionDefinition "buyListMax" - public - const
+     Source: "function buyListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(!buyList[0].Exists, \"buyList is empty!\"); //the delete function throws exception if the list is empty\n        return (buyList[0].Price, buyList[0].Sender, buyList[0].Volume);\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(!buyList[0].Exists, \"buyList is empty!\"); //the delete function throws exception if the list is empty\n        return (buyList[0].Price, buyList[0].Sender, buyList[0].Volume);\n    }"
+      ExpressionStatement
+         Source: "require(!buyList[0].Exists, \"buyList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(!buyList[0].Exists, \"buyList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          UnaryOperation (prefix) !
+             Type: bool
+             Source: "!buyList[0].Exists"
+            MemberAccess to member Exists
+               Type: bool
+               Source: "buyList[0].Exists"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "buyList[0]"
+                Identifier buyList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "buyList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          Literal, token: [no token] value: buyList is empty!
+             Type: literal_string "buyList is empty!"
+             Source: "\"buyList is empty!\""
+      Return
+         Source: "return (buyList[0].Price, buyList[0].Sender, buyList[0].Volume)"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(buyList[0].Price, buyList[0].Sender, buyList[0].Volume)"
+          MemberAccess to member Price
+             Type: uint256
+             Source: "buyList[0].Price"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "buyList[0]"
+              Identifier buyList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "buyList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          MemberAccess to member Sender
+             Type: address
+             Source: "buyList[0].Sender"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "buyList[0]"
+              Identifier buyList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "buyList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          MemberAccess to member Volume
+             Type: uint256
+             Source: "buyList[0].Volume"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "buyList[0]"
+              Identifier buyList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "buyList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+  FunctionDefinition "maxheapHeapifyDown"
+     Source: "function maxheapHeapifyDown() internal returns (bool) {\n        uint256 k = 0;\n        uint256 leftchild = 2 * k + 1;\n        while (leftchild <= buyIndex) {\n            //as long as the left child is within the array that heap is stored in\n            uint256 max = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (rightchild < buyIndex) //if there is a rightchild\n            {\n                if (\n                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice\n                ) //then the right child and left child are compared\n                {\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }\n            }\n\n            if (\n                buyList[k].AuxPrice < buyList[max].AuxPrice\n            ) //compares the k item with the max item and if k is smaller than its greatest children they are swapped\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[max];\n                buyList[max] = temp;\n                k = max; //k is set to max\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if the k item is not smaller than the max item, heapifyDown should stop\n                break;\n            }\n        }\n        return true;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        uint256 k = 0;\n        uint256 leftchild = 2 * k + 1;\n        while (leftchild <= buyIndex) {\n            //as long as the left child is within the array that heap is stored in\n            uint256 max = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (rightchild < buyIndex) //if there is a rightchild\n            {\n                if (\n                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice\n                ) //then the right child and left child are compared\n                {\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }\n            }\n\n            if (\n                buyList[k].AuxPrice < buyList[max].AuxPrice\n            ) //compares the k item with the max item and if k is smaller than its greatest children they are swapped\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[max];\n                buyList[max] = temp;\n                k = max; //k is set to max\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if the k item is not smaller than the max item, heapifyDown should stop\n                break;\n            }\n        }\n        return true;\n    }"
+      VariableDeclarationStatement
+         Source: "uint256 k = 0"
+        VariableDeclaration "k"
+           Type: uint256
+           Source: "uint256 k"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Literal, token: [no token] value: 0
+           Type: int_const 0
+           Source: "0"
+      VariableDeclarationStatement
+         Source: "uint256 leftchild = 2 * k + 1"
+        VariableDeclaration "leftchild"
+           Type: uint256
+           Source: "uint256 leftchild"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        BinaryOperation using operator +
+           Type: uint256
+           Source: "2 * k + 1"
+          BinaryOperation using operator *
+             Type: uint256
+             Source: "2 * k"
+            Literal, token: [no token] value: 2
+               Type: int_const 2
+               Source: "2"
+            Identifier k
+               Type: uint256
+               Source: "k"
+          Literal, token: [no token] value: 1
+             Type: int_const 1
+             Source: "1"
+      WhileStatement
+         Source: "while (leftchild <= buyIndex) {\n            //as long as the left child is within the array that heap is stored in\n            uint256 max = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (rightchild < buyIndex) //if there is a rightchild\n            {\n                if (\n                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice\n                ) //then the right child and left child are compared\n                {\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }\n            }\n\n            if (\n                buyList[k].AuxPrice < buyList[max].AuxPrice\n            ) //compares the k item with the max item and if k is smaller than its greatest children they are swapped\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[max];\n                buyList[max] = temp;\n                k = max; //k is set to max\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if the k item is not smaller than the max item, heapifyDown should stop\n                break;\n            }\n        }"
+        BinaryOperation using operator <=
+           Type: bool
+           Source: "leftchild <= buyIndex"
+          Identifier leftchild
+             Type: uint256
+             Source: "leftchild"
+          Identifier buyIndex
+             Type: uint256
+             Source: "buyIndex"
+        Block
+           Source: "{\n            //as long as the left child is within the array that heap is stored in\n            uint256 max = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (rightchild < buyIndex) //if there is a rightchild\n            {\n                if (\n                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice\n                ) //then the right child and left child are compared\n                {\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }\n            }\n\n            if (\n                buyList[k].AuxPrice < buyList[max].AuxPrice\n            ) //compares the k item with the max item and if k is smaller than its greatest children they are swapped\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[max];\n                buyList[max] = temp;\n                k = max; //k is set to max\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if the k item is not smaller than the max item, heapifyDown should stop\n                break;\n            }\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 max = leftchild"
+            VariableDeclaration "max"
+               Type: uint256
+               Source: "uint256 max"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            Identifier leftchild
+               Type: uint256
+               Source: "leftchild"
+          VariableDeclarationStatement
+             Source: "uint256 rightchild = leftchild + 1"
+            VariableDeclaration "rightchild"
+               Type: uint256
+               Source: "uint256 rightchild"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            BinaryOperation using operator +
+               Type: uint256
+               Source: "leftchild + 1"
+              Identifier leftchild
+                 Type: uint256
+                 Source: "leftchild"
+              Literal, token: [no token] value: 1
+                 Type: int_const 1
+                 Source: "1"
+          IfStatement
+             Source: "if (rightchild < buyIndex) //if there is a rightchild\n            {\n                if (\n                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice\n                ) //then the right child and left child are compared\n                {\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }\n            }"
+            BinaryOperation using operator <
+               Type: bool
+               Source: "rightchild < buyIndex"
+              Identifier rightchild
+                 Type: uint256
+                 Source: "rightchild"
+              Identifier buyIndex
+                 Type: uint256
+                 Source: "buyIndex"
+            Block
+               Source: "{\n                if (\n                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice\n                ) //then the right child and left child are compared\n                {\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }\n            }"
+              IfStatement
+                 Source: "if (\n                    buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice\n                ) //then the right child and left child are compared\n                {\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }"
+                BinaryOperation using operator >
+                   Type: bool
+                   Source: "buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice"
+                  MemberAccess to member AuxPrice
+                     Type: uint256
+                     Source: "buyList[rightchild].AuxPrice"
+                    IndexAccess
+                       Type: struct HeapStaticArray.OrderStruct storage ref
+                       Source: "buyList[rightchild]"
+                      Identifier buyList
+                         Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                         Source: "buyList"
+                      Identifier rightchild
+                         Type: uint256
+                         Source: "rightchild"
+                  MemberAccess to member AuxPrice
+                     Type: uint256
+                     Source: "buyList[leftchild].AuxPrice"
+                    IndexAccess
+                       Type: struct HeapStaticArray.OrderStruct storage ref
+                       Source: "buyList[leftchild]"
+                      Identifier buyList
+                         Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                         Source: "buyList"
+                      Identifier leftchild
+                         Type: uint256
+                         Source: "leftchild"
+                Block
+                   Source: "{\n                    max++; //now max is set to rightchild, otherwise max remains to be the leftchild\n                }"
+                  ExpressionStatement
+                     Source: "max++"
+                    UnaryOperation (postfix) ++
+                       Type: uint256
+                       Source: "max++"
+                      Identifier max
+                         Type: uint256
+                         Source: "max"
+          IfStatement
+             Source: "if (\n                buyList[k].AuxPrice < buyList[max].AuxPrice\n            ) //compares the k item with the max item and if k is smaller than its greatest children they are swapped\n            {\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[max];\n                buyList[max] = temp;\n                k = max; //k is set to max\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if the k item is not smaller than the max item, heapifyDown should stop\n                break;\n            }"
+            BinaryOperation using operator <
+               Type: bool
+               Source: "buyList[k].AuxPrice < buyList[max].AuxPrice"
+              MemberAccess to member AuxPrice
+                 Type: uint256
+                 Source: "buyList[k].AuxPrice"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[k]"
+                  Identifier buyList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "buyList"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+              MemberAccess to member AuxPrice
+                 Type: uint256
+                 Source: "buyList[max].AuxPrice"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[max]"
+                  Identifier buyList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "buyList"
+                  Identifier max
+                     Type: uint256
+                     Source: "max"
+            Block
+               Source: "{\n                OrderStruct memory temp = buyList[k]; //swap the element at index k with its parent\n                buyList[k] = buyList[max];\n                buyList[max] = temp;\n                k = max; //k is set to max\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            }"
+              VariableDeclarationStatement
+                 Source: "OrderStruct memory temp = buyList[k]"
+                VariableDeclaration "temp"
+                   Type: struct HeapStaticArray.OrderStruct memory
+                   Source: "OrderStruct memory temp"
+                  UserDefinedTypeName "OrderStruct"
+                     Source: "OrderStruct"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[k]"
+                  Identifier buyList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "buyList"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+              ExpressionStatement
+                 Source: "buyList[k] = buyList[max]"
+                Assignment using operator =
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[k] = buyList[max]"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "buyList[k]"
+                    Identifier buyList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "buyList"
+                    Identifier k
+                       Type: uint256
+                       Source: "k"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "buyList[max]"
+                    Identifier buyList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "buyList"
+                    Identifier max
+                       Type: uint256
+                       Source: "max"
+              ExpressionStatement
+                 Source: "buyList[max] = temp"
+                Assignment using operator =
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "buyList[max] = temp"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "buyList[max]"
+                    Identifier buyList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "buyList"
+                    Identifier max
+                       Type: uint256
+                       Source: "max"
+                  Identifier temp
+                     Type: struct HeapStaticArray.OrderStruct memory
+                     Source: "temp"
+              ExpressionStatement
+                 Source: "k = max"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "k = max"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+                  Identifier max
+                     Type: uint256
+                     Source: "max"
+              ExpressionStatement
+                 Source: "leftchild = 2 * k + 1"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "leftchild = 2 * k + 1"
+                  Identifier leftchild
+                     Type: uint256
+                     Source: "leftchild"
+                  BinaryOperation using operator +
+                     Type: uint256
+                     Source: "2 * k + 1"
+                    BinaryOperation using operator *
+                       Type: uint256
+                       Source: "2 * k"
+                      Literal, token: [no token] value: 2
+                         Type: int_const 2
+                         Source: "2"
+                      Identifier k
+                         Type: uint256
+                         Source: "k"
+                    Literal, token: [no token] value: 1
+                       Type: int_const 1
+                       Source: "1"
+            Block
+               Source: "{\n                //if the k item is not smaller than the max item, heapifyDown should stop\n                break;\n            }"
+              Break
+                 Source: "break"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "buyListisEmpty" - public - const
+     Source: "function buyListisEmpty() external view returns (bool) {\n        if (!buyList[0].Exists) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (!buyList[0].Exists) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+      IfStatement
+         Source: "if (!buyList[0].Exists) {\n            return true;\n        } else {\n            return false;\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!buyList[0].Exists"
+          MemberAccess to member Exists
+             Type: bool
+             Source: "buyList[0].Exists"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "buyList[0]"
+              Identifier buyList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "buyList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+        Block
+           Source: "{\n            return true;\n        }"
+          Return
+             Source: "return true"
+            Literal, token: true value: true
+               Type: bool
+               Source: "true"
+        Block
+           Source: "{\n            return false;\n        }"
+          Return
+             Source: "return false"
+            Literal, token: false value: false
+               Type: bool
+               Source: "false"
+  FunctionDefinition "insertAsk" - public
+     Source: "function insertAsk(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    ) external {\n        OrderStruct memory neworder =\n            OrderStruct(sender, price, volume, true, auxprice);\n\n        if (!sellList[0].Exists) {\n            sellList[0] = neworder;\n        } else {\n            sellIndex++;\n            sellList[sellIndex] = neworder;\n            minheapHeapifyUp();\n        }\n    }"
+    ParameterList
+       Source: "(\n        address sender,\n        uint256 price,\n        uint256 volume,\n        uint256 auxprice\n    )"
+      VariableDeclaration "sender"
+         Type: address
+         Source: "address sender"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration "price"
+         Type: uint256
+         Source: "uint256 price"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "volume"
+         Type: uint256
+         Source: "uint256 volume"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration "auxprice"
+         Type: uint256
+         Source: "uint256 auxprice"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    ParameterList
+       Source: ""
+    Block
+       Source: "{\n        OrderStruct memory neworder =\n            OrderStruct(sender, price, volume, true, auxprice);\n\n        if (!sellList[0].Exists) {\n            sellList[0] = neworder;\n        } else {\n            sellIndex++;\n            sellList[sellIndex] = neworder;\n            minheapHeapifyUp();\n        }\n    }"
+      VariableDeclarationStatement
+         Source: "OrderStruct memory neworder =\n            OrderStruct(sender, price, volume, true, auxprice)"
+        VariableDeclaration "neworder"
+           Type: struct HeapStaticArray.OrderStruct memory
+           Source: "OrderStruct memory neworder"
+          UserDefinedTypeName "OrderStruct"
+             Source: "OrderStruct"
+        FunctionCall
+           Type: struct HeapStaticArray.OrderStruct memory
+           Source: "OrderStruct(sender, price, volume, true, auxprice)"
+          Identifier OrderStruct
+             Type: type(struct HeapStaticArray.OrderStruct storage pointer)
+             Source: "OrderStruct"
+          Identifier sender
+             Type: address
+             Source: "sender"
+          Identifier price
+             Type: uint256
+             Source: "price"
+          Identifier volume
+             Type: uint256
+             Source: "volume"
+          Literal, token: true value: true
+             Type: bool
+             Source: "true"
+          Identifier auxprice
+             Type: uint256
+             Source: "auxprice"
+      IfStatement
+         Source: "if (!sellList[0].Exists) {\n            sellList[0] = neworder;\n        } else {\n            sellIndex++;\n            sellList[sellIndex] = neworder;\n            minheapHeapifyUp();\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!sellList[0].Exists"
+          MemberAccess to member Exists
+             Type: bool
+             Source: "sellList[0].Exists"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0]"
+              Identifier sellList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "sellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+        Block
+           Source: "{\n            sellList[0] = neworder;\n        }"
+          ExpressionStatement
+             Source: "sellList[0] = neworder"
+            Assignment using operator =
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0] = neworder"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+              Identifier neworder
+                 Type: struct HeapStaticArray.OrderStruct memory
+                 Source: "neworder"
+        Block
+           Source: "{\n            sellIndex++;\n            sellList[sellIndex] = neworder;\n            minheapHeapifyUp();\n        }"
+          ExpressionStatement
+             Source: "sellIndex++"
+            UnaryOperation (postfix) ++
+               Type: uint256
+               Source: "sellIndex++"
+              Identifier sellIndex
+                 Type: uint256
+                 Source: "sellIndex"
+          ExpressionStatement
+             Source: "sellList[sellIndex] = neworder"
+            Assignment using operator =
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[sellIndex] = neworder"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[sellIndex]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Identifier sellIndex
+                   Type: uint256
+                   Source: "sellIndex"
+              Identifier neworder
+                 Type: struct HeapStaticArray.OrderStruct memory
+                 Source: "neworder"
+          ExpressionStatement
+             Source: "minheapHeapifyUp()"
+            FunctionCall
+               Type: bool
+               Source: "minheapHeapifyUp()"
+              Identifier minheapHeapifyUp
+                 Type: function () returns (bool)
+                 Source: "minheapHeapifyUp"
+  FunctionDefinition "minheapHeapifyUp"
+     Source: "function minheapHeapifyUp() internal returns (bool) {\n        uint256 k = sellIndex; //k is set to be the last entry of the array(also heap) which is the element that's just added and has to be moved up\n        while (k > 0) {\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                sellList[k].AuxPrice < sellList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[p];\n                sellList[p] = temp;\n\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }\n\n        return true;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        uint256 k = sellIndex; //k is set to be the last entry of the array(also heap) which is the element that's just added and has to be moved up\n        while (k > 0) {\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                sellList[k].AuxPrice < sellList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[p];\n                sellList[p] = temp;\n\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }\n\n        return true;\n    }"
+      VariableDeclarationStatement
+         Source: "uint256 k = sellIndex"
+        VariableDeclaration "k"
+           Type: uint256
+           Source: "uint256 k"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Identifier sellIndex
+           Type: uint256
+           Source: "sellIndex"
+      WhileStatement
+         Source: "while (k > 0) {\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                sellList[k].AuxPrice < sellList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[p];\n                sellList[p] = temp;\n\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }"
+        BinaryOperation using operator >
+           Type: bool
+           Source: "k > 0"
+          Identifier k
+             Type: uint256
+             Source: "k"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            //while we havent reached to the top of the heap\n            uint256 p = (k - 1) / 2; //we need to compute the parent of this last element which is p = (k-1)/2\n            if (\n                sellList[k].AuxPrice < sellList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[p];\n                sellList[p] = temp;\n\n                k = p; //k moves up one level\n            } else {\n                break;\n            } //if not the break statement exits the loop (it continues until no element index k is not greater than its parent)\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 p = (k - 1) / 2"
+            VariableDeclaration "p"
+               Type: uint256
+               Source: "uint256 p"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            BinaryOperation using operator /
+               Type: uint256
+               Source: "(k - 1) / 2"
+              TupleExpression
+                 Type: uint256
+                 Source: "(k - 1)"
+                BinaryOperation using operator -
+                   Type: uint256
+                   Source: "k - 1"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+                  Literal, token: [no token] value: 1
+                     Type: int_const 1
+                     Source: "1"
+              Literal, token: [no token] value: 2
+                 Type: int_const 2
+                 Source: "2"
+          IfStatement
+             Source: "if (\n                sellList[k].AuxPrice < sellList[p].AuxPrice\n            ) //if the element is greater than its parent\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[p];\n                sellList[p] = temp;\n\n                k = p; //k moves up one level\n            } else {\n                break;\n            }"
+            BinaryOperation using operator <
+               Type: bool
+               Source: "sellList[k].AuxPrice < sellList[p].AuxPrice"
+              MemberAccess to member AuxPrice
+                 Type: uint256
+                 Source: "sellList[k].AuxPrice"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[k]"
+                  Identifier sellList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "sellList"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+              MemberAccess to member AuxPrice
+                 Type: uint256
+                 Source: "sellList[p].AuxPrice"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[p]"
+                  Identifier sellList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "sellList"
+                  Identifier p
+                     Type: uint256
+                     Source: "p"
+            Block
+               Source: "{\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[p];\n                sellList[p] = temp;\n\n                k = p; //k moves up one level\n            }"
+              VariableDeclarationStatement
+                 Source: "OrderStruct memory temp = sellList[k]"
+                VariableDeclaration "temp"
+                   Type: struct HeapStaticArray.OrderStruct memory
+                   Source: "OrderStruct memory temp"
+                  UserDefinedTypeName "OrderStruct"
+                     Source: "OrderStruct"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[k]"
+                  Identifier sellList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "sellList"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+              ExpressionStatement
+                 Source: "sellList[k] = sellList[p]"
+                Assignment using operator =
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[k] = sellList[p]"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "sellList[k]"
+                    Identifier sellList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "sellList"
+                    Identifier k
+                       Type: uint256
+                       Source: "k"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "sellList[p]"
+                    Identifier sellList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "sellList"
+                    Identifier p
+                       Type: uint256
+                       Source: "p"
+              ExpressionStatement
+                 Source: "sellList[p] = temp"
+                Assignment using operator =
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[p] = temp"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "sellList[p]"
+                    Identifier sellList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "sellList"
+                    Identifier p
+                       Type: uint256
+                       Source: "p"
+                  Identifier temp
+                     Type: struct HeapStaticArray.OrderStruct memory
+                     Source: "temp"
+              ExpressionStatement
+                 Source: "k = p"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "k = p"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+                  Identifier p
+                     Type: uint256
+                     Source: "p"
+            Block
+               Source: "{\n                break;\n            }"
+              Break
+                 Source: "break"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "sellListMaxDelete" - public
+     Source: "function sellListMaxDelete()\n        external\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellList[0].Exists, \"sellList is empty!\"); //the delete function throws exception if the list is empty\n\n        if (sellIndex == 0) {\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            delete sellList[0];\n            return (_price, _sender, _volume);\n        }\n\n        if (sellIndex == 1) {\n            // if the heap has only one item\n\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            sellList[0] = sellList[1];\n            delete sellList[1]; //the only element of the heap is removed and returned\n            sellIndex--;\n            return (_price, _sender, _volume);\n        }\n\n        //if neither of these conditions are true, then there are at least 2 items in the heap and deletion proceeds\n\n        uint256 _price = sellList[0].Price;\n        address _sender = sellList[0].Sender;\n        uint256 _volume = sellList[0].Volume;\n        sellList[0] = sellList[sellIndex]; //the last elementof the heap is removed and written into the first position\n        delete sellList[sellIndex];\n        sellIndex--;\n        minheapHeapifyDown(); //now the heapifyDown is called to restore the ordering of the heap\n        return (_price, _sender, _volume);\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(sellList[0].Exists, \"sellList is empty!\"); //the delete function throws exception if the list is empty\n\n        if (sellIndex == 0) {\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            delete sellList[0];\n            return (_price, _sender, _volume);\n        }\n\n        if (sellIndex == 1) {\n            // if the heap has only one item\n\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            sellList[0] = sellList[1];\n            delete sellList[1]; //the only element of the heap is removed and returned\n            sellIndex--;\n            return (_price, _sender, _volume);\n        }\n\n        //if neither of these conditions are true, then there are at least 2 items in the heap and deletion proceeds\n\n        uint256 _price = sellList[0].Price;\n        address _sender = sellList[0].Sender;\n        uint256 _volume = sellList[0].Volume;\n        sellList[0] = sellList[sellIndex]; //the last elementof the heap is removed and written into the first position\n        delete sellList[sellIndex];\n        sellIndex--;\n        minheapHeapifyDown(); //now the heapifyDown is called to restore the ordering of the heap\n        return (_price, _sender, _volume);\n    }"
+      ExpressionStatement
+         Source: "require(sellList[0].Exists, \"sellList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(sellList[0].Exists, \"sellList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          MemberAccess to member Exists
+             Type: bool
+             Source: "sellList[0].Exists"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0]"
+              Identifier sellList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "sellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          Literal, token: [no token] value: sellList is empty!
+             Type: literal_string "sellList is empty!"
+             Source: "\"sellList is empty!\""
+      IfStatement
+         Source: "if (sellIndex == 0) {\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            delete sellList[0];\n            return (_price, _sender, _volume);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "sellIndex == 0"
+          Identifier sellIndex
+             Type: uint256
+             Source: "sellIndex"
+          Literal, token: [no token] value: 0
+             Type: int_const 0
+             Source: "0"
+        Block
+           Source: "{\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            delete sellList[0];\n            return (_price, _sender, _volume);\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 _price = sellList[0].Price"
+            VariableDeclaration "_price"
+               Type: uint256
+               Source: "uint256 _price"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            MemberAccess to member Price
+               Type: uint256
+               Source: "sellList[0].Price"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          VariableDeclarationStatement
+             Source: "address _sender = sellList[0].Sender"
+            VariableDeclaration "_sender"
+               Type: address
+               Source: "address _sender"
+              ElementaryTypeName address
+                 Source: "address"
+            MemberAccess to member Sender
+               Type: address
+               Source: "sellList[0].Sender"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          VariableDeclarationStatement
+             Source: "uint256 _volume = sellList[0].Volume"
+            VariableDeclaration "_volume"
+               Type: uint256
+               Source: "uint256 _volume"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            MemberAccess to member Volume
+               Type: uint256
+               Source: "sellList[0].Volume"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          ExpressionStatement
+             Source: "delete sellList[0]"
+            UnaryOperation (prefix) delete
+               Type: tuple()
+               Source: "delete sellList[0]"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          Return
+             Source: "return (_price, _sender, _volume)"
+            TupleExpression
+               Type: tuple(uint256,address,uint256)
+               Source: "(_price, _sender, _volume)"
+              Identifier _price
+                 Type: uint256
+                 Source: "_price"
+              Identifier _sender
+                 Type: address
+                 Source: "_sender"
+              Identifier _volume
+                 Type: uint256
+                 Source: "_volume"
+      IfStatement
+         Source: "if (sellIndex == 1) {\n            // if the heap has only one item\n\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            sellList[0] = sellList[1];\n            delete sellList[1]; //the only element of the heap is removed and returned\n            sellIndex--;\n            return (_price, _sender, _volume);\n        }"
+        BinaryOperation using operator ==
+           Type: bool
+           Source: "sellIndex == 1"
+          Identifier sellIndex
+             Type: uint256
+             Source: "sellIndex"
+          Literal, token: [no token] value: 1
+             Type: int_const 1
+             Source: "1"
+        Block
+           Source: "{\n            // if the heap has only one item\n\n            uint256 _price = sellList[0].Price;\n            address _sender = sellList[0].Sender;\n            uint256 _volume = sellList[0].Volume;\n            sellList[0] = sellList[1];\n            delete sellList[1]; //the only element of the heap is removed and returned\n            sellIndex--;\n            return (_price, _sender, _volume);\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 _price = sellList[0].Price"
+            VariableDeclaration "_price"
+               Type: uint256
+               Source: "uint256 _price"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            MemberAccess to member Price
+               Type: uint256
+               Source: "sellList[0].Price"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          VariableDeclarationStatement
+             Source: "address _sender = sellList[0].Sender"
+            VariableDeclaration "_sender"
+               Type: address
+               Source: "address _sender"
+              ElementaryTypeName address
+                 Source: "address"
+            MemberAccess to member Sender
+               Type: address
+               Source: "sellList[0].Sender"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          VariableDeclarationStatement
+             Source: "uint256 _volume = sellList[0].Volume"
+            VariableDeclaration "_volume"
+               Type: uint256
+               Source: "uint256 _volume"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            MemberAccess to member Volume
+               Type: uint256
+               Source: "sellList[0].Volume"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+          ExpressionStatement
+             Source: "sellList[0] = sellList[1]"
+            Assignment using operator =
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0] = sellList[1]"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[0]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 0
+                   Type: int_const 0
+                   Source: "0"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[1]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 1
+                   Type: int_const 1
+                   Source: "1"
+          ExpressionStatement
+             Source: "delete sellList[1]"
+            UnaryOperation (prefix) delete
+               Type: tuple()
+               Source: "delete sellList[1]"
+              IndexAccess
+                 Type: struct HeapStaticArray.OrderStruct storage ref
+                 Source: "sellList[1]"
+                Identifier sellList
+                   Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                   Source: "sellList"
+                Literal, token: [no token] value: 1
+                   Type: int_const 1
+                   Source: "1"
+          ExpressionStatement
+             Source: "sellIndex--"
+            UnaryOperation (postfix) --
+               Type: uint256
+               Source: "sellIndex--"
+              Identifier sellIndex
+                 Type: uint256
+                 Source: "sellIndex"
+          Return
+             Source: "return (_price, _sender, _volume)"
+            TupleExpression
+               Type: tuple(uint256,address,uint256)
+               Source: "(_price, _sender, _volume)"
+              Identifier _price
+                 Type: uint256
+                 Source: "_price"
+              Identifier _sender
+                 Type: address
+                 Source: "_sender"
+              Identifier _volume
+                 Type: uint256
+                 Source: "_volume"
+      VariableDeclarationStatement
+         Source: "uint256 _price = sellList[0].Price"
+        VariableDeclaration "_price"
+           Type: uint256
+           Source: "uint256 _price"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member Price
+           Type: uint256
+           Source: "sellList[0].Price"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "sellList[0]"
+            Identifier sellList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "sellList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+      VariableDeclarationStatement
+         Source: "address _sender = sellList[0].Sender"
+        VariableDeclaration "_sender"
+           Type: address
+           Source: "address _sender"
+          ElementaryTypeName address
+             Source: "address"
+        MemberAccess to member Sender
+           Type: address
+           Source: "sellList[0].Sender"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "sellList[0]"
+            Identifier sellList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "sellList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+      VariableDeclarationStatement
+         Source: "uint256 _volume = sellList[0].Volume"
+        VariableDeclaration "_volume"
+           Type: uint256
+           Source: "uint256 _volume"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        MemberAccess to member Volume
+           Type: uint256
+           Source: "sellList[0].Volume"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "sellList[0]"
+            Identifier sellList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "sellList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+      ExpressionStatement
+         Source: "sellList[0] = sellList[sellIndex]"
+        Assignment using operator =
+           Type: struct HeapStaticArray.OrderStruct storage ref
+           Source: "sellList[0] = sellList[sellIndex]"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "sellList[0]"
+            Identifier sellList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "sellList"
+            Literal, token: [no token] value: 0
+               Type: int_const 0
+               Source: "0"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "sellList[sellIndex]"
+            Identifier sellList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "sellList"
+            Identifier sellIndex
+               Type: uint256
+               Source: "sellIndex"
+      ExpressionStatement
+         Source: "delete sellList[sellIndex]"
+        UnaryOperation (prefix) delete
+           Type: tuple()
+           Source: "delete sellList[sellIndex]"
+          IndexAccess
+             Type: struct HeapStaticArray.OrderStruct storage ref
+             Source: "sellList[sellIndex]"
+            Identifier sellList
+               Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+               Source: "sellList"
+            Identifier sellIndex
+               Type: uint256
+               Source: "sellIndex"
+      ExpressionStatement
+         Source: "sellIndex--"
+        UnaryOperation (postfix) --
+           Type: uint256
+           Source: "sellIndex--"
+          Identifier sellIndex
+             Type: uint256
+             Source: "sellIndex"
+      ExpressionStatement
+         Source: "minheapHeapifyDown()"
+        FunctionCall
+           Type: bool
+           Source: "minheapHeapifyDown()"
+          Identifier minheapHeapifyDown
+             Type: function () returns (bool)
+             Source: "minheapHeapifyDown"
+      Return
+         Source: "return (_price, _sender, _volume)"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(_price, _sender, _volume)"
+          Identifier _price
+             Type: uint256
+             Source: "_price"
+          Identifier _sender
+             Type: address
+             Source: "_sender"
+          Identifier _volume
+             Type: uint256
+             Source: "_volume"
+  FunctionDefinition "sellListMax" - public - const
+     Source: "function sellListMax()\n        external\n        view\n        returns (\n            uint256,\n            address,\n            uint256\n        )\n    {\n        require(sellList[0].Exists, \"sellList is empty!\"); //throws exception if the sellist is empty\n        return (sellList[0].Price, sellList[0].Sender, sellList[0].Volume);\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(\n            uint256,\n            address,\n            uint256\n        )"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+      VariableDeclaration ""
+         Type: address
+         Source: "address"
+        ElementaryTypeName address
+           Source: "address"
+      VariableDeclaration ""
+         Type: uint256
+         Source: "uint256"
+        ElementaryTypeName uint256
+           Source: "uint256"
+    Block
+       Source: "{\n        require(sellList[0].Exists, \"sellList is empty!\"); //throws exception if the sellist is empty\n        return (sellList[0].Price, sellList[0].Sender, sellList[0].Volume);\n    }"
+      ExpressionStatement
+         Source: "require(sellList[0].Exists, \"sellList is empty!\")"
+        FunctionCall
+           Type: tuple()
+           Source: "require(sellList[0].Exists, \"sellList is empty!\")"
+          Identifier require
+             Type: function (bool,string memory) pure
+             Source: "require"
+          MemberAccess to member Exists
+             Type: bool
+             Source: "sellList[0].Exists"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0]"
+              Identifier sellList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "sellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          Literal, token: [no token] value: sellList is empty!
+             Type: literal_string "sellList is empty!"
+             Source: "\"sellList is empty!\""
+      Return
+         Source: "return (sellList[0].Price, sellList[0].Sender, sellList[0].Volume)"
+        TupleExpression
+           Type: tuple(uint256,address,uint256)
+           Source: "(sellList[0].Price, sellList[0].Sender, sellList[0].Volume)"
+          MemberAccess to member Price
+             Type: uint256
+             Source: "sellList[0].Price"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0]"
+              Identifier sellList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "sellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          MemberAccess to member Sender
+             Type: address
+             Source: "sellList[0].Sender"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0]"
+              Identifier sellList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "sellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+          MemberAccess to member Volume
+             Type: uint256
+             Source: "sellList[0].Volume"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0]"
+              Identifier sellList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "sellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+  FunctionDefinition "minheapHeapifyDown"
+     Source: "function minheapHeapifyDown() internal returns (bool) {\n        uint256 k = 0;\n        uint256 leftchild = 2 * k + 1;\n        while (leftchild <= sellIndex) {\n            //as long as the left child is within the array that heap is stored in\n            uint256 min = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (\n                rightchild < sellIndex\n            ) //if there is a rightchild, then the right child and left child are compared\n            {\n                if (\n                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice\n                ) {\n                    min++;\n                } //now min is set to rightchild, otherwise min remains to be the leftchild\n            }\n\n            if (\n                sellList[min].AuxPrice < sellList[k].AuxPrice\n            ) //compares the k item with the max item and if its less they are swapped\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[min];\n                sellList[min] = temp;\n\n                k = min; //k is set to min\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if k item's smaller childer is not smaller than k item itself, heapifyDown should stop\n                break;\n            }\n        }\n        return true;\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        uint256 k = 0;\n        uint256 leftchild = 2 * k + 1;\n        while (leftchild <= sellIndex) {\n            //as long as the left child is within the array that heap is stored in\n            uint256 min = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (\n                rightchild < sellIndex\n            ) //if there is a rightchild, then the right child and left child are compared\n            {\n                if (\n                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice\n                ) {\n                    min++;\n                } //now min is set to rightchild, otherwise min remains to be the leftchild\n            }\n\n            if (\n                sellList[min].AuxPrice < sellList[k].AuxPrice\n            ) //compares the k item with the max item and if its less they are swapped\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[min];\n                sellList[min] = temp;\n\n                k = min; //k is set to min\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if k item's smaller childer is not smaller than k item itself, heapifyDown should stop\n                break;\n            }\n        }\n        return true;\n    }"
+      VariableDeclarationStatement
+         Source: "uint256 k = 0"
+        VariableDeclaration "k"
+           Type: uint256
+           Source: "uint256 k"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        Literal, token: [no token] value: 0
+           Type: int_const 0
+           Source: "0"
+      VariableDeclarationStatement
+         Source: "uint256 leftchild = 2 * k + 1"
+        VariableDeclaration "leftchild"
+           Type: uint256
+           Source: "uint256 leftchild"
+          ElementaryTypeName uint256
+             Source: "uint256"
+        BinaryOperation using operator +
+           Type: uint256
+           Source: "2 * k + 1"
+          BinaryOperation using operator *
+             Type: uint256
+             Source: "2 * k"
+            Literal, token: [no token] value: 2
+               Type: int_const 2
+               Source: "2"
+            Identifier k
+               Type: uint256
+               Source: "k"
+          Literal, token: [no token] value: 1
+             Type: int_const 1
+             Source: "1"
+      WhileStatement
+         Source: "while (leftchild <= sellIndex) {\n            //as long as the left child is within the array that heap is stored in\n            uint256 min = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (\n                rightchild < sellIndex\n            ) //if there is a rightchild, then the right child and left child are compared\n            {\n                if (\n                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice\n                ) {\n                    min++;\n                } //now min is set to rightchild, otherwise min remains to be the leftchild\n            }\n\n            if (\n                sellList[min].AuxPrice < sellList[k].AuxPrice\n            ) //compares the k item with the max item and if its less they are swapped\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[min];\n                sellList[min] = temp;\n\n                k = min; //k is set to min\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if k item's smaller childer is not smaller than k item itself, heapifyDown should stop\n                break;\n            }\n        }"
+        BinaryOperation using operator <=
+           Type: bool
+           Source: "leftchild <= sellIndex"
+          Identifier leftchild
+             Type: uint256
+             Source: "leftchild"
+          Identifier sellIndex
+             Type: uint256
+             Source: "sellIndex"
+        Block
+           Source: "{\n            //as long as the left child is within the array that heap is stored in\n            uint256 min = leftchild;\n            uint256 rightchild = leftchild + 1; //rightchild = 2k+2\n\n            if (\n                rightchild < sellIndex\n            ) //if there is a rightchild, then the right child and left child are compared\n            {\n                if (\n                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice\n                ) {\n                    min++;\n                } //now min is set to rightchild, otherwise min remains to be the leftchild\n            }\n\n            if (\n                sellList[min].AuxPrice < sellList[k].AuxPrice\n            ) //compares the k item with the max item and if its less they are swapped\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[min];\n                sellList[min] = temp;\n\n                k = min; //k is set to min\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if k item's smaller childer is not smaller than k item itself, heapifyDown should stop\n                break;\n            }\n        }"
+          VariableDeclarationStatement
+             Source: "uint256 min = leftchild"
+            VariableDeclaration "min"
+               Type: uint256
+               Source: "uint256 min"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            Identifier leftchild
+               Type: uint256
+               Source: "leftchild"
+          VariableDeclarationStatement
+             Source: "uint256 rightchild = leftchild + 1"
+            VariableDeclaration "rightchild"
+               Type: uint256
+               Source: "uint256 rightchild"
+              ElementaryTypeName uint256
+                 Source: "uint256"
+            BinaryOperation using operator +
+               Type: uint256
+               Source: "leftchild + 1"
+              Identifier leftchild
+                 Type: uint256
+                 Source: "leftchild"
+              Literal, token: [no token] value: 1
+                 Type: int_const 1
+                 Source: "1"
+          IfStatement
+             Source: "if (\n                rightchild < sellIndex\n            ) //if there is a rightchild, then the right child and left child are compared\n            {\n                if (\n                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice\n                ) {\n                    min++;\n                } //now min is set to rightchild, otherwise min remains to be the leftchild\n            }"
+            BinaryOperation using operator <
+               Type: bool
+               Source: "rightchild < sellIndex"
+              Identifier rightchild
+                 Type: uint256
+                 Source: "rightchild"
+              Identifier sellIndex
+                 Type: uint256
+                 Source: "sellIndex"
+            Block
+               Source: "{\n                if (\n                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice\n                ) {\n                    min++;\n                } //now min is set to rightchild, otherwise min remains to be the leftchild\n            }"
+              IfStatement
+                 Source: "if (\n                    sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice\n                ) {\n                    min++;\n                }"
+                BinaryOperation using operator <
+                   Type: bool
+                   Source: "sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice"
+                  MemberAccess to member AuxPrice
+                     Type: uint256
+                     Source: "sellList[rightchild].AuxPrice"
+                    IndexAccess
+                       Type: struct HeapStaticArray.OrderStruct storage ref
+                       Source: "sellList[rightchild]"
+                      Identifier sellList
+                         Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                         Source: "sellList"
+                      Identifier rightchild
+                         Type: uint256
+                         Source: "rightchild"
+                  MemberAccess to member AuxPrice
+                     Type: uint256
+                     Source: "sellList[leftchild].AuxPrice"
+                    IndexAccess
+                       Type: struct HeapStaticArray.OrderStruct storage ref
+                       Source: "sellList[leftchild]"
+                      Identifier sellList
+                         Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                         Source: "sellList"
+                      Identifier leftchild
+                         Type: uint256
+                         Source: "leftchild"
+                Block
+                   Source: "{\n                    min++;\n                }"
+                  ExpressionStatement
+                     Source: "min++"
+                    UnaryOperation (postfix) ++
+                       Type: uint256
+                       Source: "min++"
+                      Identifier min
+                         Type: uint256
+                         Source: "min"
+          IfStatement
+             Source: "if (\n                sellList[min].AuxPrice < sellList[k].AuxPrice\n            ) //compares the k item with the max item and if its less they are swapped\n            {\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[min];\n                sellList[min] = temp;\n\n                k = min; //k is set to min\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            } else {\n                //if k item's smaller childer is not smaller than k item itself, heapifyDown should stop\n                break;\n            }"
+            BinaryOperation using operator <
+               Type: bool
+               Source: "sellList[min].AuxPrice < sellList[k].AuxPrice"
+              MemberAccess to member AuxPrice
+                 Type: uint256
+                 Source: "sellList[min].AuxPrice"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[min]"
+                  Identifier sellList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "sellList"
+                  Identifier min
+                     Type: uint256
+                     Source: "min"
+              MemberAccess to member AuxPrice
+                 Type: uint256
+                 Source: "sellList[k].AuxPrice"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[k]"
+                  Identifier sellList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "sellList"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+            Block
+               Source: "{\n                OrderStruct memory temp = sellList[k]; //swap the element at index k with its parent\n                sellList[k] = sellList[min];\n                sellList[min] = temp;\n\n                k = min; //k is set to min\n                leftchild = 2 * k + 1; //l is recompuetd in preparation for the next iteration\n            }"
+              VariableDeclarationStatement
+                 Source: "OrderStruct memory temp = sellList[k]"
+                VariableDeclaration "temp"
+                   Type: struct HeapStaticArray.OrderStruct memory
+                   Source: "OrderStruct memory temp"
+                  UserDefinedTypeName "OrderStruct"
+                     Source: "OrderStruct"
+                IndexAccess
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[k]"
+                  Identifier sellList
+                     Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                     Source: "sellList"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+              ExpressionStatement
+                 Source: "sellList[k] = sellList[min]"
+                Assignment using operator =
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[k] = sellList[min]"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "sellList[k]"
+                    Identifier sellList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "sellList"
+                    Identifier k
+                       Type: uint256
+                       Source: "k"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "sellList[min]"
+                    Identifier sellList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "sellList"
+                    Identifier min
+                       Type: uint256
+                       Source: "min"
+              ExpressionStatement
+                 Source: "sellList[min] = temp"
+                Assignment using operator =
+                   Type: struct HeapStaticArray.OrderStruct storage ref
+                   Source: "sellList[min] = temp"
+                  IndexAccess
+                     Type: struct HeapStaticArray.OrderStruct storage ref
+                     Source: "sellList[min]"
+                    Identifier sellList
+                       Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                       Source: "sellList"
+                    Identifier min
+                       Type: uint256
+                       Source: "min"
+                  Identifier temp
+                     Type: struct HeapStaticArray.OrderStruct memory
+                     Source: "temp"
+              ExpressionStatement
+                 Source: "k = min"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "k = min"
+                  Identifier k
+                     Type: uint256
+                     Source: "k"
+                  Identifier min
+                     Type: uint256
+                     Source: "min"
+              ExpressionStatement
+                 Source: "leftchild = 2 * k + 1"
+                Assignment using operator =
+                   Type: uint256
+                   Source: "leftchild = 2 * k + 1"
+                  Identifier leftchild
+                     Type: uint256
+                     Source: "leftchild"
+                  BinaryOperation using operator +
+                     Type: uint256
+                     Source: "2 * k + 1"
+                    BinaryOperation using operator *
+                       Type: uint256
+                       Source: "2 * k"
+                      Literal, token: [no token] value: 2
+                         Type: int_const 2
+                         Source: "2"
+                      Identifier k
+                         Type: uint256
+                         Source: "k"
+                    Literal, token: [no token] value: 1
+                       Type: int_const 1
+                       Source: "1"
+            Block
+               Source: "{\n                //if k item's smaller childer is not smaller than k item itself, heapifyDown should stop\n                break;\n            }"
+              Break
+                 Source: "break"
+      Return
+         Source: "return true"
+        Literal, token: true value: true
+           Type: bool
+           Source: "true"
+  FunctionDefinition "sellListisEmpty" - public - const
+     Source: "function sellListisEmpty() external view returns (bool) {\n        if (!sellList[0].Exists) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+    ParameterList
+       Source: "()"
+    ParameterList
+       Source: "(bool)"
+      VariableDeclaration ""
+         Type: bool
+         Source: "bool"
+        ElementaryTypeName bool
+           Source: "bool"
+    Block
+       Source: "{\n        if (!sellList[0].Exists) {\n            return true;\n        } else {\n            return false;\n        }\n    }"
+      IfStatement
+         Source: "if (!sellList[0].Exists) {\n            return true;\n        } else {\n            return false;\n        }"
+        UnaryOperation (prefix) !
+           Type: bool
+           Source: "!sellList[0].Exists"
+          MemberAccess to member Exists
+             Type: bool
+             Source: "sellList[0].Exists"
+            IndexAccess
+               Type: struct HeapStaticArray.OrderStruct storage ref
+               Source: "sellList[0]"
+              Identifier sellList
+                 Type: struct HeapStaticArray.OrderStruct storage ref[42] storage ref
+                 Source: "sellList"
+              Literal, token: [no token] value: 0
+                 Type: int_const 0
+                 Source: "0"
+        Block
+           Source: "{\n            return true;\n        }"
+          Return
+             Source: "return true"
+            Literal, token: true value: true
+               Type: bool
+               Source: "true"
+        Block
+           Source: "{\n            return false;\n        }"
+          Return
+             Source: "return false"
+            Literal, token: false value: false
+               Type: bool
+               Source: "false"

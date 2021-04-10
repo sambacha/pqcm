@@ -1,8 +1,8 @@
 /// SPDX-Licesne-Identifier: GPL-3.0
 pragma solidity >=0.5.7 <0.6.0;
 
-/// @title Heap Dynamic Array
-/// @description Heap with dynamic array wrapped in a priority queue
+// @title Heap Dynamic Array
+// @description Heap with dynamic array wrapped in a priority queue
 contract HeapDynamicArray {
     /**
 *   @dev 

@@ -1,0 +1,5344 @@
+    /* "contracts/queue/HeapStaticArray.sol":179:14083  contract HeapStaticArray {... */
+  mstore(0x40, 0x80)
+    /* "contracts/queue/HeapStaticArray.sol":210:288  constructor(uint256 _MAXORDERS) public {... */
+  callvalue
+    /* "--CODEGEN--":8:17   */
+  dup1
+    /* "--CODEGEN--":5:7   */
+  iszero
+  tag_1
+  jumpi
+    /* "--CODEGEN--":30:31   */
+  0x00
+    /* "--CODEGEN--":27:28   */
+  dup1
+    /* "--CODEGEN--":20:32   */
+  revert
+    /* "--CODEGEN--":5:7   */
+tag_1:
+    /* "contracts/queue/HeapStaticArray.sol":210:288  constructor(uint256 _MAXORDERS) public {... */
+  pop
+  mload(0x40)
+  sub(codesize, bytecodeSize)
+  dup1
+  bytecodeSize
+  dup4
+  codecopy
+  dup2
+  dup2
+  add
+  0x40
+  mstore
+    /* "--CODEGEN--":13:15   */
+  0x20
+    /* "--CODEGEN--":8:11   */
+  dup2
+    /* "--CODEGEN--":5:16   */
+  lt
+    /* "--CODEGEN--":2:4   */
+  iszero
+  tag_2
+  jumpi
+    /* "--CODEGEN--":29:30   */
+  0x00
+    /* "--CODEGEN--":26:27   */
+  dup1
+    /* "--CODEGEN--":19:31   */
+  revert
+    /* "--CODEGEN--":2:4   */
+tag_2:
+    /* "contracts/queue/HeapStaticArray.sol":210:288  constructor(uint256 _MAXORDERS) public {... */
+  dup2
+  add
+  swap1
+  dup1
+  dup1
+  mload
+  swap1
+  0x20
+  add
+  swap1
+  swap3
+  swap2
+  swap1
+  pop
+  pop
+  pop
+    /* "contracts/queue/HeapStaticArray.sol":271:281  _MAXORDERS */
+  dup1
+    /* "contracts/queue/HeapStaticArray.sol":259:268  maxOrders */
+  0x00
+    /* "contracts/queue/HeapStaticArray.sol":259:281  maxOrders = _MAXORDERS */
+  dup2
+  swap1
+  sstore
+  pop
+    /* "contracts/queue/HeapStaticArray.sol":210:288  constructor(uint256 _MAXORDERS) public {... */
+  pop
+    /* "contracts/queue/HeapStaticArray.sol":179:14083  contract HeapStaticArray {... */
+  dataSize(sub_0)
+  dup1
+  dataOffset(sub_0)
+  0x00
+  codecopy
+  0x00
+  return
+stop
+
+sub_0: assembly {
+        /* "contracts/queue/HeapStaticArray.sol":179:14083  contract HeapStaticArray {... */
+      mstore(0x40, 0x80)
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_1
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x00
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_1:
+        /* "contracts/queue/HeapStaticArray.sol":179:14083  contract HeapStaticArray {... */
+      pop
+      jumpi(tag_2, lt(calldatasize, 0x04))
+      shr(0xe0, calldataload(0x00))
+      dup1
+      0x9484d404
+      gt
+      tag_14
+      jumpi
+      dup1
+      0x9484d404
+      eq
+      tag_8
+      jumpi
+      dup1
+      0xa78b7907
+      eq
+      tag_9
+      jumpi
+      dup1
+      0xcc0ba670
+      eq
+      tag_10
+      jumpi
+      dup1
+      0xd9fa9253
+      eq
+      tag_11
+      jumpi
+      dup1
+      0xefc77ff6
+      eq
+      tag_12
+      jumpi
+      dup1
+      0xf009716c
+      eq
+      tag_13
+      jumpi
+      jump(tag_2)
+    tag_14:
+      dup1
+      0x1b44d8d0
+      eq
+      tag_3
+      jumpi
+      dup1
+      0x211b0d3c
+      eq
+      tag_4
+      jumpi
+      dup1
+      0x502f8609
+      eq
+      tag_5
+      jumpi
+      dup1
+      0x8a07bb65
+      eq
+      tag_6
+      jumpi
+      dup1
+      0x91447d32
+      eq
+      tag_7
+      jumpi
+    tag_2:
+      0x00
+      dup1
+      revert
+        /* "contracts/queue/HeapStaticArray.sol":4062:5517  function buyListMaxDelete()... */
+    tag_3:
+      tag_15
+      tag_16
+      jump	// in
+    tag_15:
+      mload(0x40)
+      dup1
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap4
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":7878:8052  function buyListisEmpty() external view returns (bool) {... */
+    tag_4:
+      tag_17
+      tag_18
+      jump	// in
+    tag_17:
+      mload(0x40)
+      dup1
+      dup3
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":2234:2669  function insertBid(... */
+    tag_5:
+      tag_19
+      0x04
+      dup1
+      calldatasize
+      sub
+        /* "--CODEGEN--":13:16   */
+      0x80
+        /* "--CODEGEN--":8:11   */
+      dup2
+        /* "--CODEGEN--":5:17   */
+      lt
+        /* "--CODEGEN--":2:4   */
+      iszero
+      tag_20
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x00
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":2:4   */
+    tag_20:
+        /* "contracts/queue/HeapStaticArray.sol":2234:2669  function insertBid(... */
+      dup2
+      add
+      swap1
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      pop
+      pop
+      pop
+      tag_21
+      jump	// in
+    tag_19:
+      stop
+        /* "contracts/queue/HeapStaticArray.sol":11748:12080  function sellListMax()... */
+    tag_6:
+      tag_22
+      tag_23
+      jump	// in
+    tag_22:
+      mload(0x40)
+      dup1
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap4
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":10005:11545  function sellListMaxDelete()... */
+    tag_7:
+      tag_24
+      tag_25
+      jump	// in
+    tag_24:
+      mload(0x40)
+      dup1
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap4
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":5721:6065  function buyListMax()... */
+    tag_8:
+      tag_26
+      tag_27
+      jump	// in
+    tag_26:
+      mload(0x40)
+      dup1
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap4
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":8243:8683  function insertAsk(... */
+    tag_9:
+      tag_28
+      0x04
+      dup1
+      calldatasize
+      sub
+        /* "--CODEGEN--":13:16   */
+      0x80
+        /* "--CODEGEN--":8:11   */
+      dup2
+        /* "--CODEGEN--":5:17   */
+      lt
+        /* "--CODEGEN--":2:4   */
+      iszero
+      tag_29
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x00
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":2:4   */
+    tag_29:
+        /* "contracts/queue/HeapStaticArray.sol":8243:8683  function insertAsk(... */
+      dup2
+      add
+      swap1
+      dup1
+      dup1
+      calldataload
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      dup1
+      calldataload
+      swap1
+      0x20
+      add
+      swap1
+      swap3
+      swap2
+      swap1
+      pop
+      pop
+      pop
+      tag_30
+      jump	// in
+    tag_28:
+      stop
+        /* "contracts/queue/HeapStaticArray.sol":13905:14081  function sellListisEmpty() external view returns (bool) {... */
+    tag_10:
+      tag_31
+      tag_32
+      jump	// in
+    tag_31:
+      mload(0x40)
+      dup1
+      dup3
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":1883:1907  uint256 public maxOrders */
+    tag_11:
+      tag_33
+      tag_34
+      jump	// in
+    tag_33:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":2020:2043  uint256 public buyIndex */
+    tag_12:
+      tag_35
+      tag_36
+      jump	// in
+    tag_35:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":1990:2014  uint256 public sellIndex */
+    tag_13:
+      tag_37
+      tag_38
+      jump	// in
+    tag_37:
+      mload(0x40)
+      dup1
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/queue/HeapStaticArray.sol":4062:5517  function buyListMaxDelete()... */
+    tag_16:
+        /* "contracts/queue/HeapStaticArray.sol":4137:4144  uint256 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4158:4165  address */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":4179:4186  uint256 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4220:4227  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4228:4229  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4220:4230  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_40
+      jumpi
+      invalid
+    tag_40:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4220:4237  buyList[0].Exists */
+      0x03
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":4219:4237  !buyList[0].Exists */
+      iszero
+        /* "contracts/queue/HeapStaticArray.sol":4211:4259  require(!buyList[0].Exists, "buyList is empty!") */
+      tag_42
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x11
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x6275794c69737420697320656d70747921000000000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_42:
+        /* "contracts/queue/HeapStaticArray.sol":4346:4347  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4334:4342  buyIndex */
+      sload(0x01a6)
+        /* "contracts/queue/HeapStaticArray.sol":4334:4347  buyIndex == 0 */
+      eq
+        /* "contracts/queue/HeapStaticArray.sol":4330:4583  if (buyIndex == 0) {... */
+      iszero
+      tag_43
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":4363:4377  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4380:4387  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4388:4389  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4380:4390  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_44
+      jumpi
+      invalid
+    tag_44:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4380:4396  buyList[0].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":4363:4396  uint256 _price = buyList[0].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4410:4425  address _sender */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4428:4435  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4436:4437  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4428:4438  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_46
+      jumpi
+      invalid
+    tag_46:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4428:4445  buyList[0].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":4410:4445  address _sender = buyList[0].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4459:4474  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4477:4484  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4485:4486  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4477:4487  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_48
+      jumpi
+      invalid
+    tag_48:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4477:4494  buyList[0].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":4459:4494  uint256 _volume = buyList[0].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4515:4522  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4523:4524  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4515:4525  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_50
+      jumpi
+      invalid
+    tag_50:
+      0x05
+      mul
+      add
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4508:4525  delete buyList[0] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x04
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4547:4553  _price */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":4555:4562  _sender */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":4564:4571  _volume */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":4539:4572  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+      jump(tag_39)
+        /* "contracts/queue/HeapStaticArray.sol":4330:4583  if (buyIndex == 0) {... */
+    tag_43:
+        /* "contracts/queue/HeapStaticArray.sol":4608:4609  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4596:4604  buyIndex */
+      sload(0x01a6)
+        /* "contracts/queue/HeapStaticArray.sol":4596:4609  buyIndex == 1 */
+      eq
+        /* "contracts/queue/HeapStaticArray.sol":4592:4985  if (buyIndex == 1) //if the heap has two items... */
+      iszero
+      tag_52
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":4661:4675  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4678:4685  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4686:4687  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4678:4688  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_53
+      jumpi
+      invalid
+    tag_53:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4678:4694  buyList[0].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":4661:4694  uint256 _price = buyList[0].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4708:4723  address _sender */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4726:4733  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4734:4735  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4726:4736  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_55
+      jumpi
+      invalid
+    tag_55:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4726:4743  buyList[0].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":4708:4743  address _sender = buyList[0].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4757:4772  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4775:4782  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4783:4784  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4775:4785  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_57
+      jumpi
+      invalid
+    tag_57:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4775:4792  buyList[0].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":4757:4792  uint256 _volume = buyList[0].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4819:4826  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4827:4828  1 */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":4819:4829  buyList[1] */
+      0x2a
+      dup2
+      lt
+      tag_59
+      jumpi
+      invalid
+    tag_59:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4806:4813  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4814:4815  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4806:4816  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_61
+      jumpi
+      invalid
+    tag_61:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":4806:4829  buyList[0] = buyList[1] */
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      0x01
+      add
+      sstore
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      0x02
+      add
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4893:4900  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":4901:4902  1 */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":4893:4903  buyList[1] */
+      0x2a
+      dup2
+      lt
+      tag_63
+      jumpi
+      invalid
+    tag_63:
+      0x05
+      mul
+      add
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4886:4903  delete buyList[1] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x04
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4917:4925  buyIndex */
+      0x01a6
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":4917:4927  buyIndex-- */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      swap1
+      sub
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4949:4955  _price */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":4957:4964  _sender */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":4966:4973  _volume */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":4941:4974  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+      jump(tag_39)
+        /* "contracts/queue/HeapStaticArray.sol":4592:4985  if (buyIndex == 1) //if the heap has two items... */
+    tag_52:
+        /* "contracts/queue/HeapStaticArray.sol":5111:5125  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5128:5135  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":5136:5137  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5128:5138  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_65
+      jumpi
+      invalid
+    tag_65:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":5128:5144  buyList[0].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":5111:5144  uint256 _price = buyList[0].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":5154:5169  address _sender */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5172:5179  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":5180:5181  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5172:5182  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_67
+      jumpi
+      invalid
+    tag_67:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":5172:5189  buyList[0].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":5154:5189  address _sender = buyList[0].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":5199:5214  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5217:5224  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":5225:5226  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5217:5227  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_69
+      jumpi
+      invalid
+    tag_69:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":5217:5234  buyList[0].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":5199:5234  uint256 _volume = buyList[0].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":5257:5264  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":5265:5273  buyIndex */
+      sload(0x01a6)
+        /* "contracts/queue/HeapStaticArray.sol":5257:5274  buyList[buyIndex] */
+      0x2a
+      dup2
+      lt
+      tag_71
+      jumpi
+      invalid
+    tag_71:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":5244:5251  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":5252:5253  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5244:5254  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_73
+      jumpi
+      invalid
+    tag_73:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":5244:5274  buyList[0] = buyList[buyIndex] */
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      0x01
+      add
+      sstore
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      0x02
+      add
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":5368:5375  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":5376:5384  buyIndex */
+      sload(0x01a6)
+        /* "contracts/queue/HeapStaticArray.sol":5368:5385  buyList[buyIndex] */
+      0x2a
+      dup2
+      lt
+      tag_75
+      jumpi
+      invalid
+    tag_75:
+      0x05
+      mul
+      add
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5361:5385  delete buyList[buyIndex] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x04
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":5395:5403  buyIndex */
+      0x01a6
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5395:5405  buyIndex-- */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      swap1
+      sub
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":5415:5435  maxheapHeapifyDown() */
+      tag_77
+        /* "contracts/queue/HeapStaticArray.sol":5415:5433  maxheapHeapifyDown */
+      tag_78
+        /* "contracts/queue/HeapStaticArray.sol":5415:5435  maxheapHeapifyDown() */
+      jump	// in
+    tag_77:
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":5485:5491  _price */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":5493:5500  _sender */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":5502:5509  _volume */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":5477:5510  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":4062:5517  function buyListMaxDelete()... */
+    tag_39:
+      swap1
+      swap2
+      swap3
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":7878:8052  function buyListisEmpty() external view returns (bool) {... */
+    tag_18:
+        /* "contracts/queue/HeapStaticArray.sol":7927:7931  bool */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":7948:7955  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7956:7957  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":7948:7958  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_80
+      jumpi
+      invalid
+    tag_80:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":7948:7965  buyList[0].Exists */
+      0x03
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":7943:8046  if (!buyList[0].Exists) {... */
+      tag_82
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":7988:7992  true */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7981:7992  return true */
+      swap1
+      pop
+      jump(tag_79)
+        /* "contracts/queue/HeapStaticArray.sol":7943:8046  if (!buyList[0].Exists) {... */
+    tag_82:
+        /* "contracts/queue/HeapStaticArray.sol":8030:8035  false */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":8023:8035  return false */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":7878:8052  function buyListisEmpty() external view returns (bool) {... */
+    tag_79:
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":2234:2669  function insertBid(... */
+    tag_21:
+        /* "contracts/queue/HeapStaticArray.sol":2375:2402  OrderStruct memory neworder */
+      tag_85
+      tag_86
+      jump	// in
+    tag_85:
+        /* "contracts/queue/HeapStaticArray.sol":2417:2467  OrderStruct(sender, price, volume, true, auxprice) */
+      mload(0x40)
+      dup1
+      0xa0
+      add
+      0x40
+      mstore
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":2429:2435  sender */
+      dup7
+        /* "contracts/queue/HeapStaticArray.sol":2417:2467  OrderStruct(sender, price, volume, true, auxprice) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapStaticArray.sol":2437:2442  price */
+      dup6
+        /* "contracts/queue/HeapStaticArray.sol":2417:2467  OrderStruct(sender, price, volume, true, auxprice) */
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapStaticArray.sol":2444:2450  volume */
+      dup5
+        /* "contracts/queue/HeapStaticArray.sol":2417:2467  OrderStruct(sender, price, volume, true, auxprice) */
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapStaticArray.sol":2452:2456  true */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":2417:2467  OrderStruct(sender, price, volume, true, auxprice) */
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapStaticArray.sol":2458:2466  auxprice */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":2417:2467  OrderStruct(sender, price, volume, true, auxprice) */
+      dup2
+      mstore
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":2375:2467  OrderStruct memory neworder =... */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":2483:2490  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":2491:2492  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":2483:2493  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_87
+      jumpi
+      invalid
+    tag_87:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":2483:2500  buyList[0].Exists */
+      0x03
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":2478:2663  if (!buyList[0].Exists) {... */
+      tag_89
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":2529:2537  neworder */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":2516:2523  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":2524:2525  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":2516:2526  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_90
+      jumpi
+      invalid
+    tag_90:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":2516:2537  buyList[0] = neworder */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":2478:2663  if (!buyList[0].Exists) {... */
+      jump(tag_92)
+    tag_89:
+        /* "contracts/queue/HeapStaticArray.sol":2568:2576  buyIndex */
+      0x01a6
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":2568:2578  buyIndex++ */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      add
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":2612:2620  neworder */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":2592:2599  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":2600:2608  buyIndex */
+      sload(0x01a6)
+        /* "contracts/queue/HeapStaticArray.sol":2592:2609  buyList[buyIndex] */
+      0x2a
+      dup2
+      lt
+      tag_93
+      jumpi
+      invalid
+    tag_93:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":2592:2620  buyList[buyIndex] = neworder */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":2634:2652  maxheapHeapifyUp() */
+      tag_95
+        /* "contracts/queue/HeapStaticArray.sol":2634:2650  maxheapHeapifyUp */
+      tag_96
+        /* "contracts/queue/HeapStaticArray.sol":2634:2652  maxheapHeapifyUp() */
+      jump	// in
+    tag_95:
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":2478:2663  if (!buyList[0].Exists) {... */
+    tag_92:
+        /* "contracts/queue/HeapStaticArray.sol":2234:2669  function insertBid(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":11748:12080  function sellListMax()... */
+    tag_23:
+        /* "contracts/queue/HeapStaticArray.sol":11831:11838  uint256 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11852:11859  address */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":11873:11880  uint256 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11913:11921  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":11922:11923  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11913:11924  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_98
+      jumpi
+      invalid
+    tag_98:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":11913:11931  sellList[0].Exists */
+      0x03
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":11905:11954  require(sellList[0].Exists, "sellList is empty!") */
+      tag_100
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x12
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x73656c6c4c69737420697320656d707479210000000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_100:
+        /* "contracts/queue/HeapStaticArray.sol":12015:12023  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":12024:12025  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":12015:12026  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_101
+      jumpi
+      invalid
+    tag_101:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":12015:12032  sellList[0].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":12034:12042  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":12043:12044  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":12034:12045  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_103
+      jumpi
+      invalid
+    tag_103:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":12034:12052  sellList[0].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":12054:12062  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":12063:12064  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":12054:12065  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_105
+      jumpi
+      invalid
+    tag_105:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":12054:12072  sellList[0].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":12007:12073  return (sellList[0].Price, sellList[0].Sender, sellList[0].Volume) */
+      swap3
+      pop
+      swap3
+      pop
+      swap3
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":11748:12080  function sellListMax()... */
+      swap1
+      swap2
+      swap3
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":10005:11545  function sellListMaxDelete()... */
+    tag_25:
+        /* "contracts/queue/HeapStaticArray.sol":10081:10088  uint256 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10102:10109  address */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":10123:10130  uint256 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10163:10171  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10172:10173  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10163:10174  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_108
+      jumpi
+      invalid
+    tag_108:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10163:10181  sellList[0].Exists */
+      0x03
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":10155:10204  require(sellList[0].Exists, "sellList is empty!") */
+      tag_110
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x12
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x73656c6c4c69737420697320656d707479210000000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_110:
+        /* "contracts/queue/HeapStaticArray.sol":10292:10293  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10279:10288  sellIndex */
+      sload(0x01a5)
+        /* "contracts/queue/HeapStaticArray.sol":10279:10293  sellIndex == 0 */
+      eq
+        /* "contracts/queue/HeapStaticArray.sol":10275:10533  if (sellIndex == 0) {... */
+      iszero
+      tag_111
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":10309:10323  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10326:10334  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10335:10336  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10326:10337  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_112
+      jumpi
+      invalid
+    tag_112:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10326:10343  sellList[0].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":10309:10343  uint256 _price = sellList[0].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10357:10372  address _sender */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10375:10383  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10384:10385  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10375:10386  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_114
+      jumpi
+      invalid
+    tag_114:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10375:10393  sellList[0].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":10357:10393  address _sender = sellList[0].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10407:10422  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10425:10433  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10434:10435  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10425:10436  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_116
+      jumpi
+      invalid
+    tag_116:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10425:10443  sellList[0].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":10407:10443  uint256 _volume = sellList[0].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10464:10472  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10473:10474  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10464:10475  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_118
+      jumpi
+      invalid
+    tag_118:
+      0x05
+      mul
+      add
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10457:10475  delete sellList[0] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x04
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10497:10503  _price */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":10505:10512  _sender */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":10514:10521  _volume */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":10489:10522  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+      jump(tag_107)
+        /* "contracts/queue/HeapStaticArray.sol":10275:10533  if (sellIndex == 0) {... */
+    tag_111:
+        /* "contracts/queue/HeapStaticArray.sol":10560:10561  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":10547:10556  sellIndex */
+      sload(0x01a5)
+        /* "contracts/queue/HeapStaticArray.sol":10547:10561  sellIndex == 1 */
+      eq
+        /* "contracts/queue/HeapStaticArray.sol":10543:10966  if (sellIndex == 1) {... */
+      iszero
+      tag_120
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":10623:10637  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10640:10648  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10649:10650  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10640:10651  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_121
+      jumpi
+      invalid
+    tag_121:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10640:10657  sellList[0].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":10623:10657  uint256 _price = sellList[0].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10671:10686  address _sender */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10689:10697  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10698:10699  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10689:10700  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_123
+      jumpi
+      invalid
+    tag_123:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10689:10707  sellList[0].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":10671:10707  address _sender = sellList[0].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10721:10736  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10739:10747  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10748:10749  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10739:10750  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_125
+      jumpi
+      invalid
+    tag_125:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10739:10757  sellList[0].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":10721:10757  uint256 _volume = sellList[0].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10785:10793  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10794:10795  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":10785:10796  sellList[1] */
+      0x2a
+      dup2
+      lt
+      tag_127
+      jumpi
+      invalid
+    tag_127:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10771:10779  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10780:10781  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10771:10782  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_129
+      jumpi
+      invalid
+    tag_129:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":10771:10796  sellList[0] = sellList[1] */
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      0x01
+      add
+      sstore
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      0x02
+      add
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10817:10825  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":10826:10827  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":10817:10828  sellList[1] */
+      0x2a
+      dup2
+      lt
+      tag_131
+      jumpi
+      invalid
+    tag_131:
+      0x05
+      mul
+      add
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10810:10828  delete sellList[1] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x04
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10897:10906  sellIndex */
+      0x01a5
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":10897:10908  sellIndex-- */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      swap1
+      sub
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10930:10936  _price */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":10938:10945  _sender */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":10947:10954  _volume */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":10922:10955  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+      jump(tag_107)
+        /* "contracts/queue/HeapStaticArray.sol":10543:10966  if (sellIndex == 1) {... */
+    tag_120:
+        /* "contracts/queue/HeapStaticArray.sol":11094:11108  uint256 _price */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11111:11119  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":11120:11121  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11111:11122  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_133
+      jumpi
+      invalid
+    tag_133:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":11111:11128  sellList[0].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":11094:11128  uint256 _price = sellList[0].Price */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":11138:11153  address _sender */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11156:11164  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":11165:11166  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11156:11167  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_135
+      jumpi
+      invalid
+    tag_135:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":11156:11174  sellList[0].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":11138:11174  address _sender = sellList[0].Sender */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":11184:11199  uint256 _volume */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11202:11210  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":11211:11212  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11202:11213  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_137
+      jumpi
+      invalid
+    tag_137:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":11202:11220  sellList[0].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":11184:11220  uint256 _volume = sellList[0].Volume */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":11244:11252  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":11253:11262  sellIndex */
+      sload(0x01a5)
+        /* "contracts/queue/HeapStaticArray.sol":11244:11263  sellList[sellIndex] */
+      0x2a
+      dup2
+      lt
+      tag_139
+      jumpi
+      invalid
+    tag_139:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":11230:11238  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":11239:11240  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11230:11241  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_141
+      jumpi
+      invalid
+    tag_141:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":11230:11263  sellList[0] = sellList[sellIndex] */
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      0x01
+      add
+      sstore
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      0x02
+      add
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":11357:11365  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":11366:11375  sellIndex */
+      sload(0x01a5)
+        /* "contracts/queue/HeapStaticArray.sol":11357:11376  sellList[sellIndex] */
+      0x2a
+      dup2
+      lt
+      tag_143
+      jumpi
+      invalid
+    tag_143:
+      0x05
+      mul
+      add
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11350:11376  delete sellList[sellIndex] */
+      dup1
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x01
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x02
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      0x03
+      dup3
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      swap1
+      0xff
+      mul
+      not
+      and
+      swap1
+      sstore
+      0x04
+      dup3
+      add
+      0x00
+      swap1
+      sstore
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":11386:11395  sellIndex */
+      0x01a5
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":11386:11397  sellIndex-- */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      swap1
+      sub
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":11407:11427  minheapHeapifyDown() */
+      tag_145
+        /* "contracts/queue/HeapStaticArray.sol":11407:11425  minheapHeapifyDown */
+      tag_146
+        /* "contracts/queue/HeapStaticArray.sol":11407:11427  minheapHeapifyDown() */
+      jump	// in
+    tag_145:
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":11513:11519  _price */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":11521:11528  _sender */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":11530:11537  _volume */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":11505:11538  return (_price, _sender, _volume) */
+      swap6
+      pop
+      swap6
+      pop
+      swap6
+      pop
+      pop
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":10005:11545  function sellListMaxDelete()... */
+    tag_107:
+      swap1
+      swap2
+      swap3
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":5721:6065  function buyListMax()... */
+    tag_27:
+        /* "contracts/queue/HeapStaticArray.sol":5803:5810  uint256 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5824:5831  address */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":5845:5852  uint256 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5886:5893  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":5894:5895  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":5886:5896  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_148
+      jumpi
+      invalid
+    tag_148:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":5886:5903  buyList[0].Exists */
+      0x03
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":5885:5903  !buyList[0].Exists */
+      iszero
+        /* "contracts/queue/HeapStaticArray.sol":5877:5925  require(!buyList[0].Exists, "buyList is empty!") */
+      tag_150
+      jumpi
+      mload(0x40)
+      0x08c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x04
+      add
+      dup1
+      dup1
+      0x20
+      add
+      dup3
+      dup2
+      sub
+      dup3
+      mstore
+      0x11
+      dup2
+      mstore
+      0x20
+      add
+      dup1
+      0x6275794c69737420697320656d70747921000000000000000000000000000000
+      dup2
+      mstore
+      pop
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      revert
+    tag_150:
+        /* "contracts/queue/HeapStaticArray.sol":6003:6010  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":6011:6012  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":6003:6013  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_151
+      jumpi
+      invalid
+    tag_151:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":6003:6019  buyList[0].Price */
+      0x01
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":6021:6028  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":6029:6030  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":6021:6031  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_153
+      jumpi
+      invalid
+    tag_153:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":6021:6038  buyList[0].Sender */
+      0x00
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":6040:6047  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":6048:6049  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":6040:6050  buyList[0] */
+      0x2a
+      dup2
+      lt
+      tag_155
+      jumpi
+      invalid
+    tag_155:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":6040:6057  buyList[0].Volume */
+      0x02
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":5995:6058  return (buyList[0].Price, buyList[0].Sender, buyList[0].Volume) */
+      swap3
+      pop
+      swap3
+      pop
+      swap3
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":5721:6065  function buyListMax()... */
+      swap1
+      swap2
+      swap3
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":8243:8683  function insertAsk(... */
+    tag_30:
+        /* "contracts/queue/HeapStaticArray.sol":8384:8411  OrderStruct memory neworder */
+      tag_158
+      tag_86
+      jump	// in
+    tag_158:
+        /* "contracts/queue/HeapStaticArray.sol":8426:8476  OrderStruct(sender, price, volume, true, auxprice) */
+      mload(0x40)
+      dup1
+      0xa0
+      add
+      0x40
+      mstore
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":8438:8444  sender */
+      dup7
+        /* "contracts/queue/HeapStaticArray.sol":8426:8476  OrderStruct(sender, price, volume, true, auxprice) */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapStaticArray.sol":8446:8451  price */
+      dup6
+        /* "contracts/queue/HeapStaticArray.sol":8426:8476  OrderStruct(sender, price, volume, true, auxprice) */
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapStaticArray.sol":8453:8459  volume */
+      dup5
+        /* "contracts/queue/HeapStaticArray.sol":8426:8476  OrderStruct(sender, price, volume, true, auxprice) */
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapStaticArray.sol":8461:8465  true */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":8426:8476  OrderStruct(sender, price, volume, true, auxprice) */
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+        /* "contracts/queue/HeapStaticArray.sol":8467:8475  auxprice */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":8426:8476  OrderStruct(sender, price, volume, true, auxprice) */
+      dup2
+      mstore
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":8384:8476  OrderStruct memory neworder =... */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":8492:8500  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":8501:8502  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":8492:8503  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_159
+      jumpi
+      invalid
+    tag_159:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":8492:8510  sellList[0].Exists */
+      0x03
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":8487:8677  if (!sellList[0].Exists) {... */
+      tag_161
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":8540:8548  neworder */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":8526:8534  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":8535:8536  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":8526:8537  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_162
+      jumpi
+      invalid
+    tag_162:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":8526:8548  sellList[0] = neworder */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":8487:8677  if (!sellList[0].Exists) {... */
+      jump(tag_164)
+    tag_161:
+        /* "contracts/queue/HeapStaticArray.sol":8579:8588  sellIndex */
+      0x01a5
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":8579:8590  sellIndex++ */
+      dup2
+      sload
+      dup1
+      swap3
+      swap2
+      swap1
+      0x01
+      add
+      swap2
+      swap1
+      pop
+      sstore
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":8626:8634  neworder */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":8604:8612  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":8613:8622  sellIndex */
+      sload(0x01a5)
+        /* "contracts/queue/HeapStaticArray.sol":8604:8623  sellList[sellIndex] */
+      0x2a
+      dup2
+      lt
+      tag_165
+      jumpi
+      invalid
+    tag_165:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":8604:8634  sellList[sellIndex] = neworder */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":8648:8666  minheapHeapifyUp() */
+      tag_167
+        /* "contracts/queue/HeapStaticArray.sol":8648:8664  minheapHeapifyUp */
+      tag_168
+        /* "contracts/queue/HeapStaticArray.sol":8648:8666  minheapHeapifyUp() */
+      jump	// in
+    tag_167:
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":8487:8677  if (!sellList[0].Exists) {... */
+    tag_164:
+        /* "contracts/queue/HeapStaticArray.sol":8243:8683  function insertAsk(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":13905:14081  function sellListisEmpty() external view returns (bool) {... */
+    tag_32:
+        /* "contracts/queue/HeapStaticArray.sol":13955:13959  bool */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":13976:13984  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":13985:13986  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":13976:13987  sellList[0] */
+      0x2a
+      dup2
+      lt
+      tag_170
+      jumpi
+      invalid
+    tag_170:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":13976:13994  sellList[0].Exists */
+      0x03
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+        /* "contracts/queue/HeapStaticArray.sol":13971:14075  if (!sellList[0].Exists) {... */
+      tag_172
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":14017:14021  true */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":14010:14021  return true */
+      swap1
+      pop
+      jump(tag_169)
+        /* "contracts/queue/HeapStaticArray.sol":13971:14075  if (!sellList[0].Exists) {... */
+    tag_172:
+        /* "contracts/queue/HeapStaticArray.sol":14059:14064  false */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":14052:14064  return false */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":13905:14081  function sellListisEmpty() external view returns (bool) {... */
+    tag_169:
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":1883:1907  uint256 public maxOrders */
+    tag_34:
+      sload(0x00)
+      dup2
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":2020:2043  uint256 public buyIndex */
+    tag_36:
+      sload(0x01a6)
+      dup2
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":1990:2014  uint256 public sellIndex */
+    tag_38:
+      sload(0x01a5)
+      dup2
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":6345:7804  function maxheapHeapifyDown() internal returns (bool) {... */
+    tag_78:
+        /* "contracts/queue/HeapStaticArray.sol":6393:6397  bool */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":6409:6418  uint256 k */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":6421:6422  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":6409:6422  uint256 k = 0 */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":6432:6449  uint256 leftchild */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":6460:6461  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":6456:6457  k */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":6452:6453  2 */
+      0x02
+        /* "contracts/queue/HeapStaticArray.sol":6452:6457  2 * k */
+      mul
+        /* "contracts/queue/HeapStaticArray.sol":6452:6461  2 * k + 1 */
+      add
+        /* "contracts/queue/HeapStaticArray.sol":6432:6461  uint256 leftchild = 2 * k + 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":6471:7777  while (leftchild <= buyIndex) {... */
+    tag_175:
+        /* "contracts/queue/HeapStaticArray.sol":6491:6499  buyIndex */
+      sload(0x01a6)
+        /* "contracts/queue/HeapStaticArray.sol":6478:6487  leftchild */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":6478:6499  leftchild <= buyIndex */
+      gt
+        /* "contracts/queue/HeapStaticArray.sol":6471:7777  while (leftchild <= buyIndex) {... */
+      tag_176
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":6598:6609  uint256 max */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":6612:6621  leftchild */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":6598:6621  uint256 max = leftchild */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":6635:6653  uint256 rightchild */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":6668:6669  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":6656:6665  leftchild */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":6656:6669  leftchild + 1 */
+      add
+        /* "contracts/queue/HeapStaticArray.sol":6635:6669  uint256 rightchild = leftchild + 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":6721:6729  buyIndex */
+      sload(0x01a6)
+        /* "contracts/queue/HeapStaticArray.sol":6708:6718  rightchild */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":6708:6729  rightchild < buyIndex */
+      lt
+        /* "contracts/queue/HeapStaticArray.sol":6704:7091  if (rightchild < buyIndex) //if there is a rightchild... */
+      iszero
+      tag_177
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":6844:6851  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":6852:6861  leftchild */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":6844:6862  buyList[leftchild] */
+      0x2a
+      dup2
+      lt
+      tag_178
+      jumpi
+      invalid
+    tag_178:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":6844:6871  buyList[leftchild].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":6813:6820  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":6821:6831  rightchild */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":6813:6832  buyList[rightchild] */
+      0x2a
+      dup2
+      lt
+      tag_180
+      jumpi
+      invalid
+    tag_180:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":6813:6841  buyList[rightchild].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":6813:6871  buyList[rightchild].AuxPrice > buyList[leftchild].AuxPrice */
+      gt
+        /* "contracts/queue/HeapStaticArray.sol":6788:7077  if (... */
+      iszero
+      tag_182
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":6979:6984  max++ */
+      dup2
+      dup1
+      0x01
+      add
+      swap3
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":6788:7077  if (... */
+    tag_182:
+        /* "contracts/queue/HeapStaticArray.sol":6704:7091  if (rightchild < buyIndex) //if there is a rightchild... */
+    tag_177:
+        /* "contracts/queue/HeapStaticArray.sol":7148:7155  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7156:7159  max */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":7148:7160  buyList[max] */
+      0x2a
+      dup2
+      lt
+      tag_183
+      jumpi
+      invalid
+    tag_183:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":7148:7169  buyList[max].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":7126:7133  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7134:7135  k */
+      dup6
+        /* "contracts/queue/HeapStaticArray.sol":7126:7136  buyList[k] */
+      0x2a
+      dup2
+      lt
+      tag_185
+      jumpi
+      invalid
+    tag_185:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":7126:7145  buyList[k].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":7126:7169  buyList[k].AuxPrice < buyList[max].AuxPrice */
+      lt
+        /* "contracts/queue/HeapStaticArray.sol":7105:7767  if (... */
+      iszero
+      tag_187
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":7318:7341  OrderStruct memory temp */
+      tag_188
+      tag_86
+      jump	// in
+    tag_188:
+        /* "contracts/queue/HeapStaticArray.sol":7344:7351  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7352:7353  k */
+      dup6
+        /* "contracts/queue/HeapStaticArray.sol":7344:7354  buyList[k] */
+      0x2a
+      dup2
+      lt
+      tag_189
+      jumpi
+      invalid
+    tag_189:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":7318:7354  OrderStruct memory temp = buyList[k] */
+      mload(0x40)
+      dup1
+      0xa0
+      add
+      0x40
+      mstore
+      swap1
+      dup2
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      pop
+      pop
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":7431:7438  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7439:7442  max */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":7431:7443  buyList[max] */
+      0x2a
+      dup2
+      lt
+      tag_191
+      jumpi
+      invalid
+    tag_191:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":7418:7425  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7426:7427  k */
+      dup7
+        /* "contracts/queue/HeapStaticArray.sol":7418:7428  buyList[k] */
+      0x2a
+      dup2
+      lt
+      tag_193
+      jumpi
+      invalid
+    tag_193:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":7418:7443  buyList[k] = buyList[max] */
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      0x01
+      add
+      sstore
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      0x02
+      add
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":7476:7480  temp */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":7461:7468  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7469:7472  max */
+      dup5
+        /* "contracts/queue/HeapStaticArray.sol":7461:7473  buyList[max] */
+      0x2a
+      dup2
+      lt
+      tag_195
+      jumpi
+      invalid
+    tag_195:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":7461:7480  buyList[max] = temp */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":7502:7505  max */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":7498:7505  k = max */
+      swap5
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":7561:7562  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7557:7558  k */
+      dup6
+        /* "contracts/queue/HeapStaticArray.sol":7553:7554  2 */
+      0x02
+        /* "contracts/queue/HeapStaticArray.sol":7553:7558  2 * k */
+      mul
+        /* "contracts/queue/HeapStaticArray.sol":7553:7562  2 * k + 1 */
+      add
+        /* "contracts/queue/HeapStaticArray.sol":7541:7562  leftchild = 2 * k + 1 */
+      swap4
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":7105:7767  if (... */
+      pop
+      jump(tag_197)
+    tag_187:
+        /* "contracts/queue/HeapStaticArray.sol":7747:7752  break */
+      pop
+      pop
+      jump(tag_176)
+        /* "contracts/queue/HeapStaticArray.sol":7105:7767  if (... */
+    tag_197:
+        /* "contracts/queue/HeapStaticArray.sol":6471:7777  while (leftchild <= buyIndex) {... */
+      pop
+      pop
+      jump(tag_175)
+    tag_176:
+        /* "contracts/queue/HeapStaticArray.sol":7793:7797  true */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":7786:7797  return true */
+      swap3
+      pop
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":6345:7804  function maxheapHeapifyDown() internal returns (bool) {... */
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":2800:3778  function maxheapHeapifyUp() internal returns (bool) {... */
+    tag_96:
+        /* "contracts/queue/HeapStaticArray.sol":2846:2850  bool */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":2862:2871  uint256 k */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":2874:2882  buyIndex */
+      sload(0x01a6)
+        /* "contracts/queue/HeapStaticArray.sol":2862:2882  uint256 k = buyIndex */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":3011:3750  while (k > 0) {... */
+    tag_199:
+        /* "contracts/queue/HeapStaticArray.sol":3022:3023  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":3018:3019  k */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":3018:3023  k > 0 */
+      gt
+        /* "contracts/queue/HeapStaticArray.sol":3011:3750  while (k > 0) {... */
+      iszero
+      tag_200
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":3100:3109  uint256 p */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":3122:3123  2 */
+      0x02
+        /* "contracts/queue/HeapStaticArray.sol":3117:3118  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":3113:3114  k */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":3113:3118  k - 1 */
+      sub
+        /* "contracts/queue/HeapStaticArray.sol":3112:3123  (k - 1) / 2 */
+      dup2
+      tag_201
+      jumpi
+      invalid
+    tag_201:
+      div
+        /* "contracts/queue/HeapStaticArray.sol":3100:3123  uint256 p = (k - 1) / 2 */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":3254:3261  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":3262:3263  p */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":3254:3264  buyList[p] */
+      0x2a
+      dup2
+      lt
+      tag_202
+      jumpi
+      invalid
+    tag_202:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":3254:3273  buyList[p].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":3232:3239  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":3240:3241  k */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":3232:3242  buyList[k] */
+      0x2a
+      dup2
+      lt
+      tag_204
+      jumpi
+      invalid
+    tag_204:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":3232:3251  buyList[k].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":3232:3273  buyList[k].AuxPrice > buyList[p].AuxPrice */
+      gt
+        /* "contracts/queue/HeapStaticArray.sol":3211:3625  if (... */
+      iszero
+      tag_206
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":3362:3385  OrderStruct memory temp */
+      tag_207
+      tag_86
+      jump	// in
+    tag_207:
+        /* "contracts/queue/HeapStaticArray.sol":3388:3395  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":3396:3397  k */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":3388:3398  buyList[k] */
+      0x2a
+      dup2
+      lt
+      tag_208
+      jumpi
+      invalid
+    tag_208:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":3362:3398  OrderStruct memory temp = buyList[k] */
+      mload(0x40)
+      dup1
+      0xa0
+      add
+      0x40
+      mstore
+      swap1
+      dup2
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      pop
+      pop
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":3475:3482  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":3483:3484  p */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":3475:3485  buyList[p] */
+      0x2a
+      dup2
+      lt
+      tag_210
+      jumpi
+      invalid
+    tag_210:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":3462:3469  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":3470:3471  k */
+      dup5
+        /* "contracts/queue/HeapStaticArray.sol":3462:3472  buyList[k] */
+      0x2a
+      dup2
+      lt
+      tag_212
+      jumpi
+      invalid
+    tag_212:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":3462:3485  buyList[k] = buyList[p] */
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      0x01
+      add
+      sstore
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      0x02
+      add
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":3516:3520  temp */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":3503:3510  buyList */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":3511:3512  p */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":3503:3513  buyList[p] */
+      0x2a
+      dup2
+      lt
+      tag_214
+      jumpi
+      invalid
+    tag_214:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":3503:3520  buyList[p] = temp */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":3542:3543  p */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":3538:3543  k = p */
+      swap3
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":3211:3625  if (... */
+      pop
+      jump(tag_216)
+    tag_206:
+        /* "contracts/queue/HeapStaticArray.sol":3605:3610  break */
+      pop
+      jump(tag_200)
+        /* "contracts/queue/HeapStaticArray.sol":3211:3625  if (... */
+    tag_216:
+        /* "contracts/queue/HeapStaticArray.sol":3011:3750  while (k > 0) {... */
+      pop
+      jump(tag_199)
+    tag_200:
+        /* "contracts/queue/HeapStaticArray.sol":3767:3771  true */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":3760:3771  return true */
+      swap2
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":2800:3778  function maxheapHeapifyUp() internal returns (bool) {... */
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":12362:13829  function minheapHeapifyDown() internal returns (bool) {... */
+    tag_146:
+        /* "contracts/queue/HeapStaticArray.sol":12410:12414  bool */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":12426:12435  uint256 k */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":12438:12439  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":12426:12439  uint256 k = 0 */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":12449:12466  uint256 leftchild */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":12477:12478  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":12473:12474  k */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":12469:12470  2 */
+      0x02
+        /* "contracts/queue/HeapStaticArray.sol":12469:12474  2 * k */
+      mul
+        /* "contracts/queue/HeapStaticArray.sol":12469:12478  2 * k + 1 */
+      add
+        /* "contracts/queue/HeapStaticArray.sol":12449:12478  uint256 leftchild = 2 * k + 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":12488:13802  while (leftchild <= sellIndex) {... */
+    tag_218:
+        /* "contracts/queue/HeapStaticArray.sol":12508:12517  sellIndex */
+      sload(0x01a5)
+        /* "contracts/queue/HeapStaticArray.sol":12495:12504  leftchild */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":12495:12517  leftchild <= sellIndex */
+      gt
+        /* "contracts/queue/HeapStaticArray.sol":12488:13802  while (leftchild <= sellIndex) {... */
+      tag_219
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":12616:12627  uint256 min */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":12630:12639  leftchild */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":12616:12639  uint256 min = leftchild */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":12653:12671  uint256 rightchild */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":12686:12687  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":12674:12683  leftchild */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":12674:12687  leftchild + 1 */
+      add
+        /* "contracts/queue/HeapStaticArray.sol":12653:12687  uint256 rightchild = leftchild + 1 */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":12756:12765  sellIndex */
+      sload(0x01a5)
+        /* "contracts/queue/HeapStaticArray.sol":12743:12753  rightchild */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":12743:12765  rightchild < sellIndex */
+      lt
+        /* "contracts/queue/HeapStaticArray.sol":12722:13125  if (... */
+      iszero
+      tag_220
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":12944:12952  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":12953:12962  leftchild */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":12944:12963  sellList[leftchild] */
+      0x2a
+      dup2
+      lt
+      tag_221
+      jumpi
+      invalid
+    tag_221:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":12944:12972  sellList[leftchild].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":12912:12920  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":12921:12931  rightchild */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":12912:12932  sellList[rightchild] */
+      0x2a
+      dup2
+      lt
+      tag_223
+      jumpi
+      invalid
+    tag_223:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":12912:12941  sellList[rightchild].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":12912:12972  sellList[rightchild].AuxPrice < sellList[leftchild].AuxPrice */
+      lt
+        /* "contracts/queue/HeapStaticArray.sol":12887:13037  if (... */
+      iszero
+      tag_225
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":13013:13018  min++ */
+      dup2
+      dup1
+      0x01
+      add
+      swap3
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":12887:13037  if (... */
+    tag_225:
+        /* "contracts/queue/HeapStaticArray.sol":12722:13125  if (... */
+    tag_220:
+        /* "contracts/queue/HeapStaticArray.sol":13185:13193  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":13194:13195  k */
+      dup5
+        /* "contracts/queue/HeapStaticArray.sol":13185:13196  sellList[k] */
+      0x2a
+      dup2
+      lt
+      tag_226
+      jumpi
+      invalid
+    tag_226:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":13185:13205  sellList[k].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":13160:13168  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":13169:13172  min */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":13160:13173  sellList[min] */
+      0x2a
+      dup2
+      lt
+      tag_228
+      jumpi
+      invalid
+    tag_228:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":13160:13182  sellList[min].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":13160:13205  sellList[min].AuxPrice < sellList[k].AuxPrice */
+      lt
+        /* "contracts/queue/HeapStaticArray.sol":13139:13792  if (... */
+      iszero
+      tag_230
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":13323:13346  OrderStruct memory temp */
+      tag_231
+      tag_86
+      jump	// in
+    tag_231:
+        /* "contracts/queue/HeapStaticArray.sol":13349:13357  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":13358:13359  k */
+      dup6
+        /* "contracts/queue/HeapStaticArray.sol":13349:13360  sellList[k] */
+      0x2a
+      dup2
+      lt
+      tag_232
+      jumpi
+      invalid
+    tag_232:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":13323:13360  OrderStruct memory temp = sellList[k] */
+      mload(0x40)
+      dup1
+      0xa0
+      add
+      0x40
+      mstore
+      swap1
+      dup2
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      pop
+      pop
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":13438:13446  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":13447:13450  min */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":13438:13451  sellList[min] */
+      0x2a
+      dup2
+      lt
+      tag_234
+      jumpi
+      invalid
+    tag_234:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":13424:13432  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":13433:13434  k */
+      dup7
+        /* "contracts/queue/HeapStaticArray.sol":13424:13435  sellList[k] */
+      0x2a
+      dup2
+      lt
+      tag_236
+      jumpi
+      invalid
+    tag_236:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":13424:13451  sellList[k] = sellList[min] */
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      0x01
+      add
+      sstore
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      0x02
+      add
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":13485:13489  temp */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":13469:13477  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":13478:13481  min */
+      dup5
+        /* "contracts/queue/HeapStaticArray.sol":13469:13482  sellList[min] */
+      0x2a
+      dup2
+      lt
+      tag_238
+      jumpi
+      invalid
+    tag_238:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":13469:13489  sellList[min] = temp */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":13512:13515  min */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":13508:13515  k = min */
+      swap5
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":13571:13572  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":13567:13568  k */
+      dup6
+        /* "contracts/queue/HeapStaticArray.sol":13563:13564  2 */
+      0x02
+        /* "contracts/queue/HeapStaticArray.sol":13563:13568  2 * k */
+      mul
+        /* "contracts/queue/HeapStaticArray.sol":13563:13572  2 * k + 1 */
+      add
+        /* "contracts/queue/HeapStaticArray.sol":13551:13572  leftchild = 2 * k + 1 */
+      swap4
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":13139:13792  if (... */
+      pop
+      jump(tag_240)
+    tag_230:
+        /* "contracts/queue/HeapStaticArray.sol":13772:13777  break */
+      pop
+      pop
+      jump(tag_219)
+        /* "contracts/queue/HeapStaticArray.sol":13139:13792  if (... */
+    tag_240:
+        /* "contracts/queue/HeapStaticArray.sol":12488:13802  while (leftchild <= sellIndex) {... */
+      pop
+      pop
+      jump(tag_218)
+    tag_219:
+        /* "contracts/queue/HeapStaticArray.sol":13818:13822  true */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":13811:13822  return true */
+      swap3
+      pop
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":12362:13829  function minheapHeapifyDown() internal returns (bool) {... */
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":8734:9719  function minheapHeapifyUp() internal returns (bool) {... */
+    tag_168:
+        /* "contracts/queue/HeapStaticArray.sol":8780:8784  bool */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":8796:8805  uint256 k */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":8808:8817  sellIndex */
+      sload(0x01a5)
+        /* "contracts/queue/HeapStaticArray.sol":8796:8817  uint256 k = sellIndex */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":8945:9691  while (k > 0) {... */
+    tag_242:
+        /* "contracts/queue/HeapStaticArray.sol":8956:8957  0 */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":8952:8953  k */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":8952:8957  k > 0 */
+      gt
+        /* "contracts/queue/HeapStaticArray.sol":8945:9691  while (k > 0) {... */
+      iszero
+      tag_243
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":9034:9043  uint256 p */
+      0x00
+        /* "contracts/queue/HeapStaticArray.sol":9056:9057  2 */
+      0x02
+        /* "contracts/queue/HeapStaticArray.sol":9051:9052  1 */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":9047:9048  k */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":9047:9052  k - 1 */
+      sub
+        /* "contracts/queue/HeapStaticArray.sol":9046:9057  (k - 1) / 2 */
+      dup2
+      tag_244
+      jumpi
+      invalid
+    tag_244:
+      div
+        /* "contracts/queue/HeapStaticArray.sol":9034:9057  uint256 p = (k - 1) / 2 */
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":9189:9197  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":9198:9199  p */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":9189:9200  sellList[p] */
+      0x2a
+      dup2
+      lt
+      tag_245
+      jumpi
+      invalid
+    tag_245:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":9189:9209  sellList[p].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":9166:9174  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":9175:9176  k */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":9166:9177  sellList[k] */
+      0x2a
+      dup2
+      lt
+      tag_247
+      jumpi
+      invalid
+    tag_247:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":9166:9186  sellList[k].AuxPrice */
+      0x04
+      add
+      sload
+        /* "contracts/queue/HeapStaticArray.sol":9166:9209  sellList[k].AuxPrice < sellList[p].AuxPrice */
+      lt
+        /* "contracts/queue/HeapStaticArray.sol":9145:9566  if (... */
+      iszero
+      tag_249
+      jumpi
+        /* "contracts/queue/HeapStaticArray.sol":9298:9321  OrderStruct memory temp */
+      tag_250
+      tag_86
+      jump	// in
+    tag_250:
+        /* "contracts/queue/HeapStaticArray.sol":9324:9332  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":9333:9334  k */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":9324:9335  sellList[k] */
+      0x2a
+      dup2
+      lt
+      tag_251
+      jumpi
+      invalid
+    tag_251:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":9298:9335  OrderStruct memory temp = sellList[k] */
+      mload(0x40)
+      dup1
+      0xa0
+      add
+      0x40
+      mstore
+      swap1
+      dup2
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      iszero
+      iszero
+      iszero
+      iszero
+      dup2
+      mstore
+      0x20
+      add
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      pop
+      pop
+      swap1
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":9413:9421  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":9422:9423  p */
+      dup3
+        /* "contracts/queue/HeapStaticArray.sol":9413:9424  sellList[p] */
+      0x2a
+      dup2
+      lt
+      tag_253
+      jumpi
+      invalid
+    tag_253:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":9399:9407  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":9408:9409  k */
+      dup5
+        /* "contracts/queue/HeapStaticArray.sol":9399:9410  sellList[k] */
+      0x2a
+      dup2
+      lt
+      tag_255
+      jumpi
+      invalid
+    tag_255:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":9399:9424  sellList[k] = sellList[p] */
+      0x00
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x01
+      dup3
+      add
+      sload
+      dup2
+      0x01
+      add
+      sstore
+      0x02
+      dup3
+      add
+      sload
+      dup2
+      0x02
+      add
+      sstore
+      0x03
+      dup3
+      add
+      0x00
+      swap1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xff
+      and
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x04
+      dup3
+      add
+      sload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":9456:9460  temp */
+      dup1
+        /* "contracts/queue/HeapStaticArray.sol":9442:9450  sellList */
+      0xd3
+        /* "contracts/queue/HeapStaticArray.sol":9451:9452  p */
+      dup4
+        /* "contracts/queue/HeapStaticArray.sol":9442:9453  sellList[p] */
+      0x2a
+      dup2
+      lt
+      tag_257
+      jumpi
+      invalid
+    tag_257:
+      0x05
+      mul
+      add
+        /* "contracts/queue/HeapStaticArray.sol":9442:9460  sellList[p] = temp */
+      0x00
+      dup3
+      add
+      mload
+      dup2
+      0x00
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x01
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x02
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x03
+      add
+      exp(0x0100, 0x00)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x04
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":9483:9484  p */
+      dup2
+        /* "contracts/queue/HeapStaticArray.sol":9479:9484  k = p */
+      swap3
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":9145:9566  if (... */
+      pop
+      jump(tag_259)
+    tag_249:
+        /* "contracts/queue/HeapStaticArray.sol":9546:9551  break */
+      pop
+      jump(tag_243)
+        /* "contracts/queue/HeapStaticArray.sol":9145:9566  if (... */
+    tag_259:
+        /* "contracts/queue/HeapStaticArray.sol":8945:9691  while (k > 0) {... */
+      pop
+      jump(tag_242)
+    tag_243:
+        /* "contracts/queue/HeapStaticArray.sol":9708:9712  true */
+      0x01
+        /* "contracts/queue/HeapStaticArray.sol":9701:9712  return true */
+      swap2
+      pop
+      pop
+        /* "contracts/queue/HeapStaticArray.sol":8734:9719  function minheapHeapifyUp() internal returns (bool) {... */
+      swap1
+      jump	// out
+        /* "contracts/queue/HeapStaticArray.sol":179:14083  contract HeapStaticArray {... */
+    tag_86:
+      mload(0x40)
+      dup1
+      0xa0
+      add
+      0x40
+      mstore
+      dup1
+      and(0xffffffffffffffffffffffffffffffffffffffff, 0x00)
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      dup2
+      mstore
+      0x20
+      add
+      iszero(iszero(0x00))
+      dup2
+      mstore
+      0x20
+      add
+      0x00
+      dup2
+      mstore
+      pop
+      swap1
+      jump	// out
+
+    auxdata: 0xa265627a7a72315820b425ca4aed05c7b6cf4a983d7ccc355c3395bd8df34da1ea8eb0c9eea6bd012464736f6c63430005110032
+}

@@ -1,7 +1,4 @@
 // SPDX-License-Identifier: SSPL-1.0
-// @title Call Market
-// @version 0.3.0
-
 pragma solidity >=0.5.7 <0.6.0;
 
 /**
@@ -25,7 +22,7 @@ unavailableEtherArray: Maintains a list of unavailableEtherBalance addresses, th
 */
 
 //import "node_modules/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+import "./IERC20.sol";
 import "./HeapDynamicArray.sol";
 import "./HeapStaticArray.sol";
 import "./HeapMapping.sol";
