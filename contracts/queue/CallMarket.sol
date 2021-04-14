@@ -2,23 +2,23 @@
 pragma solidity >=0.5.7 <0.6.0;
 
 /**
-States.Open: The market is open
-States.Closed: The market is closed but the orders have not yet been processed
-States.Settled: The market is closed and settled (orders have been processed)
-creationTime: The openning time of the market
-biddingPeriod: The window of time during which the market is open
-numOrders: Total orders in the market (both bids and asks)
-buylistCounter: A bid orders counter that is decremented every time a bid is submitted (used for handling ties)
-sellistCounter: An ask orders counter that is incremented every time an ask is submitted (used for handling ties)
-refunds: Maintains the refund counters to be transferred to the block.coinbase (current block miner)
+        States.Open: The market is open
+        States.Closed: The market is closed but the orders have not yet been processed
+        States.Settled: The market is closed and settled (orders have been processed)
+        creationTime: The openning time of the market
+        biddingPeriod: The window of time during which the market is open
+        numOrders: Total orders in the market (both bids and asks)
+        buylistCounter: A bid orders counter that is decremented every time a bid is submitted (used for handling ties)
+        sellistCounter: An ask orders counter that is incremented every time an ask is submitted (used for handling ties)
+        refunds: Maintains the refund counters to be transferred to the block.coinbase (current block miner)
 
-totalTokenBalance: Maintains the total token balance of each trader 
-unavailableTokenBalance: Maintains the number of tokens a trader has depositted
-unavailableTokenArray: Maintains a list of unavailableTokenBalance addresses, this list will be used to delete the unavailableTokenBalance mapping
+        totalTokenBalance: Maintains the total token balance of each trader 
+        unavailableTokenBalance: Maintains the number of tokens a trader has depositted
+        unavailableTokenArray: Maintains a list of unavailableTokenBalance addresses, this list will be used to delete the unavailableTokenBalance mapping
 
-totalEtherBalance: Maintains the total ETH balance of each trader 
-unavailableEtherBalance: Maintains the number of ETH a trader has depositted
-unavailableEtherArray: Maintains a list of unavailableEtherBalance addresses, this list will be used to delete the unavailableEtherBalance mapping
+        totalEtherBalance: Maintains the total ETH balance of each trader 
+        unavailableEtherBalance: Maintains the number of ETH a trader has depositted
+        unavailableEtherArray: Maintains a list of unavailableEtherBalance addresses, this list will be used to delete the unavailableEtherBalance mapping
 */
 
 //import "node_modules/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
@@ -39,8 +39,6 @@ contract CallMarket {
     //Mapping public MP = new Mapping(address(this));
     address payable public callmarket = address(uint160(address(this)));
 
-    //***********************************************************************//
-
     /**
      *   @dev Converts string to uint and returns the uint
      */
@@ -59,8 +57,6 @@ contract CallMarket {
 
         return result;
     }
-
-    //***********************************************************************//
 
     /**
      *   @dev Converts uint to string and returns the string
@@ -202,7 +198,7 @@ contract CallMarket {
 
     //***********************************************************************//
     /**
-    *   @dev 
+    *  @dev 
         Allows traders to submit bid orders if the market is at the open state
         Traders must have enough ETH already depositted
         To handle ties: Converts the bid price to string, contactenate it with the buylistCounter and converts the constactenated string to uint
@@ -241,7 +237,7 @@ contract CallMarket {
 
     //***********************************************************************//
     /**
-    *   @dev 
+    *  @dev 
         Allows traders to submit ask orders if the market is at the open state
         Traders must have enough tokens already depositted
         To handle ties: Converts the ask price to string, contactenate it with the sellistCounter and converts the constactenated string to uint
@@ -329,6 +325,7 @@ contract CallMarket {
             (BAPrice,BASender,BAVolume) = priorityQueue.sellListMaxDelete();
         }
         
+        // @note enable for MINER
         //uint refund = refunds[block.coinbase]; 
         //refunds[block.coinbase] = 0; 
         //block.coinbase.transfer(refund);
@@ -344,7 +341,8 @@ contract CallMarket {
         // }
 
         return true;
-    } */
+    } 
+    */
     //*********************************************************//
     /**
     *   @dev 
