@@ -98,7 +98,7 @@ contract CallMarket {
     }
 
     /**
-    *   @dev
+       @dev
         States.Open: The market is open
         States.Closed: The market is closed but the orders have not yet been processed
         States.Settled: The market is closed and settled (orders have been processed)
@@ -157,8 +157,8 @@ contract CallMarket {
 
     //***********************************************************************//
     /**
-    *   @dev Allows the traders to deposit ERC20 tokens
-        Traders must firs call the approve() from the ERC20 token contract to allow the call market contract to spend those tokens
+         @dev Allows the traders to deposit ERC20 tokens
+         Traders must first call the approve() from the ERC20 token contract to allow the call market contract to spend those tokens
     */
 
     function depositToken(address token, uint256 numofTokens)
@@ -198,7 +198,7 @@ contract CallMarket {
 
     //***********************************************************************//
     /**
-    *  @dev 
+       @dev 
         Allows traders to submit bid orders if the market is at the open state
         Traders must have enough ETH already depositted
         To handle ties: Converts the bid price to string, contactenate it with the buylistCounter and converts the constactenated string to uint
@@ -237,7 +237,7 @@ contract CallMarket {
 
     //***********************************************************************//
     /**
-    *  @dev 
+       @dev 
         Allows traders to submit ask orders if the market is at the open state
         Traders must have enough tokens already depositted
         To handle ties: Converts the ask price to string, contactenate it with the sellistCounter and converts the constactenated string to uint
@@ -294,9 +294,9 @@ contract CallMarket {
     /**
     *   @dev 
         matchorders() version 1: Volumes are all 1
-
+        //@NOTE this section was previously commented out
     */
-    /* function matchOrders() external auctionAtStage(States.Closed) returns (bool){
+     function matchOrders() external auctionAtStage(States.Closed) returns (bool){
 
         
         state = States.Settled;
@@ -325,7 +325,9 @@ contract CallMarket {
             (BAPrice,BASender,BAVolume) = priorityQueue.sellListMaxDelete();
         }
         
-        // @note enable for MINER
+        
+        // @NOTE Enable for MINER Support 
+        // @TODO In Protocol Version
         //uint refund = refunds[block.coinbase]; 
         //refunds[block.coinbase] = 0; 
         //block.coinbase.transfer(refund);
@@ -421,6 +423,8 @@ contract CallMarket {
                 (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();
             }
 
+            // @NOTE MINER SUPPORT 
+            // @TODO ENABLE FOR MINER SUPPORt
             ////uint refund = refunds[block.coinbase];
             ////refunds[block.coinbase] = 0;
             ////block.coinbase.transfer(refund);
@@ -476,7 +480,10 @@ contract CallMarket {
     /**
      *   @dev Getter function to get the Ether balanace of the contract
      */
-    /* function getBalance() public view returns (uint256) {
+    /* 
+    @NOTE SECTION WAS PREV. COMMENTED OUT
+    */
+    function getBalance() public view returns (uint256) {
         return address(this).balance;
-    } */
+    } 
 }
