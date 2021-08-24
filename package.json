@@ -23,8 +23,10 @@
   "author": "SEE CONTRIBUTORS",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
+    "truffle": "^5.4.7"
   },
   "dependencies": {
+    "hardhat": "^2.6.1",
     "openzeppelin-solidity": "^2.5.1",
     "solc": "^0.5.17"
   }
