@@ -24,6 +24,9 @@ module.exports = {
     //  url: "https://eth-goerli.alchemyapi.io/v2/" + process.env.ALCHEMY_API_KEY,
     //  accounts: [process.env.ALCHEMY_DEPLOYMENT_KEY]
     //}
+    'truffle-dashboard': {
+      url: "http://localhost:24012/rpc"
+	}
   },
 
   paths: {
@@ -37,7 +40,6 @@ module.exports = {
     version: '0.5.17',
     settings: {
       metadata: {
-        bytecodeHash: 'none',
       },
       optimizer: {
         enabled: false,

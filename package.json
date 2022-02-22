@@ -1,19 +1,22 @@
 {
   "name": "evoqueue",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Experimental Orderbook Designs in Solidity",
-  "main": "index.ts",
   "directories": {
-    "test": "test"
-  },
-  "files": {
+    "test": "test",
     "contracts": "contracts"
   },
+  "files": [
+    "/contracts/**/*.sol",
+    "/build/contracts/*.json",
+    "!/contracts/mocks/**/*"
+  ],
   "scripts": {
     "build": "npx hardhat compile",
-    "compile": "npx truffle compile",
-    "hh": "npx hardhat clean && npx hardhat compile",
+    "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
+    "coverage": "yarn typechain && hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\" && yarn typechain",
     "testnet": "./scripts/devnet.sh",
+    "test": "hardhat test",
     "lint:sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
     "prettier": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\"",
@@ -23,10 +26,28 @@
   "author": "SEE CONTRIBUTORS",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
-    "truffle": "^5.4.7"
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-truffle5": "^2.0.4",
+    "@nomiclabs/hardhat-web3": "^2.0.0",
+    "@typechain/ethers-v5": "^9.0.0",
+    "@typechain/hardhat": "^4.0.0",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "^14",
+    "chai": "^4.3.6",
+    "ethers": "^5.5.4",
+    "hardhat": "^2.8.4",
+    "hardhat-abi-exporter": "^2.8.0",
+    "hardhat-deploy": "^0.10.5",
+    "hardhat-gas-reporter": "^1.0.8",
+    "mocha": "^9.2.1",
+    "truffle": "^5.5.1",
+    "ts-generator": "^0.1.1",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5"
   },
   "dependencies": {
-    "hardhat": "^2.6.1",
+    "dotenv": "^16.0.0",
     "openzeppelin-solidity": "^2.5.1",
     "solc": "^0.5.17"
   }

@@ -21,7 +21,7 @@ pragma solidity >=0.5.7 <0.6.0;
         unavailableEtherArray: Maintains a list of unavailableEtherBalance addresses, this list will be used to delete the unavailableEtherBalance mapping
 */
 
-//import "node_modules/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+
 import "./IERC20.sol";
 import "./HeapDynamicArray.sol";
 import "./HeapStaticArray.sol";
@@ -291,14 +291,14 @@ contract CallMarket {
     */
 
     //*********************************************************//
-    /**
-    *   @dev 
+    /**  @dev 
         matchorders() version 1: Volumes are all 1
-        //@NOTE this section was previously commented out
-    */
+        //NOTE this section was previously commented out
+     */ 
+
+
      function matchOrders() external auctionAtStage(States.Closed) returns (bool){
 
-        
         state = States.Settled;
 
         (uint256 BBPrice, address BBSender, uint256 BBVolume) = priorityQueue.buyListMaxDelete();
@@ -326,8 +326,8 @@ contract CallMarket {
         }
         
         
-        // @NOTE Enable for MINER Support 
-        // @TODO In Protocol Version
+        // NOTE Enable for MINER Support 
+        // TODO In Protocol Version
         //uint refund = refunds[block.coinbase]; 
         //refunds[block.coinbase] = 0; 
         //block.coinbase.transfer(refund);
@@ -344,12 +344,11 @@ contract CallMarket {
 
         return true;
     } 
-    */
+    
     //*********************************************************//
     /**
     *   @dev 
         matchorders() version 2: Partial fillings
-
     */
 
     function matchOrders()
@@ -423,8 +422,8 @@ contract CallMarket {
                 (BAPrice, BASender, BAVolume) = priorityQueue.sellListMax();
             }
 
-            // @NOTE MINER SUPPORT 
-            // @TODO ENABLE FOR MINER SUPPORt
+            // NOTE MINER SUPPORT 
+            // TODO ENABLE FOR MINER SUPPORt
             ////uint refund = refunds[block.coinbase];
             ////refunds[block.coinbase] = 0;
             ////block.coinbase.transfer(refund);
@@ -481,7 +480,7 @@ contract CallMarket {
      *   @dev Getter function to get the Ether balanace of the contract
      */
     /* 
-    @NOTE SECTION WAS PREV. COMMENTED OUT
+    NOTE SECTION WAS PREV. COMMENTED OUT
     */
     function getBalance() public view returns (uint256) {
         return address(this).balance;
