@@ -2,7 +2,7 @@
 pragma solidity >=0.5.7 <0.6.0;
 
 /// @title Mapping
-import "./Call_Market.sol";
+import "./CallMarket.sol";
 
 contract Mapping {
     address payable addr;
